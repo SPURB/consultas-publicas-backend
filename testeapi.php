@@ -2,11 +2,14 @@
 require_once "classes/Member.class.php";
 require_once "classes/Consulta.class.php";
 
-$origin = $_SERVER['HTTP_ORIGIN'];
-$allow = array("localhost", "spurbcp");
-foreach($allow as $a){
-	if(stripos($origin, $a) !== FALSE){
-		header('Access-Control-Allow-Origin: '.$origin);
+if(isset($_SERVER['HTTP_ORIGIN'])){
+	$origin = $_SERVER['HTTP_ORIGIN'];
+	$allow = array("localhost", "spurbcp");
+	foreach($allow as $a){
+		if(stripos($origin, $a) !== FALSE){
+			header('Access-Control-Allow-Origin: '.$origin);
+			break;
+		}
 	}
 }
 

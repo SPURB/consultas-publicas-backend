@@ -1,7 +1,6 @@
 # consultas-publicas-backend
 Backend de consulta públicas de Projetos de Intervenções Urbanas municipais de São Paulo.
 
-
 ## GET
 * `testeapi.php/members`
 Retorna todos os members
@@ -36,3 +35,43 @@ Desativa o member pelo memid.
 
 ## Nota
 **Temporariamente para testes, aponte o caminho do arquivo de conexao com o banco na classe GenericDAO**
+
+## Estrutura do banco
+
+````mysql
+mysql> DESC members;
++----------------+-------------+------+-----+---------+----------------+
+| Field          | Type        | Null | Key | Default | Extra          |
++----------------+-------------+------+-----+---------+----------------+
+| memid          | int(11)     | NO   | PRI | NULL    | auto_increment |
+| name           | varchar(30) | NO   |     | NULL    |                |
+| email          | varchar(30) | NO   |     | NULL    |                |
+| content        | text        | NO   |     | NULL    |                |
+| commentdate    | datetime    | NO   |     | NULL    |                |
+| public         | tinyint(1)  | NO   |     | NULL    |                |
+| postid         | int(11)     | NO   |     | NULL    |                |
+| trash          | tinyint(1)  | NO   |     | NULL    |                |
+| commentid      | int(11)     | NO   |     | NULL    |                |
+| commentcontext | text        | NO   |     | NULL    |                |
+| idConsulta     | int(11)     | NO   | MUL | NULL    |                |
++----------------+-------------+------+-----+---------+----------------+
+11 rows in set (0.00 sec)
+
+mysql> DESC consultas;
++---------------+--------------+------+-----+---------+----------------+
+| Field         | Type         | Null | Key | Default | Extra          |
++---------------+--------------+------+-----+---------+----------------+
+| id_consulta   | int(11)      | NO   | PRI | NULL    | auto_increment |
+| nome          | varchar(200) | NO   |     | NULL    |                |
+| data_cadastro | date         | YES  |     | NULL    |                |
++---------------+--------------+------+-----+---------+----------------+
+3 rows in set (0.00 sec)
+
+mysql> SELECT * FROM consultas;
++-------------+---------------------------------------+---------------+
+| id_consulta | nome                                  | data_cadastro |
++-------------+---------------------------------------+---------------+
+|           1 | nome_banco_consulta                   | 0000-00-00    |
++-------------+---------------------------------------+---------------+
+
+````

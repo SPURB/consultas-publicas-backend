@@ -66,12 +66,8 @@ class Member extends GenericDAO{
 	}
 	
 	public function obter($id){
-		try{
-			return $this->getById($id);
-		}catch(Exception $ex){
-			error_log($ex->getMessage());
-			return FALSE;
-		}
+		$filtroId = array("memid" => "= $id");
+		return $this->listar($filtroId);
 	}
 	
 	public function obterPorConsulta($idConsulta, $idMember){

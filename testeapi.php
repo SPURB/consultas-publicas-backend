@@ -86,12 +86,24 @@ function post(){
 			}
 			$result = $member->listar($filtro);
 			if(!$result){
-				throw new Exception("Nenhum resultado encontado", 404);
+				throw new Exception("Nenhum resultado encontrado", 404);
 			}
-		}else if($action == ""){	
+		}else if($table == "consultas"){
+			$novaConsulta = new Consulta();
+			foreach($input as $key => $val){
+				if(array_search($key, $novaConsulta->columns) === FALSE){
+					throw new Exception("$key parametro incorreto", 400);
+				}
+				$novaConsulta->$key = $val;
+			}
+			$novaConsulta->dataCadastro = date();
+			$novaConsulta->ativo = "1";
+			$result = $novaConsulta->cadastrar();
+		}
+		else if($action == ""){	
 			foreach($input as $key => $val){
 				if(array_search($key, $member->columns) === FALSE){
-					throw new Exception("Internal Server Error", 500);
+					throw new Exception("$key parametro incorreto", 400);
 				}
 				$member->$key = $val;
 			}
@@ -99,6 +111,7 @@ function post(){
 			if($consulta !== FALSE){
 				$member->idConsulta = $consulta->id;
 			}
+			$member->commentDate = date();
 			$result = $member->cadastrar();
 		}else{
 			throw new Exception("Recurso nao encontrado", 404);
@@ -126,7 +139,7 @@ function put(){
 			throw new Exception("$id nao encontrado", 404);
 		}
 		
-		$member = $memberDAO->obter($id)
+		$member = $memberDAO->obter($id);
 		
 		foreach($input as $key => $val){
 			if(array_search($key, $member->columns) === FALSE){

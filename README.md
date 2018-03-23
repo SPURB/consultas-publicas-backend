@@ -6,6 +6,8 @@ Backend de consulta públicas de Projetos de Intervenções Urbanas municipais d
 Retorna todos os members
 * `testeapi.php/members/<id>`
 Retorna o member pelo seu memid
+* `testeapi.php/consultas`
+Retorna todas as consultas ativas
 * `testeapi.php/<nome_da_consulta>`
 Retorna todos os members relacionados a consulta informada
 
@@ -13,6 +15,8 @@ Retorna todos os members relacionados a consulta informada
 ## POST
 * `testeapi.php/members {parametros POST}`
 Cria um novo member. Seu conteúdo será definido nos parâmetros POST
+  * `testeapi.php/members/<nome_da_consulta> {parametros POST}`
+Cria um novo member relacionado a consulta informada. Seu conteúdo será definido nos parâmetros POST
   > Definição de parametros POST para inserção
 Exemplo: `{'name':'Thomas', 'public':'1' }`
 Os nomes das colunas devem ser iguais aos retornados numa consulta
@@ -23,15 +27,27 @@ Os nomes das colunas devem ser iguais aos retornados numa consulta
 Exemplo: `{'name':'=Thomas', 'public':'=1' }`
 Os nomes das colunas devem ser iguais aos retornados numa consulta
 
+* `testeapi.php/consultas {parametros POST}`
+Cria uma nova consulta. Seu conteúdo será definido nos parâmetros POST
+  > Definição de parametros POST para inserção
+  Exemplo: `{'nome':'consulta_teste' }`
+
 
 ## PUT
 * `testeapi.php/members/<memid> {parametros PUT}`
 Atualiza um member pelo memid. Seu conteúdo será definido nos parâmetros PUT
 
+* `testeapi.php/<nome_da_consulta> {parametros PUT}`
+Atualiza o nome da consulta pelo parâmetro PUT
+  Exemplo: `{'nome':'nova_consulta' }`
+
 
 ## DELETE
 * `testeapi.php/members/<memid>`
 Desativa o member pelo memid.
+
+* `testeapi.php/<nome_da_consulta>`
+Desativa a consulta informada.
 
 ## Nota
 **Temporariamente para testes, aponte o caminho do arquivo de conexao com o banco na classe GenericDAO**

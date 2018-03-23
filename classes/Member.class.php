@@ -54,6 +54,14 @@ class Member extends GenericDAO{
 			return FALSE;
 		}
 	}
+
+	public function listarAtivos($filtro = NULL){
+		if($filtro == NULL){
+			$filtro = array();
+		}
+		$filtro['trash'] = "=0";
+		return $this->select($filtro);
+	}
 	
 	public function listarPorConsulta($idConsulta, $filtro = NULL){
 		

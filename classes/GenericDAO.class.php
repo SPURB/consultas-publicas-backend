@@ -8,7 +8,7 @@ class GenericDAO{
 	 */
 	private $base;
 	
-	private static $properties = "C:/xampp/htdocs/testes/consultas-publicas-backend/classes/base/bd.properties";
+	private static $properties = "C:/xampp/htdocs/bd.properties";
 	
 	protected $tableName;
 	

@@ -22,24 +22,24 @@ $method = $_SERVER['REQUEST_METHOD'];
  
 // print results, insert id or affected row count
 switch ($method) {
-	case 'GET':
+	case "GET":
 		echo json_encode(get());
 	break;
-	case 'PUT':
+	case "PUT":
 		echo json_encode(put());
 	break;
-	case 'POST':
+	case "POST":
 		echo json_encode(post());
 	break;
-	case 'DELETE':
+	case "DELETE":
 		echo json_encode(del());
 	break;
 }
 
 function get(){
+	$result = NULL;
 	$memberDAO = new Member();
 	$consultaDAO = new Consulta();
-	$result = NULL;
 	
 	$request = explode('/', trim($_SERVER['PATH_INFO'],'/'));
 	$table = preg_replace('/[^a-z0-9_]+/i','',array_shift($request));
@@ -48,7 +48,11 @@ function get(){
 	try{
 		$consulta = getConsulta($table);
 		if($consulta === FALSE){
-			$result = ($id > 0) ? $memberDAO->obter($id) : $memberDAO->listar();
+			if($table == "members"){
+				$result = ($id > 0) ? $memberDAO->obter($id) : $memberDAO->listarAtivos();
+			}else if($table == "consultas" && $id==0){
+				$result = $consultaDAO->listar();
+			}
 		}else{
 			$result = ($id > 0) ? $memberDAO->obterPorConsulta($consulta->id, $id) : $memberDAO->listarPorConsulta($consulta->id);
 		}
@@ -96,7 +100,7 @@ function post(){
 				}
 				$novaConsulta->$key = $val;
 			}
-			$novaConsulta->dataCadastro = date();
+			$novaConsulta->dataCadastro = date("Y-m-d");
 			$novaConsulta->ativo = "1";
 			$result = $novaConsulta->cadastrar();
 		}
@@ -111,7 +115,7 @@ function post(){
 			if($consulta !== FALSE){
 				$member->idConsulta = $consulta->id;
 			}
-			$member->commentDate = date();
+			$member->commentDate = date("Y-m-d");
 			$result = $member->cadastrar();
 		}else{
 			throw new Exception("Recurso nao encontrado", 404);
@@ -126,6 +130,9 @@ function post(){
 }
 
 function put(){
+	$memberDAO = new Member();
+	$consultaDAO = new Consulta();
+
 	$request = explode('/', trim($_SERVER['PATH_INFO'],'/'));
 	$table = preg_replace('/[^a-z0-9_]+/i','',array_shift($request));
 	$id = intval(array_shift($request));
@@ -138,17 +145,24 @@ function put(){
 		if($id <= 0){
 			throw new Exception("$id nao encontrado", 404);
 		}
-		
-		$member = $memberDAO->obter($id);
-		
-		foreach($input as $key => $val){
-			if(array_search($key, $member->columns) === FALSE){
-				throw new Exception("Parametro incorreto $key", 400);
+		if($table == "members"){
+			$member = $memberDAO->obter($id);
+			
+			foreach($input as $key => $val){
+				if(array_search($key, $member->columns) === FALSE){
+					throw new Exception("Parametro incorreto $key", 400);
+				}
+				$member->$key = $val;
 			}
-			$member->$key = $val;
+			$member->memid = $id;
+			$result = $member->atualizar();
+		}else{
+			$consulta = getConsulta($table);
+			$cols = array("nome" => $input["nome"]);
+			$filters = array("id" => $consulta->id);
+			$result = $consultaDAO->atualizar($cols, $filters);
 		}
-		$member->memid = $id;
-		$result = $member->atualizar();
+
 		if(!$result || $result == 0){
 			throw new Exception("Erro. Nenhuma linha atualizada", 500);
 		}
@@ -161,8 +175,9 @@ function put(){
 }
 
 function del(){
-	$memberDAO = new Member();
 	$result = NULL;
+	$memberDAO = new Member();
+	$consultaDAO = new Consulta();
 	
 	$request = explode('/', trim($_SERVER['PATH_INFO'],'/'));
 	$table = preg_replace('/[^a-z0-9_]+/i','',array_shift($request));
@@ -172,9 +187,13 @@ function del(){
 		if($id <= 0){
 			throw new Exception("$id parametro invalido");
 		}
-		
-		$result = $memberDAO->desativar($id);
-		
+		if($table == "members"){
+			$memberDAO = new Member();
+			$result = $memberDAO->desativar($id);
+		}else{
+			$consulta = getConsulta($table);
+			$result = $consultaDAO->desativar($consulta->id);
+		}
 		if($result == NULL || $result === FALSE || $result == 0){
 			throw new Exception("$id gerou um erro. Nenhuma linha atualizada.", 500);
 		}
@@ -188,7 +207,8 @@ function del(){
 }
 
 function getConsulta($table){
-	if($table == "members"){
+	$consultaDAO = new Consulta();
+	if($table == "members" || $table == "consultas"){
 		return FALSE;
 	}else{
 		$consulta = $consultaDAO->obterPeloNome($table);

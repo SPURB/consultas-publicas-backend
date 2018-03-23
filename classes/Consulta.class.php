@@ -35,6 +35,10 @@ class Consulta extends GenericDAO{
 	}
 	
 	public function listar($filtro = NULL){
+		if($filtro == NULL){
+			$filtro = array();
+		}
+		$filtro["ativo"] = "=1";
 		try{
 			return $this->select($filtro);
 		}catch(Exception $ex){
@@ -68,6 +72,24 @@ class Consulta extends GenericDAO{
 			error_log($ex->getMessage());
 			return FALSE;
 		}
+	}
+
+	public function atualizar($campos = NULL, $filtro = NULL){
+		try{
+			if($campos == NULL){
+				return $this->selfUpdate($this->memid);
+			}
+			return $this->update($campos, $filtro);
+		}catch(Exception $ex){
+			error_log($ex->getMessage());
+			return FALSE;
+		}
+	}
+
+	public function desativar($id){
+		$colunas = array("ativo" => "=0");
+		$filtros = array("id" => $id);
+		return $this->atualizar($colunas, $filtros);
 	}
 	
 }

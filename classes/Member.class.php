@@ -84,8 +84,11 @@ class Member extends GenericDAO{
 		}
 	}
 	
-	public function atualizar($campos, $filtro){
+	public function atualizar($campos = NULL, $filtro = NULL){
 		try{
+			if($campos == NULL){
+				return $this->selfUpdate($this->memid);
+			}
 			return $this->update($campos, $filtro);
 		}catch(Exception $ex){
 			error_log($ex->getMessage());

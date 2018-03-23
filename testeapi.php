@@ -4,7 +4,7 @@ require_once "classes/Consulta.class.php";
 
 if(isset($_SERVER['HTTP_ORIGIN'])){
 	$origin = $_SERVER['HTTP_ORIGIN'];
-	$allow = array("localhost", "spurbcp");
+	$allow = array("localhost", "spurbcp", "10.");
 	foreach($allow as $a){
 		if(stripos($origin, $a) !== FALSE){
 			header('Access-Control-Allow-Origin: '.$origin);
@@ -15,7 +15,6 @@ if(isset($_SERVER['HTTP_ORIGIN'])){
 
 header("Access-Control-Allow-Headers: Content-Type");
 header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE');
-
 header("Content-type: application/json");
  
 // get the HTTP method, path and body of the request
@@ -47,18 +46,14 @@ function get(){
 	$id = intval(array_shift($request));
 	
 	try{
-		if($table == "members"){
+		$consulta = getConsulta($table);
+		if($consulta === FALSE){
 			$result = ($id > 0) ? $memberDAO->obter($id) : $memberDAO->listar();
 		}else{
-			$consulta = $consultaDAO->obterPeloNome($table);
-			if($consulta === FALSE){
-				throw new Exception("$table Resource not found", 404);
-			}
 			$result = ($id > 0) ? $memberDAO->obterPorConsulta($consulta->id, $id) : $memberDAO->listarPorConsulta($consulta->id);
 		}
-		
 		if($result == NULL){
-			throw new Exception("$id Resource not found", 404);
+			throw new Exception("$id nao encontrado", 404);
 		}
 		http_response_code(200);
 	}catch(Exception $ex){
@@ -82,27 +77,31 @@ function post(){
 			$filtro = array();
 			foreach($input as $key => $val){
 				if(array_search($key, $member->columns) === FALSE){
-					throw new Exception("$key column invalid", 400);
+					throw new Exception("$key parametro incorreto", 400);
 				}
 				$filtro[$key] = $val;
 			}
 			if(array_count_values($filtro) == 0){
-				throw new Exception("Invalid search conditions", 400);
+				throw new Exception("Parametros de busca incorretos", 400);
 			}
 			$result = $member->listar($filtro);
 			if(!$result){
-				throw new Exception("No data found", 404);
+				throw new Exception("Nenhum resultado encontado", 404);
 			}
-		}else if($action == ""){
+		}else if($action == ""){	
 			foreach($input as $key => $val){
 				if(array_search($key, $member->columns) === FALSE){
 					throw new Exception("Internal Server Error", 500);
 				}
 				$member->$key = $val;
 			}
+			$consulta = getConsulta($table);
+			if($consulta !== FALSE){
+				$member->idConsulta = $consulta->id;
+			}
 			$result = $member->cadastrar();
 		}else{
-			throw new Exception("Resource not found", 404);
+			throw new Exception("Recurso nao encontrado", 404);
 		}
 		http_response_code(200);
 	}catch(Exception $ex){
@@ -124,19 +123,21 @@ function put(){
 	
 	try{
 		if($id <= 0){
-			throw new Exception("$id resource not found", 404);
+			throw new Exception("$id nao encontrado", 404);
 		}
+		
+		$member = $memberDAO->obter($id)
 		
 		foreach($input as $key => $val){
 			if(array_search($key, $member->columns) === FALSE){
-				throw new Exception("Incorrect input $key", 400);
+				throw new Exception("Parametro incorreto $key", 400);
 			}
 			$member->$key = $val;
 		}
 		$member->memid = $id;
-		$result = $member->selfUpdate();
+		$result = $member->atualizar();
 		if(!$result || $result == 0){
-			throw new Exception("Internal Server Error", 500);
+			throw new Exception("Erro. Nenhuma linha atualizada", 500);
 		}
 	}catch(Exception $ex){
 		error_log($ex->getMessage());
@@ -156,13 +157,13 @@ function del(){
 	
 	try{
 		if($id <= 0){
-			throw new Exception("$id invalid parameter");
+			throw new Exception("$id parametro invalido");
 		}
 		
 		$result = $memberDAO->desativar($id);
 		
 		if($result == NULL || $result === FALSE || $result == 0){
-			throw new Exception("$id Internal Server Error", 500);
+			throw new Exception("$id gerou um erro. Nenhuma linha atualizada.", 500);
 		}
 		http_response_code(200);
 	}catch(Exception $ex){
@@ -171,6 +172,18 @@ function del(){
 		$result=$ex->getMessage();
 	}
 	return $result;
+}
+
+function getConsulta($table){
+	if($table == "members"){
+		return FALSE;
+	}else{
+		$consulta = $consultaDAO->obterPeloNome($table);
+		if($consulta === FALSE){
+			throw new Exception("$table recurso nao encontrado", 404);
+		}
+		return $consulta;
+	}
 }
 
 

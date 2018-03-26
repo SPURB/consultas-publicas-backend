@@ -55,7 +55,7 @@ function get($request){
 			if($table == "members"){
 				$result = ($id > 0) ? $memberDAO->obter($id) : $memberDAO->listarAtivos();
 			}else if($table == "consultas"){
-				$result = $consultaDAO->listar();
+				$result = ($id > 0) ? $consultaDAO->obter($id) : $consultaDAO->listar();
 			}
 		}else{
 			$result = ($id > 0) ? $memberDAO->obterPorConsulta($consulta->id, $id) : $memberDAO->listarPorConsulta($consulta->id);

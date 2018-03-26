@@ -19,40 +19,41 @@ header("Content-type: application/json");
  
 // get the HTTP method, path and body of the request
 $method = $_SERVER['REQUEST_METHOD'];
- 
+if(!isset($_SERVER['PATH_INFO'])){
+	http_response_code(404);
+	echo json_encode("Requisicao invalida");
+}else{
+	$request = explode('/', trim($_SERVER['PATH_INFO'],'/'));
 // print results, insert id or affected row count
-switch ($method) {
-	case "GET":
-		echo json_encode(get());
-	break;
-	case "PUT":
-		echo json_encode(put());
-	break;
-	case "POST":
-		echo json_encode(post());
-	break;
-	case "DELETE":
-		echo json_encode(del());
-	break;
+	switch ($method) {
+		case 'GET':
+			echo json_encode(get($request));
+		break;
+		case 'PUT':
+			echo json_encode(put($request));
+		break;
+		case 'POST':
+			echo json_encode(post($request));
+		break;
+		case 'DELETE':
+			echo json_encode(del($request));
+		break;
+	}
 }
 
-function get(){
-	$result = NULL;
+
+
+function get($request){
 	$memberDAO = new Member();
-	$consultaDAO = new Consulta();
+	$result = NULL;
 	
-	$request = explode('/', trim($_SERVER['PATH_INFO'],'/'));
 	$table = preg_replace('/[^a-z0-9_]+/i','',array_shift($request));
 	$id = intval(array_shift($request));
 	
 	try{
 		$consulta = getConsulta($table);
 		if($consulta === FALSE){
-			if($table == "members"){
-				$result = ($id > 0) ? $memberDAO->obter($id) : $memberDAO->listarAtivos();
-			}else if($table == "consultas" && $id==0){
-				$result = $consultaDAO->listar();
-			}
+			$result = ($id > 0) ? $memberDAO->obter($id) : $memberDAO->listar();
 		}else{
 			$result = ($id > 0) ? $memberDAO->obterPorConsulta($consulta->id, $id) : $memberDAO->listarPorConsulta($consulta->id);
 		}
@@ -68,8 +69,7 @@ function get(){
 	return $result;
 }
 
-function post(){
-	$request = explode('/', trim($_SERVER['PATH_INFO'],'/'));
+function post($request){
 	$table = preg_replace('/[^a-z0-9_]+/i','',array_shift($request));
 	$action = preg_replace('/[^a-z0-9_]+/i','',array_shift($request));
 	$input = json_decode(file_get_contents('php://input'),true);
@@ -129,11 +129,7 @@ function post(){
 	return $result;
 }
 
-function put(){
-	$memberDAO = new Member();
-	$consultaDAO = new Consulta();
-
-	$request = explode('/', trim($_SERVER['PATH_INFO'],'/'));
+function put($request){
 	$table = preg_replace('/[^a-z0-9_]+/i','',array_shift($request));
 	$id = intval(array_shift($request));
 	$input = json_decode(file_get_contents('php://input'),true);
@@ -145,24 +141,17 @@ function put(){
 		if($id <= 0){
 			throw new Exception("$id nao encontrado", 404);
 		}
-		if($table == "members"){
-			$member = $memberDAO->obter($id);
-			
-			foreach($input as $key => $val){
-				if(array_search($key, $member->columns) === FALSE){
-					throw new Exception("Parametro incorreto $key", 400);
-				}
-				$member->$key = $val;
+		
+		$member = $memberDAO->obter($id);
+		
+		foreach($input as $key => $val){
+			if(array_search($key, $member->columns) === FALSE){
+				throw new Exception("Parametro incorreto $key", 400);
 			}
-			$member->memid = $id;
-			$result = $member->atualizar();
-		}else{
-			$consulta = getConsulta($table);
-			$cols = array("nome" => $input["nome"]);
-			$filters = array("id" => $consulta->id);
-			$result = $consultaDAO->atualizar($cols, $filters);
+			$member->$key = $val;
 		}
-
+		$member->memid = $id;
+		$result = $member->atualizar();
 		if(!$result || $result == 0){
 			throw new Exception("Erro. Nenhuma linha atualizada", 500);
 		}
@@ -174,12 +163,10 @@ function put(){
 	return $result;
 }
 
-function del(){
-	$result = NULL;
+function del($request){
 	$memberDAO = new Member();
-	$consultaDAO = new Consulta();
+	$result = NULL;
 	
-	$request = explode('/', trim($_SERVER['PATH_INFO'],'/'));
 	$table = preg_replace('/[^a-z0-9_]+/i','',array_shift($request));
 	$id = intval(array_shift($request));
 	
@@ -187,13 +174,9 @@ function del(){
 		if($id <= 0){
 			throw new Exception("$id parametro invalido");
 		}
-		if($table == "members"){
-			$memberDAO = new Member();
-			$result = $memberDAO->desativar($id);
-		}else{
-			$consulta = getConsulta($table);
-			$result = $consultaDAO->desativar($consulta->id);
-		}
+		
+		$result = $memberDAO->desativar($id);
+		
 		if($result == NULL || $result === FALSE || $result == 0){
 			throw new Exception("$id gerou um erro. Nenhuma linha atualizada.", 500);
 		}
@@ -208,7 +191,7 @@ function del(){
 
 function getConsulta($table){
 	$consultaDAO = new Consulta();
-	if($table == "members" || $table == "consultas"){
+	if($table == "members"){
 		return FALSE;
 	}else{
 		$consulta = $consultaDAO->obterPeloNome($table);

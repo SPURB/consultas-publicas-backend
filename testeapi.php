@@ -16,15 +16,13 @@ if(isset($_SERVER['HTTP_ORIGIN'])){
 header("Access-Control-Allow-Headers: Content-Type");
 header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE');
 header("Content-type: application/json");
- 
-// get the HTTP method, path and body of the request
+
 $method = $_SERVER['REQUEST_METHOD'];
 if(!isset($_SERVER['PATH_INFO'])){
 	http_response_code(404);
 	echo json_encode("Requisicao invalida");
 }else{
 	$request = explode('/', trim($_SERVER['PATH_INFO'],'/'));
-// print results, insert id or affected row count
 	switch ($method) {
 		case 'GET':
 			echo json_encode(get($request));
@@ -45,15 +43,20 @@ if(!isset($_SERVER['PATH_INFO'])){
 
 function get($request){
 	$memberDAO = new Member();
+	$consultaDAO = new Consulta();
 	$result = NULL;
-	
+	//array_shift extrai o primeiro elemento do array
 	$table = preg_replace('/[^a-z0-9_]+/i','',array_shift($request));
 	$id = intval(array_shift($request));
 	
 	try{
 		$consulta = getConsulta($table);
 		if($consulta === FALSE){
-			$result = ($id > 0) ? $memberDAO->obter($id) : $memberDAO->listar();
+			if($table == "members"){
+				$result = ($id > 0) ? $memberDAO->obter($id) : $memberDAO->listarAtivos();
+			}else if($table == "consultas"){
+				$result = $consultaDAO->listar();
+			}
 		}else{
 			$result = ($id > 0) ? $memberDAO->obterPorConsulta($consulta->id, $id) : $memberDAO->listarPorConsulta($consulta->id);
 		}
@@ -191,7 +194,7 @@ function del($request){
 
 function getConsulta($table){
 	$consultaDAO = new Consulta();
-	if($table == "members"){
+	if($table == "members" || $table == "consultas"){
 		return FALSE;
 	}else{
 		$consulta = $consultaDAO->obterPeloNome($table);

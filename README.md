@@ -15,7 +15,7 @@ Retorna todos os members relacionados a consulta informada
 ## POST
 * `testeapi.php/members {parametros POST}`
 Cria um novo member. Seu conteúdo será definido nos parâmetros POST
-  * `testeapi.php/members/<nome_da_consulta> {parametros POST}`
+* `testeapi.php/members/<nome_da_consulta> {parametros POST}`
 Cria um novo member relacionado a consulta informada. Seu conteúdo será definido nos parâmetros POST
   > Definição de parametros POST para inserção
 Exemplo: `{'name':'Thomas', 'public':'1' }`
@@ -84,10 +84,11 @@ mysql> DESC consultas;
 3 rows in set (0.00 sec)
 
 mysql> SELECT * FROM consultas;
-+-------------+---------------------------------------+---------------+
-| id_consulta | nome                                  | data_cadastro |
-+-------------+---------------------------------------+---------------+
-|           1 | nome_banco_consulta                   | 0000-00-00    |
-+-------------+---------------------------------------+---------------+
++-------------+-------------------------------+---------------+-------+
+| id_consulta | nome                          | data_cadastro | ativo |
++-------------+-------------------------------+---------------+-------+
+|           1 | nome_banco_consulta_1         | 2018-01-01    |     0 |
+|           2 | nome_banco_consulta_2         | 2018-02-02    |     1 |
++-------------+-------------------------------+---------------+-------+
 
 ````

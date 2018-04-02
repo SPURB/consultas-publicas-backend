@@ -1,10 +1,10 @@
 <?php
 require_once "classes/Member.class.php";
 require_once "classes/Consulta.class.php";
-
+/*
 if(isset($_SERVER['HTTP_ORIGIN'])){
 	$origin = $_SERVER['HTTP_ORIGIN'];
-	$allow = array("localhost", "spurbcp", "10.");
+	$allow = array("localhost", "spurbcp");
 	foreach($allow as $a){
 		if(stripos($origin, $a) !== FALSE){
 			header('Access-Control-Allow-Origin: '.$origin);
@@ -12,32 +12,54 @@ if(isset($_SERVER['HTTP_ORIGIN'])){
 		}
 	}
 }
-
+*/
 header("Access-Control-Allow-Headers: Content-Type");
 header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE');
 header("Content-type: application/json");
+header('Access-Control-Allow-Origin: *');
 
-$method = $_SERVER['REQUEST_METHOD'];
-if(!isset($_SERVER['PATH_INFO'])){
-	http_response_code(404);
-	echo json_encode("Requisicao invalida");
-}else{
-	$request = explode('/', trim($_SERVER['PATH_INFO'],'/'));
-	switch ($method) {
-		case 'GET':
-			echo json_encode(get($request));
-		break;
-		case 'PUT':
-			echo json_encode(put($request));
-		break;
-		case 'POST':
-			echo json_encode(post($request));
-		break;
-		case 'DELETE':
-			echo json_encode(del($request));
-		break;
+$allowed = FALSE;
+if(isset($_SERVER['HTTP_HOST'])){
+	$allow = array("localhost", "spurbcp13343","10.91.1.235","spurbcp", "prefeitura.sp.gov.br");
+	foreach($allow as $a){
+		if(stripos($_SERVER['HTTP_HOST'], $a) !== FALSE){
+			$allowed = TRUE;
+			break;
+		}
 	}
 }
+if($allowed === FALSE){
+	http_response_code(403);
+	echo json_encode("Sem permissao");
+}
+else{
+	$method = $_SERVER['REQUEST_METHOD'];
+	if(!isset($_SERVER['REQUEST_URI'])){
+		http_response_code(404);
+		echo json_encode("Requisicao invalida");
+	}else{
+		$request = explode('/', trim($_SERVER['REQUEST_URI'],'/'));
+		if(isset($request[0]) &&  $request[0] == "apiconsultas"){
+			array_shift($request);
+		}
+			error_log('method...'.$method);
+		switch ($method) {
+			case 'GET':
+				echo json_encode(get($request));
+			break;
+			case 'PUT':
+				echo json_encode(put($request));
+			break;
+			case 'POST':
+				echo json_encode(post($request));
+			break;
+			case 'DELETE':
+				echo json_encode(del($request));
+			break;
+		}
+	}
+}
+
 
 
 
@@ -74,6 +96,7 @@ function get($request){
 
 function post($request){
 	$table = preg_replace('/[^a-z0-9_]+/i','',array_shift($request));
+	error_log('teste de string...'.$table);
 	$action = preg_replace('/[^a-z0-9_]+/i','',array_shift($request));
 	$input = json_decode(file_get_contents('php://input'),true);
 	
@@ -92,7 +115,7 @@ function post($request){
 				throw new Exception("Parametros de busca incorretos", 400);
 			}
 			$result = $member->listar($filtro);
-			if(!$result){
+			if(!$result || $result == NULL){
 				throw new Exception("Nenhum resultado encontrado", 404);
 			}
 		}else if($table == "consultas"){
@@ -114,11 +137,15 @@ function post($request){
 				}
 				$member->$key = $val;
 			}
+			// echo $table;
+			/*
 			$consulta = getConsulta($table);
 			if($consulta !== FALSE){
 				$member->idConsulta = $consulta->id;
 			}
-			$member->commentDate = date("Y-m-d");
+			*/
+			$member->commentDate = date("Y-m-d H:i:s");
+			
 			$result = $member->cadastrar();
 		}else{
 			throw new Exception("Recurso nao encontrado", 404);

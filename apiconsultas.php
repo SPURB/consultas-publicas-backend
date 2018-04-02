@@ -1,10 +1,11 @@
 <?php
 require_once "classes/Member.class.php";
 require_once "classes/Consulta.class.php";
-
+include_once "classes/base/Logger.class.php";
+/*
 if(isset($_SERVER['HTTP_ORIGIN'])){
 	$origin = $_SERVER['HTTP_ORIGIN'];
-	$allow = array("localhost", "spurbcp", "10.");
+	$allow = array("localhost", "spurbcp", "gestao", "10.");
 	foreach($allow as $a){
 		if(stripos($origin, $a) !== FALSE){
 			header('Access-Control-Allow-Origin: '.$origin);
@@ -12,30 +13,52 @@ if(isset($_SERVER['HTTP_ORIGIN'])){
 		}
 	}
 }
+*/
 
 header("Access-Control-Allow-Headers: Content-Type");
 header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE');
 header("Content-type: application/json");
 
-$method = $_SERVER['REQUEST_METHOD'];
-if(!isset($_SERVER['PATH_INFO'])){
-	http_response_code(404);
-	echo json_encode("Requisicao invalida");
-}else{
-	$request = explode('/', trim($_SERVER['PATH_INFO'],'/'));
-	switch ($method) {
-		case 'GET':
-			echo json_encode(get($request));
-		break;
-		case 'PUT':
-			echo json_encode(put($request));
-		break;
-		case 'POST':
-			echo json_encode(post($request));
-		break;
-		case 'DELETE':
-			echo json_encode(del($request));
-		break;
+$allowed = FALSE;
+if(isset($_SERVER['HTTP_HOST'])){
+	$allow = array("localhost", "spurbcp", "prefeitura.sp.gov.br");
+	foreach($allow as $a){
+		if(stripos($_SERVER['HTTP_HOST'], $a) !== FALSE){
+			$allowed = TRUE;
+			break;
+		}
+	}
+}
+if($allowed === FALSE){
+	http_response_code(403);
+	echo json_encode("Sem permissao");
+}
+else{
+	$method = $_SERVER['REQUEST_METHOD'];
+	if(!isset($_SERVER['REQUEST_URI'])){
+		http_response_code(404);
+		echo json_encode("Requisicao invalida");
+	}else{
+		$request = explode('/', trim($_SERVER['REQUEST_URI'],'/'));
+		if(isset($request[0]) &&  $request[0] == "apiconsultas"){
+			array_shift($request);
+		}else{
+			$request = explode('/', trim($_SERVER['PATH_INFO'],'/'));
+		}
+		switch ($method) {
+			case 'GET':
+				echo json_encode(get($request));
+			break;
+			case 'PUT':
+				echo json_encode(put($request));
+			break;
+			case 'POST':
+				echo json_encode(post($request));
+			break;
+			case 'DELETE':
+				echo json_encode(del($request));
+			break;
+		}
 	}
 }
 
@@ -48,6 +71,7 @@ function get($request){
 	//array_shift extrai o primeiro elemento do array
 	$table = preg_replace('/[^a-z0-9_]+/i','',array_shift($request));
 	$id = intval(array_shift($request));
+	logErro("Request ".$table."/".$id);
 	
 	try{
 		$consulta = getConsulta($table);
@@ -65,7 +89,7 @@ function get($request){
 		}
 		http_response_code(200);
 	}catch(Exception $ex){
-		error_log($ex->getMessage());
+		logErro($ex->getMessage());
 		http_response_code($ex->getCode());
 		$result=$ex->getMessage();
 	}
@@ -76,6 +100,8 @@ function post($request){
 	$table = preg_replace('/[^a-z0-9_]+/i','',array_shift($request));
 	$action = preg_replace('/[^a-z0-9_]+/i','',array_shift($request));
 	$input = json_decode(file_get_contents('php://input'),true);
+	$log = new Logger();
+	$log->write("Request ".$table."/".$action);
 	
 	$member = new Member();
 	$result = NULL;
@@ -92,7 +118,7 @@ function post($request){
 				throw new Exception("Parametros de busca incorretos", 400);
 			}
 			$result = $member->listar($filtro);
-			if(!$result){
+			if(!$result || $result == NULL){
 				throw new Exception("Nenhum resultado encontrado", 404);
 			}
 		}else if($table == "consultas"){
@@ -106,6 +132,13 @@ function post($request){
 			$novaConsulta->dataCadastro = date("Y-m-d");
 			$novaConsulta->ativo = "1";
 			$result = $novaConsulta->cadastrar();
+			if($result == NULL || $result === FALSE){
+				$msg = "";
+				foreach($novaConsulta as $key => $val){
+					$msg.=" ".$key." | ".$val;
+				}
+				throw new Exception("Erro ao gravar no banco de dados.", 500);
+			}
 		}
 		else if($action == ""){	
 			foreach($input as $key => $val){
@@ -120,12 +153,19 @@ function post($request){
 			}
 			$member->commentDate = date("Y-m-d");
 			$result = $member->cadastrar();
+			if($result == NULL || $result === FALSE){
+				$msg = "";
+				foreach($member as $key => $val){
+					$msg.=" ".$key." | ".$val;
+				}
+				throw new Exception("$msg Erro ao gravar no banco de dados.", 500);
+			}
 		}else{
 			throw new Exception("Recurso nao encontrado", 404);
 		}
 		http_response_code(200);
 	}catch(Exception $ex){
-		error_log($ex->getMessage());
+		logErro($ex->getMessage());
 		http_response_code($ex->getCode());
 		$result=$ex->getMessage();
 	}
@@ -156,10 +196,14 @@ function put($request){
 		$member->memid = $id;
 		$result = $member->atualizar();
 		if(!$result || $result == 0){
-			throw new Exception("Erro. Nenhuma linha atualizada", 500);
+			$msg = "";
+			foreach($member as $key => $val){
+				$msg.=" ".$key." | ".$val;
+			}
+			throw new Exception("$msg Erro na atualização.", 500);
 		}
 	}catch(Exception $ex){
-		error_log($ex->getMessage());
+		logErro($ex->getMessage());
 		http_response_code($ex->getCode());
 		$result=$ex->getMessage();
 	}
@@ -185,7 +229,7 @@ function del($request){
 		}
 		http_response_code(200);
 	}catch(Exception $ex){
-		error_log($ex->getMessage());
+		logErro($ex->getMessage());
 		http_response_code($ex->getCode());
 		$result=$ex->getMessage();
 	}
@@ -203,6 +247,11 @@ function getConsulta($table){
 		}
 		return $consulta;
 	}
+}
+
+function logErro($msg){
+	$log = new Logger();
+	$log->write($msg);
 }
 
 

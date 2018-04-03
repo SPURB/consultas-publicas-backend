@@ -151,7 +151,7 @@ function post($request){
 			if($consulta !== FALSE){
 				$member->idConsulta = $consulta->id;
 			}
-			$member->commentDate = date("Y-m-d");
+			$member->commentdate = date("Y-m-d");
 			$result = $member->cadastrar();
 			if($result == NULL || $result === FALSE){
 				$msg = "";

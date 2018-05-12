@@ -8,7 +8,8 @@ class GenericDAO{
 	 */
 	private $base;
 	
-	private static $properties = "/var/www/properties/bd.properties";
+	private static $properties = "C:/xampp/htdocs/bd.properties";
+	private static $propertiesLinux = "/var/www/properties/bd.properties";
 	
 	protected $tableName;
 	
@@ -18,7 +19,12 @@ class GenericDAO{
 		if(file_exists(self::$properties)){
 			$this->base = new Base(self::$properties);
 		}else{
-			die("Erro na conexao. Arquivo inexistente ".self::$properties);
+			if(file_exists(self::$propertiesLinux)){
+				$this->base = new Base(self::$propertiesLinux);
+			}
+			else{
+				die("Erro na conexao. Arquivo inexistente ".self::$properties. " ou ".self::$propertiesLinux);
+			}
 		}
 	}
 

@@ -1,0 +1,6 @@
+<Files "users.json">
+	Deny from all
+</Files>
+<IfModule mod_php5.c>
+	php_value always_populate_raw_post_data -1
+</IfModule>

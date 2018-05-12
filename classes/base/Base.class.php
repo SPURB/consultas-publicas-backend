@@ -1,5 +1,6 @@
 <?php
 include_once "PDOQueryException.class.php";
+include_once "Logger.class.php";
 
 class Base{
 	
@@ -63,7 +64,8 @@ class Base{
 			}
 			$msg.=$msgParam;
 		}
-		error_log($msg);
+		$log = new Logger();
+		$log->write($msg);
 	}
 	
     private function connect(){

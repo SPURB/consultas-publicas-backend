@@ -71,7 +71,6 @@ function get($request){
 	//array_shift extrai o primeiro elemento do array
 	$table = preg_replace('/[^a-z0-9_]+/i','',array_shift($request));
 	$id = intval(array_shift($request));
-	logErro("Request ".$table."/".$id);
 	
 	try{
 		$consulta = getConsulta($table);
@@ -100,8 +99,6 @@ function post($request){
 	$table = preg_replace('/[^a-z0-9_]+/i','',array_shift($request));
 	$action = preg_replace('/[^a-z0-9_]+/i','',array_shift($request));
 	$input = json_decode(file_get_contents('php://input'),true);
-	$log = new Logger();
-	$log->write("Request ".$table."/".$action);
 	
 	$member = new Member();
 	$result = NULL;
@@ -151,7 +148,11 @@ function post($request){
 			if($consulta !== FALSE){
 				$member->idConsulta = $consulta->id;
 			}
+			if($member->isComentarioRepetido($member->content, $member->idConsulta )){
+				throw new Exception("Texto repetido nao autorizado.", 403);
+			}
 			$member->commentdate = date("Y-m-d");
+			$member->content = trim($member->content);
 			$result = $member->cadastrar();
 			if($result == NULL || $result === FALSE){
 				$msg = "";

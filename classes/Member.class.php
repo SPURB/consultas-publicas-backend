@@ -85,7 +85,7 @@ class Member extends GenericDAO{
 	}
 	
 	public function cadastrar(){
-		try{
+		try{			
 			return $this->insert();
 		}catch(Exception $ex){
 			error_log($ex->getMessage());
@@ -109,6 +109,15 @@ class Member extends GenericDAO{
 		$colunas = array("trash" => "=1");
 		$filtros = array("memid" => "=".$id);
 		return $this->atualizar($colunas, $filtros);
+	}
+	
+	public function isComentarioRepetido($comentario, $idConsulta){
+		$comentario = trim($comentario);
+		$filtro = array(
+			"content" => "= $comentario",
+		);
+		$result = $this->listarPorConsulta($idConsulta, $filtro);		
+		return (count($result) > 0);
 	}
 	
 }

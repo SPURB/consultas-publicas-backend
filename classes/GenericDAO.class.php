@@ -260,7 +260,6 @@ class GenericDAO{
 			}
 		}
 		$rows = array();
-		error_log($sql);
 		$result = $this->base->consultar($sql, $values);
 		foreach($result as $row){
 			foreach($row as $obj){

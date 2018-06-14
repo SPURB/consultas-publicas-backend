@@ -38,7 +38,6 @@ class Consulta extends GenericDAO{
 		if($filtro == NULL){
 			$filtro = array();
 		}
-		$filtro["ativo"] = "=1";
 		try{
 			return $this->select($filtro);
 		}catch(Exception $ex){

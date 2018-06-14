@@ -34,7 +34,6 @@ class Logger{
 				else if(is_object($message) && method_exists($message, "getMessage")){
 					$message = $message->getMessage();
 				}
-
 				$ip = $_SERVER['REMOTE_ADDR'];
 				$time = date("d/m/Y H:i:s");
 				$fullMsg = "[".$time."][".$ip."] ".$message.PHP_EOL;

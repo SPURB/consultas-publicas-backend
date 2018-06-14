@@ -2,55 +2,55 @@
 Backend de consulta públicas de Projetos de Intervenções Urbanas municipais de São Paulo.
 
 ## GET
-* `testeapi.php/members`
+* `apiconsultas.php/members`
 Retorna todos os members
-* `testeapi.php/members/<id>`
+* `apiconsultas.php/members/<id>`
 Retorna o member pelo seu memid
-* `testeapi.php/consultas`
+* `apiconsultas.php/consultas`
 Retorna todas as consultas ativas
-* `testeapi.php/<nome_da_consulta>`
+* `apiconsultas.php/<nome_da_consulta>`
 Retorna todos os members relacionados a consulta informada
 
 
 ## POST
-* `testeapi.php/members {parametros POST}`
+* `apiconsultas.php/members {parametros POST}`
 Cria um novo member. Seu conteúdo será definido nos parâmetros POST
-* `testeapi.php/members/<nome_da_consulta> {parametros POST}`
+* `apiconsultas.php/members/<nome_da_consulta> {parametros POST}`
 Cria um novo member relacionado a consulta informada. Seu conteúdo será definido nos parâmetros POST
   > Definição de parametros POST para inserção
 Exemplo: `{'name':'Thomas', 'public':'1' }`
 Os nomes das colunas devem ser iguais aos retornados numa consulta
 
-* `testeapi.php/members/search {parametros POST}`
+* `apiconsultas.php/members/search {parametros POST}`
  Retorna uma consulta utilzando os parâmetros como filtros
   > Definição de parametros POST para consulta
 Exemplo: `{'name':'=Thomas', 'public':'=1' }`
 Os nomes das colunas devem ser iguais aos retornados numa consulta
 
-* `testeapi.php/consultas {parametros POST}`
+* `apiconsultas.php/consultas {parametros POST}`
 Cria uma nova consulta. Seu conteúdo será definido nos parâmetros POST
   > Definição de parametros POST para inserção
   Exemplo: `{'nome':'consulta_teste' }`
 
 
 ## PUT
-* `testeapi.php/members/<memid> {parametros PUT}`
+* `apiconsultas.php/members/<memid> {parametros PUT}`
 Atualiza um member pelo memid. Seu conteúdo será definido nos parâmetros PUT
 
-* `testeapi.php/<nome_da_consulta> {parametros PUT}`
+* `apiconsultas.php/<nome_da_consulta> {parametros PUT}`
 Atualiza o nome da consulta pelo parâmetro PUT
   Exemplo: `{'nome':'nova_consulta' }`
 
 
 ## DELETE
-* `testeapi.php/members/<memid>`
+* `apiconsultas.php/members/<memid>`
 Desativa o member pelo memid.
 
-* `testeapi.php/<nome_da_consulta>`
+* `apiconsultas.php/<nome_da_consulta>`
 Desativa a consulta informada.
 
 ## Nota
-**Temporariamente para testes, aponte o caminho do arquivo de conexao com o banco na classe GenericDAO**
+**Apontar caminho do arquivo de conexao com o banco na classe GenericDAO (linha 11)**
 
 ## Estrutura do banco
 
@@ -69,7 +69,7 @@ mysql> DESC members;
 | trash          | tinyint(1)  | NO   |     | NULL    |                |
 | commentid      | int(11)     | NO   |     | NULL    |                |
 | commentcontext | text        | NO   |     | NULL    |                |
-| idConsulta     | int(11)     | NO   | MUL | NULL    |                |
+| id_consulta    | int(11)     | NO   | MUL | NULL    |                |
 +----------------+-------------+------+-----+---------+----------------+
 11 rows in set (0.00 sec)
 

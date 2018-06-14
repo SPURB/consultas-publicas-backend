@@ -1,3 +1,9 @@
+<<<<<<< HEAD
 *.properties
 testes-frontend/
 teste.php
+=======
+log/
+users.json 
+*.properties
+>>>>>>> 0f8795c617327f21820987cc73e79244d6dc0a1b

@@ -36,6 +36,17 @@ class GenericDAO{
 		$this -> $campo = $valor;
 	}
 	
+	/*
+	* A primeira coluna da classe filha deve ser referente ao ID / Primary Key da tabela
+	*/
+	private function getPKColName(){
+		if(!is_array($this->columns) || count($this->columns) < 1){
+			throw new DAOException("Verifique o mapeamento das propriedades da classe.");
+		}
+		reset($this->columns);
+		return current($this->columns);
+	}
+	
 	/**
 	 * Método utilizado para trocar os campos do BD pelas propriedades da classe
 	 * @param $columns:array de campos key=campo_do_bd value=propriedade_da_classe, 
@@ -68,11 +79,15 @@ class GenericDAO{
 			throw new DAOException("O objeto não tem o id da base e não poderá ser removido.");
 		}
 		$values = array();
-		$campoId = $this->columns[0];
+		$campoId = $this->getPKColName();
 		$sql = "DELETE FROM ".$this->tableName." WHERE ".$campoId." = ?";
 		array_push($values, $id);
 		
-		return $this->base->deletar($sql, $values);
+		$result = $this->base->deletar($sql, $values);
+		if($result == 0){
+			throw new DAOException("O comando foi executado mas nenhum registro da base foi modificado para o ID $id.");
+		}
+		return $result;
 	}
 	
 	protected function selfUpdate($id){
@@ -83,7 +98,8 @@ class GenericDAO{
 		$sqlColunas = "";
 		$values = array();
 		$first = true; 
-		$campoId = $this->columns[0];
+		$campoId = $this->getPKColName();
+		
 		foreach($this->columns as $campobd => $campoClass){
 			if($campoClass != $campoId){
 				if(!$first){
@@ -96,8 +112,12 @@ class GenericDAO{
 		}
 		$sql = "UPDATE ".$this->tableName." SET ".$sqlColunas." WHERE ".$campoId." = ?";
 		array_push($values, $id);
-		
-		return $this->base->atualizar($sql, $values);
+
+		$result = $this->base->atualizar($sql, $values);
+		if($result == 0){
+			throw new DAOException("O comando foi executado mas nenhum registro da base foi modificado para o ID $id.");
+		}
+		return $result;
 	}
 	
 	protected function update($columns, $conditions = NULL){
@@ -156,8 +176,11 @@ class GenericDAO{
 		}else{
 			throw new DAOException("Filtro nao reconhecido. Operadores aceitos =,<>,NOT LIKE,LIKE,IS" );
 		}
-		
-		return $this->base->atualizar($sql, $values);
+		$result = $this->base->atualizar($sql, $values);
+		if($result == 0){
+			throw new DAOException("O comando foi executado mas nenhum registro da base foi modificado.");
+		}
+		return $result;
 	}
 	
 	protected function insert(){

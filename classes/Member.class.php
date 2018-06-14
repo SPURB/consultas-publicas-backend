@@ -21,7 +21,8 @@ class Member extends GenericDAO{
 		$this->tableName = "members";
 		
 		/*
-			key = coluna do banco => value = property da classe
+			key = nome da coluna no banco => value = propriedade da classe
+			A primeira deve ser a Primary Key da tabela
 		*/
 		$this->columns = array(
 			"memid" => "memid",
@@ -75,7 +76,7 @@ class Member extends GenericDAO{
 	
 	public function obter($id){
 		$filtroId = array("memid" => "= $id");
-		return $this->listar($filtroId);
+		return $this->listar($filtroId)[0];
 	}
 	
 	public function obterPorConsulta($idConsulta, $idMember){
@@ -106,7 +107,7 @@ class Member extends GenericDAO{
 	
 	public function desativar($id){
 		$colunas = array("trash" => "=1");
-		$filtros = array("memid" => $id);
+		$filtros = array("memid" => "=".$id);
 		return $this->atualizar($colunas, $filtros);
 	}
 	

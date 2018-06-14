@@ -19,9 +19,22 @@ class Logger{
 		
 		if(is_writable($logPath)){
 			try{
-				if(is_object($message) && method_exists($message, "getMessage")){
+				if(is_array($message)){
+					$str = "";
+					$first = TRUE;
+					foreach($message as $item){
+						if(!$first){
+							$str.=",";
+						}
+						$str.=$item;
+						$first = FALSE;
+					}
+					$message = $str;
+				}
+				else if(is_object($message) && method_exists($message, "getMessage")){
 					$message = $message->getMessage();
 				}
+
 				$ip = $_SERVER['REMOTE_ADDR'];
 				$time = date("d/m/Y H:i:s");
 				$fullMsg = "[".$time."][".$ip."] ".$message.PHP_EOL;

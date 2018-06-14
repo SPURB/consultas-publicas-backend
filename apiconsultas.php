@@ -176,7 +176,6 @@ function put($request){
 	$table = preg_replace('/[^a-z0-9_]+/i','',array_shift($request));
 	$id = intval(array_shift($request));
 	$input = json_decode(file_get_contents('php://input'),true);
-	
 	$member = new Member();
 	$result = NULL;
 	
@@ -185,14 +184,22 @@ function put($request){
 			throw new Exception("$id nao encontrado", 404);
 		}
 		
-		$member = $memberDAO->obter($id);
+		$memberOrig = $member->obter($id);
+		if($memberOrig === FALSE){
+			throw new Exception("$id nao encontrado", 404);
+		}
 		
-		foreach($input as $key => $val){
-			if(array_search($key, $member->columns) === FALSE){
+		foreach($member->columns as $key){
+			if(isset($input[$key]) && isset($memberOrig->$key) && $memberOrig->$key != $input[$key]){
+				$member->$key = $input[$key];
+			}else if(isset($memberOrig->$key)){
+				$member->$key = $memberOrig->$key;
+			}else{
 				throw new Exception("Parametro incorreto $key", 400);
 			}
-			$member->$key = $val;
+	
 		}
+		
 		$member->memid = $id;
 		$result = $member->atualizar();
 		if(!$result || $result == 0){

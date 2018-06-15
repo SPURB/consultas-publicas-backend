@@ -56,12 +56,18 @@ class Member extends GenericDAO{
 		}
 	}
 
-	public function listarAtivos($filtro = NULL){
+	public function listarAtivos($pagina = NULL, $filtro = NULL){
 		if($filtro == NULL){
 			$filtro = array();
 		}
 		$filtro['trash'] = "=0";
-		return $this->select($filtro);
+		$result = $this->select($filtro);
+		if($pagina != NULL){
+			$limite = 10;
+			$primeiro = ($pagina * $limite) - $limite;
+			$result = array_slice($result, $primeiro, $limite);
+		}
+		return $result;
 	}
 	
 	public function listarPorConsulta($idConsulta, $filtro = NULL){
@@ -76,7 +82,9 @@ class Member extends GenericDAO{
 	
 	public function obter($id){
 		$filtroId = array("memid" => "= $id");
-		return $this->listar($filtroId)[0];
+		$result = $this->listar($filtroId);
+		reset($result);
+		return current($result);
 	}
 	
 	public function obterPorConsulta($idConsulta, $idMember){

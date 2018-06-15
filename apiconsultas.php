@@ -79,6 +79,8 @@ function get($request){
 				$result = ($id > 0) ? $memberDAO->obter($id) : $memberDAO->listarAtivos();
 			}else if($table == "consultas"){
 				$result = ($id > 0) ? $consultaDAO->obter($id) : $consultaDAO->listar();
+			}else if($table == "pagedmembers"){
+				$result = ($id > 0) ? $memberDAO->listarAtivos($id) : $memberDAO->listarAtivos(1);
 			}
 		}else{
 			$result = ($id > 0) ? $memberDAO->obterPorConsulta($consulta->id, $id) : $memberDAO->listarPorConsulta($consulta->id);
@@ -245,16 +247,16 @@ function del($request){
 }
 
 function getConsulta($table){
+	$tables = array("members", "consultas", "pagedmembers");
 	$consultaDAO = new Consulta();
-	if($table == "members" || $table == "consultas"){
+	if(array_search($table, $tables) !== FALSE){
 		return FALSE;
-	}else{
-		$consulta = $consultaDAO->obterPeloNome($table);
-		if($consulta === FALSE){
-			throw new Exception("$table recurso nao encontrado", 404);
-		}
-		return $consulta;
 	}
+	$consulta = $consultaDAO->obterPeloNome($table);
+	if($consulta === FALSE){
+		throw new Exception("$table recurso nao encontrado", 404);
+	}
+	return $consulta;
 }
 
 function logErro($msg){

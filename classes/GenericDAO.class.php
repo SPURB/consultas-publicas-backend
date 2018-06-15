@@ -54,7 +54,7 @@ class GenericDAO{
 	 * objetoclass[opcional]: se for omitido retorna um novo objeto, se passado retorna um objeto da sua classe
 	 *
 	 */
-	protected function bind($objetobd, $objetoclass = NULL){
+	protected final function bind($objetobd, $objetoclass = NULL){
 		if(! ($classe = get_class($objetoclass) ) )
 			throw new DAOException("Falha no mapeamento do banco de dados. O parâmetro fornecido não é um objeto.");
 		
@@ -74,7 +74,7 @@ class GenericDAO{
 		
 	}
 	
-	protected function remove($id){
+	protected final function remove($id){
 		if($id === NULL || $id <= 0){
 			throw new DAOException("O objeto não tem o id da base e não poderá ser removido.");
 		}
@@ -90,7 +90,7 @@ class GenericDAO{
 		return $result;
 	}
 	
-	protected function selfUpdate($id){
+	protected final function selfUpdate($id){
 		if($id === NULL || $id <= 0){
 			throw new DAOException("O objeto não tem identificação na base e não poderá ser atualizado.");
 		}
@@ -120,7 +120,7 @@ class GenericDAO{
 		return $result;
 	}
 	
-	protected function update($columns, $conditions = NULL){
+	protected final function update($columns, $conditions = NULL){
 		
 		$sqlColunas = "";
 		if($columns == NULL){
@@ -183,7 +183,7 @@ class GenericDAO{
 		return $result;
 	}
 	
-	protected function insert(){
+	protected final function insert(){
 		$sqlColunas = "";
 		$sqlVals = "";
 		$values = array();
@@ -204,7 +204,7 @@ class GenericDAO{
 		
 	}
 	
-	protected function select($conditions = NULL, $orderColumns = NULL, $orderType = NULL, $selectColumns = NULL){
+	protected final function select($conditions = NULL, $orderColumns = NULL, $orderType = NULL, $selectColumns = NULL){
 		$sqlColunas = "";
 		$values = NULL;
 		if($selectColumns == NULL){
@@ -281,7 +281,7 @@ class GenericDAO{
 		return NULL;
 	}
 	
-	protected function parseBoolean($value){
+	protected final function parseBoolean($value){
 		if($val == 0){
 			return "FALSE";
 		}

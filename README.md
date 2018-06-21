@@ -27,6 +27,10 @@ Os nomes das colunas devem ser iguais aos retornados numa consulta
 Exemplo: `{'name':'=Thomas', 'public':'=1' }`
 Os nomes das colunas devem ser iguais aos retornados numa consulta
 
+* `apiconsultas.php/members/pagedsearch/<numero_da_pagina> {parametros POST}`
+ Semelhante ao anterior, mas retorna somente 10 resultados por vez, de acordo com o número da página informado.
+ OBS: Caso não seja informado o número da página, serão retornados os 10 primeiros resultados.
+
 * `apiconsultas.php/consultas {parametros POST}`
 Cria uma nova consulta. Seu conteúdo será definido nos parâmetros POST
   > Definição de parametros POST para inserção

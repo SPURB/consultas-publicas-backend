@@ -104,8 +104,9 @@ function post($request){
 	
 	$member = new Member();
 	$result = NULL;
+	$actions = array("search", "pagedsearch");
 	try{
-		if($action == "search"){
+		if(array_search($action, $actions) !== FALSE){
 			$filtro = array();
 			foreach($input as $key => $val){
 				if(array_search($key, $member->columns) === FALSE){
@@ -116,7 +117,13 @@ function post($request){
 			if(array_count_values($filtro) == 0){
 				throw new Exception("Parametros de busca incorretos", 400);
 			}
-			$result = $member->listar($filtro);
+			if($action == "pagedsearch"){
+				$page = preg_replace('/[^a-z0-9_]+/i','',array_shift($request));
+				$page = (intval($page) > 0) ? intval($page) : 1;
+				$result = $member->listarAtivos($page, $filtro);
+			}else{
+				$result = $member->listar($filtro);
+			}
 			if(!$result || $result == NULL){
 				throw new Exception("Nenhum resultado encontrado", 404);
 			}

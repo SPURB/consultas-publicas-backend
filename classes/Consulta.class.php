@@ -1,11 +1,19 @@
 <?php
 require_once "GenericDAO.class.php";
+require_once "Member.class.php";
 
 class Consulta extends GenericDAO{
 	
 	private $nome;
 	private $dataCadastro;
 	private $ativo;
+	private $nomePublico;
+	private $dataFinal;
+	private $nContribuicoes;
+	private $textoIntro;
+	private $urlConsulta;
+	private $urlCapa;
+
 	
 	public function __construct(){	
 		parent::__construct();
@@ -19,13 +27,22 @@ class Consulta extends GenericDAO{
 			"id_consulta" => "id",
 			"nome" => "nome",
 			"data_cadastro" => "dataCadastro",
-			"ativo" => "ativo"
+			"ativo" => "ativo",
+			"nome_publico" => "nomePublico",
+			"data_final" => "dataFinal",
+			"n_contribuicoes" => "nContribuicoes",
+			"texto_intro" => "textoIntro",
+			"url_consulta" => "urlConsulta",
+			"url_capa" => "urlCapa"
 		);
 	}
 	
 	public function __get($campo) {
 		if($campo == "ativo"){
 			return $this->parseBoolean($this->$campo);
+		}
+		else if($campo == "nContribuicoes"){
+			return $this->getNContribuicoes();
 		}
 		return $this -> $campo;
 	}
@@ -89,6 +106,18 @@ class Consulta extends GenericDAO{
 		$colunas = array("ativo" => "=0");
 		$filtros = array("id" => $id);
 		return $this->atualizar($colunas, $filtros);
+	}
+
+	public function getNContribuicoes(){
+		try{
+			$m = new Member();
+			$filtro = array("public" => "=1");
+			$mConsulta = $m->listarPorConsulta($this->id, $filtro);
+			return count($mConsulta);
+		}catch(Exception $ex){
+			return -1;
+		}
+
 	}
 	
 }

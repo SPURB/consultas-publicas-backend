@@ -30,7 +30,6 @@ class Consulta extends GenericDAO{
 			"ativo" => "ativo",
 			"nome_publico" => "nomePublico",
 			"data_final" => "dataFinal",
-			"n_contribuicoes" => "nContribuicoes",
 			"texto_intro" => "textoIntro",
 			"url_consulta" => "urlConsulta",
 			"url_capa" => "urlCapa"
@@ -117,7 +116,6 @@ class Consulta extends GenericDAO{
 		}catch(Exception $ex){
 			return -1;
 		}
-
 	}
 	
 }

@@ -55,7 +55,11 @@ class Consulta extends GenericDAO{
 			$filtro = array();
 		}
 		try{
-			return $this->select($filtro);
+			$lista = $this->select($filtro);
+			foreach ($lista as $consulta) {
+				$consulta->nContribuicoes = $this->getNContribuicoes($consulta->id);
+			}
+			return $lista;
 		}catch(Exception $ex){
 			error_log($ex->getMessage());
 			return FALSE;
@@ -64,7 +68,9 @@ class Consulta extends GenericDAO{
 	
 	public function obter($id){
 		try{
-			return $this->getById($id);
+			$consulta = $this->getById($id);
+			$consulta->nContribuicoes = $this->getNContribuicoes($consulta->id);
+			return $consulta;
 		}catch(Exception $ex){
 			error_log($ex->getMessage());
 			return FALSE;
@@ -107,11 +113,14 @@ class Consulta extends GenericDAO{
 		return $this->atualizar($colunas, $filtros);
 	}
 
-	public function getNContribuicoes(){
+	public function getNContribuicoes($idConsulta = NULL){
+		if($idConsulta == NULL){
+			$idConsulta = $this->id;
+		}
 		try{
 			$m = new Member();
 			$filtro = array("public" => "=1");
-			$mConsulta = $m->listarPorConsulta($this->id, $filtro);
+			$mConsulta = $m->listarPorConsulta($idConsulta, $filtro);
 			return count($mConsulta);
 		}catch(Exception $ex){
 			return -1;

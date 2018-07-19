@@ -21,7 +21,7 @@ header("Content-type: application/json");
 
 $allowed = FALSE;
 if(isset($_SERVER['HTTP_HOST'])){
-	$allow = array("localhost", "spurbcp", "spurbsp", "prefeitura.sp.gov.br");
+	$allow = array("localhost", "spurb", "prefeitura.sp.gov.br");
 	foreach($allow as $a){
 		if(stripos($_SERVER['HTTP_HOST'], $a) !== FALSE){
 			$allowed = TRUE;

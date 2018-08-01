@@ -32,7 +32,8 @@ class Consulta extends GenericDAO{
 			"data_final" => "dataFinal",
 			"texto_intro" => "textoIntro",
 			"url_consulta" => "urlConsulta",
-			"url_capa" => "urlCapa"
+			"url_capa" => "urlCapa",
+			"url_devolutiva" => "urlDevolutiva"
 		);
 	}
 	

@@ -85,7 +85,11 @@ class GenericDAO{
 		
 		$result = $this->base->deletar($sql, $values);
 		if($result == 0){
-			throw new DAOException("O comando foi executado mas nenhum registro da base foi modificado para o ID $id.");
+			$errMsg = "$sql ";
+			foreach($values as $v){
+				$errMsg.=" | $v";
+			}
+			throw new DAOException("$errMsg O comando foi executado mas nenhum registro da base foi modificado para o ID $id.");
 		}
 		return $result;
 	}
@@ -115,7 +119,11 @@ class GenericDAO{
 
 		$result = $this->base->atualizar($sql, $values);
 		if($result == 0){
-			throw new DAOException("O comando foi executado mas nenhum registro da base foi modificado para o ID $id.");
+			$errMsg = "$sql ";
+			foreach($values as $v){
+				$errMsg.=" | $v";
+			}
+			throw new DAOException("$errMsg O comando foi executado mas nenhum registro da base foi modificado para o ID $id.");
 		}
 		return $result;
 	}
@@ -178,7 +186,11 @@ class GenericDAO{
 		}
 		$result = $this->base->atualizar($sql, $values);
 		if($result == 0){
-			throw new DAOException("O comando foi executado mas nenhum registro da base foi modificado.");
+			$errMsg = "$sql ";
+			foreach($values as $v){
+				$errMsg.=" | $v";
+			}
+			throw new DAOException("$errMsg O comando foi executado mas nenhum registro da base foi modificado.");
 		}
 		return $result;
 	}

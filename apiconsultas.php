@@ -2,28 +2,18 @@
 require_once "classes/Member.class.php";
 require_once "classes/Consulta.class.php";
 include_once "classes/base/Logger.class.php";
-/*
-if(isset($_SERVER['HTTP_ORIGIN'])){
-	$origin = $_SERVER['HTTP_ORIGIN'];
-	$allow = array("localhost", "spurbcp", "gestao", "10.");
-	foreach($allow as $a){
-		if(stripos($origin, $a) !== FALSE){
-			header('Access-Control-Allow-Origin: '.$origin);
-			break;
-		}
-	}
-}
-*/
 
+header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Headers: Content-Type");
+header('Access-Control-Allow-Credentials: false');
 header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE');
 header("Content-type: application/json");
 
 $allowed = FALSE;
-if(isset($_SERVER['HTTP_HOST'])){
-	$allow = array("localhost", "spurb", "prefeitura.sp.gov.br");
+if(isset($_SERVER['REMOTE_ADDR'])){
+	$allow = array("10.");
 	foreach($allow as $a){
-		if(stripos($_SERVER['HTTP_HOST'], $a) !== FALSE){
+		if(stripos($_SERVER['REMOTE_ADDR'], $a) !== FALSE){
 			$allowed = TRUE;
 			break;
 		}
@@ -31,34 +21,38 @@ if(isset($_SERVER['HTTP_HOST'])){
 }
 if($allowed === FALSE){
 	http_response_code(403);
-	echo json_encode("Sem permissao");
+	echo json_encode("Nao autorizado ".$_SERVER['REMOTE_ADDR']);
 }
 else{
 	$method = $_SERVER['REQUEST_METHOD'];
+	error_log($method);
 	if(!isset($_SERVER['REQUEST_URI'])){
 		http_response_code(404);
 		echo json_encode("Requisicao invalida");
 	}else{
-		$request = explode('/', trim($_SERVER['REQUEST_URI'],'/'));
-		if(isset($request[0]) &&  $request[0] == "apiconsultas"){
-			array_shift($request);
-		}else{
-			$request = explode('/', trim($_SERVER['PATH_INFO'],'/'));
-		}
+		$request = explode('/', trim($_SERVER['PATH_INFO'],'/'));
+		$result = NULL;
 		switch ($method) {
 			case 'GET':
-				echo json_encode(get($request));
+				$result = encodeObject(get($request));
 			break;
 			case 'PUT':
-				echo json_encode(put($request));
+				$result = put($request);
 			break;
 			case 'POST':
-				echo json_encode(post($request));
+				$result = post($request);
 			break;
 			case 'DELETE':
-				echo json_encode(del($request));
+				$result = del($request);
 			break;
 		}
+		$result = json_encode($result);
+		if(json_last_error() != JSON_ERROR_NONE){
+			$result = json_last_error_msg();
+			logErro($result);
+			http_response_code(500);
+		}
+		echo $result;
 	}
 }
 
@@ -135,7 +129,7 @@ function post($request){
 				}
 				$novaConsulta->$key = $val;
 			}
-			$novaConsulta->dataCadastro = date("Y-m-d");
+			$novaConsulta->dataCadastro = date("Y-m-d H:i:s");
 			$novaConsulta->ativo = "1";
 			$result = $novaConsulta->cadastrar();
 			if($result == NULL || $result === FALSE){
@@ -184,7 +178,9 @@ function post($request){
 
 function put($request){
 	$table = preg_replace('/[^a-z0-9_]+/i','',array_shift($request));
+	error_log($table);
 	$id = intval(array_shift($request));
+	error_log($id);
 	$input = json_decode(file_get_contents('php://input'),true);
 	$member = new Member();
 	$result = NULL;
@@ -269,6 +265,21 @@ function getConsulta($table){
 function logErro($msg){
 	$log = new Logger();
 	$log->write($msg);
+}
+
+function encodeObject($obj){
+	if(is_array($obj)){
+		foreach($obj as $item){
+			$item = encodeObject($item);
+		}
+	}else if(is_object($obj)){
+		foreach($obj as $key => $val){
+			if($val != NULL){
+				$obj->$key = utf8_encode($val);
+			}
+		}
+	}
+	return $obj;
 }
 
 

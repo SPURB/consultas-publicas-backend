@@ -25,7 +25,6 @@ if($allowed === FALSE){
 }
 else{
 	$method = $_SERVER['REQUEST_METHOD'];
-	error_log($method);
 	if(!isset($_SERVER['REQUEST_URI'])){
 		http_response_code(404);
 		echo json_encode("Requisicao invalida");
@@ -178,9 +177,7 @@ function post($request){
 
 function put($request){
 	$table = preg_replace('/[^a-z0-9_]+/i','',array_shift($request));
-	error_log($table);
 	$id = intval(array_shift($request));
-	error_log($id);
 	$input = json_decode(file_get_contents('php://input'),true);
 	$member = new Member();
 	$result = NULL;

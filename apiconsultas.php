@@ -70,6 +70,7 @@ function get($request){
 		if($consulta === FALSE){
 			if($table == "members"){
 				$result = ($id > 0) ? $memberDAO->obter($id) : $memberDAO->listarAtivos();
+				cleanEmail($result);
 			}else if($table == "consultas"){
 				$result = ($id > 0) ? $consultaDAO->obter($id) : $consultaDAO->listar();
 			}else if($table == "pagedmembers"){
@@ -275,6 +276,17 @@ function encodeObject($obj){
 				$obj->$key = utf8_encode($val);
 			}
 		}
+	}
+	return $obj;
+}
+
+function cleanEmail($obj){
+	if(is_array($obj)){
+		foreach($obj as $item){
+			$item = cleanEmail($item);
+		}
+	}else if(is_object($obj) && isset($obj->email)){
+		$obj->email = "";
 	}
 	return $obj;
 }

@@ -33,7 +33,7 @@ else{
 		$result = NULL;
 		switch ($method) {
 			case 'GET':
-				$result = encodeObject(get($request));
+				$result = get($request);
 			break;
 			case 'PUT':
 				$result = put($request);
@@ -45,11 +45,11 @@ else{
 				$result = del($request);
 			break;
 		}
-		$result = json_encode($result);
+		$resultEnc = json_encode($result);
 		if(json_last_error() != JSON_ERROR_NONE){
-			$result = json_last_error_msg();
-			logErro($result);
-			http_response_code(500);
+			logErro(json_last_error_msg());
+		}else{
+			$result = $resultEnc;
 		}
 		echo $result;
 	}
@@ -61,10 +61,8 @@ function get($request){
 	$memberDAO = new Member();
 	$consultaDAO = new Consulta();
 	$result = NULL;
-	//array_shift extrai o primeiro elemento do array
 	$table = preg_replace('/[^a-z0-9_]+/i','',array_shift($request));
 	$id = intval(array_shift($request));
-	
 	try{
 		$consulta = getConsulta($table);
 		if($consulta === FALSE){
@@ -82,6 +80,7 @@ function get($request){
 		if($result == NULL){
 			throw new Exception("$id nao encontrado", 404);
 		}
+		$result = encodeObject($result);
 		http_response_code(200);
 	}catch(Exception $ex){
 		logErro($ex->getMessage());
@@ -121,6 +120,7 @@ function post($request){
 			if(!$result || $result == NULL){
 				throw new Exception("Nenhum resultado encontrado", 404);
 			}
+			$result = encodeObject($result);
 		}else if($table == "consultas"){
 			$novaConsulta = new Consulta();
 			foreach($input as $key => $val){

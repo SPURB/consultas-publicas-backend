@@ -68,7 +68,6 @@ function get($request){
 		if($consulta === FALSE){
 			if($table == "members"){
 				$result = ($id > 0) ? $memberDAO->obter($id) : $memberDAO->listarAtivos();
-				cleanEmail($result);
 			}else if($table == "consultas"){
 				$result = ($id > 0) ? $consultaDAO->obter($id) : $consultaDAO->listar();
 			}else if($table == "pagedmembers"){
@@ -80,6 +79,7 @@ function get($request){
 		if($result == NULL){
 			throw new Exception("$id nao encontrado", 404);
 		}
+		cleanEmail($result);
 		$result = encodeObject($result);
 		http_response_code(200);
 	}catch(Exception $ex){
@@ -140,6 +140,7 @@ function post($request){
 				throw new Exception("Erro ao gravar no banco de dados.", 500);
 			}
 		}
+		//Insert
 		else if($action == ""){	
 			foreach($input as $key => $val){
 				if(array_search($key, $member->columns) === FALSE){
@@ -149,6 +150,9 @@ function post($request){
 			}
 			$consulta = getConsulta($table);
 			if($consulta !== FALSE){
+				if($consulta->ativo == '0'){
+					throw new Exception("Consulta encerrada. Periodo de participacao terminado.", 403);
+				}
 				$member->idConsulta = $consulta->id;
 			}
 			if($member->isComentarioRepetido($member->content, $member->idConsulta )){

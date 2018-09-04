@@ -282,7 +282,8 @@ class GenericDAO{
 	}
 	
 	protected function getById($id){
-		$campoId = array_search("id", $this->columns);
+		reset($this->columns);
+		$campoId = current($this->columns);
 		if($campoId !== FALSE){
 			$condition = array($campoId."=".$id);
 			$result = $this->select($condition);
@@ -293,7 +294,7 @@ class GenericDAO{
 		return NULL;
 	}
 	
-	protected final function parseBoolean($value){
+	protected final function parseBoolean($val){
 		if($val == 0){
 			return "FALSE";
 		}

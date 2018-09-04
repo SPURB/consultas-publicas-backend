@@ -25,11 +25,13 @@ if($allowed === FALSE){
 }
 else{
 	$method = $_SERVER['REQUEST_METHOD'];
-	if(!isset($_SERVER['REQUEST_URI'])){
+	$info = 
+		(isset($_SERVER['PATH_INFO']) && $_SERVER['PATH_INFO'] != "") ? $_SERVER['PATH_INFO'] : $_SERVER['REQUEST_URI'];
+	if($info == NULL || $info == ""){
 		http_response_code(404);
 		echo json_encode("Requisicao invalida");
 	}else{
-		$request = explode('/', trim($_SERVER['PATH_INFO'],'/'));
+		$request = explode('/', trim($info,'/'));
 		$result = NULL;
 		switch ($method) {
 			case 'GET':
@@ -158,7 +160,7 @@ function post($request){
 			if($member->isComentarioRepetido($member->content, $member->idConsulta )){
 				throw new Exception("Texto repetido nao autorizado.", 403);
 			}
-			$member->commentdate = date("Y-m-d");
+			$member->commentdate = date("Y-m-d H:i:s");
 			$member->content = trim($member->content);
 			$result = $member->cadastrar();
 			if($result == NULL || $result === FALSE){
@@ -184,35 +186,32 @@ function put($request){
 	$table = preg_replace('/[^a-z0-9_]+/i','',array_shift($request));
 	$id = intval(array_shift($request));
 	$input = json_decode(file_get_contents('php://input'),true);
-	$member = new Member();
+	$obj = ($table == "consultas") ? new Consulta() : new Member();
 	$result = NULL;
-	
 	try{
 		if($id <= 0){
 			throw new Exception("$id nao encontrado", 404);
 		}
 		
-		$memberOrig = $member->obter($id);
-		if($memberOrig === FALSE){
+		$objOrig = $obj->obter($id);
+		if($objOrig === FALSE){
 			throw new Exception("$id nao encontrado", 404);
 		}
 		
-		foreach($member->columns as $key){
-			if(isset($input[$key]) && isset($memberOrig->$key) && $memberOrig->$key != $input[$key]){
-				$member->$key = $input[$key];
-			}else if(isset($memberOrig->$key)){
-				$member->$key = $memberOrig->$key;
+		foreach($obj->columns as $key){
+			if(isset($input[$key]) && $objOrig->$key != $input[$key]){
+				$obj->$key = $input[$key];
+			}else if(isset($objOrig->$key)){
+				$obj->$key = $objOrig->$key;
 			}else{
-				throw new Exception("Parametro incorreto $key", 400);
+				$obj->$key = NULL;
+				//throw new Exception("Parametro incorreto $key", 400);
 			}
-	
 		}
-		
-		$member->memid = $id;
-		$result = $member->atualizar();
+		$result = $obj->atualizar();
 		if(!$result || $result == 0){
 			$msg = "";
-			foreach($member as $key => $val){
+			foreach($obj as $key => $val){
 				$msg.=" ".$key." | ".$val;
 			}
 			throw new Exception("$msg Erro na atualização.", 500);

@@ -14,7 +14,7 @@ class Consulta extends GenericDAO{
 	private $textoIntro;
 	private $urlConsulta;
 	private $urlCapa;
-
+	private $urlDevolutiva;
 	
 	public function __construct(){	
 		parent::__construct();
@@ -39,10 +39,7 @@ class Consulta extends GenericDAO{
 	}
 	
 	public function __get($campo) {
-		if($campo == "ativo"){
-			return $this->parseBoolean($this->$campo);
-		}
-		else if($campo == "nContribuicoes"){
+		if($campo == "nContribuicoes"){
 			return $this->getNContribuicoes();
 		}
 		return $this -> $campo;
@@ -63,7 +60,7 @@ class Consulta extends GenericDAO{
 			}
 			return $lista;
 		}catch(Exception $ex){
-			error_log($ex->getMessage());
+			$this->log->write($ex->getMessage());
 			return FALSE;
 		}
 	}
@@ -74,7 +71,7 @@ class Consulta extends GenericDAO{
 			$consulta->nContribuicoes = $this->getNContribuicoes($consulta->id_consulta);
 			return $consulta;
 		}catch(Exception $ex){
-			error_log($ex->getMessage());
+			$this->log->write($ex->getMessage());
 			return FALSE;
 		}
 	}
@@ -92,7 +89,7 @@ class Consulta extends GenericDAO{
 		try{
 			return $this->insert();
 		}catch(Exception $ex){
-			error_log($ex->getMessage());
+			$this->log->write($ex->getMessage());
 			return FALSE;
 		}
 	}
@@ -104,7 +101,7 @@ class Consulta extends GenericDAO{
 			}
 			return $this->update($campos, $filtro);
 		}catch(Exception $ex){
-			error_log($ex->getMessage());
+			$this->log->write($ex->getMessage());
 			return FALSE;
 		}
 	}

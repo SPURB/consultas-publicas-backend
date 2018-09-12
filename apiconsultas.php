@@ -57,8 +57,6 @@ else{
 	}
 }
 
-
-
 function get($request){
 	$memberDAO = new Member();
 	$consultaDAO = new Consulta();
@@ -192,7 +190,6 @@ function put($request){
 		if($id <= 0){
 			throw new Exception("$id nao encontrado", 404);
 		}
-		
 		$objOrig = $obj->obter($id);
 		if($objOrig === FALSE){
 			throw new Exception("$id nao encontrado", 404);
@@ -205,7 +202,6 @@ function put($request){
 				$obj->$key = $objOrig->$key;
 			}else{
 				$obj->$key = NULL;
-				//throw new Exception("Parametro incorreto $key", 400);
 			}
 		}
 		$result = $obj->atualizar();

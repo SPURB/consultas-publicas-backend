@@ -51,7 +51,7 @@ class Member extends GenericDAO{
 		try{
 			return $this->select($filtro);
 		}catch(Exception $ex){
-			error_log($ex->getMessage());
+			$this->log->write($ex->getMessage());
 			return FALSE;
 		}
 	}
@@ -96,7 +96,7 @@ class Member extends GenericDAO{
 		try{			
 			return $this->insert();
 		}catch(Exception $ex){
-			error_log($ex->getMessage());
+			$this->log->write($ex->getMessage());
 			return FALSE;
 		}
 	}
@@ -108,7 +108,7 @@ class Member extends GenericDAO{
 			}
 			return $this->update($campos, $filtro);
 		}catch(Exception $ex){
-			error_log($ex->getMessage());
+			$this->log->write($ex->getMessage());
 			return FALSE;
 		}
 	}

@@ -1,6 +1,7 @@
 <?php
 require_once "base/Base.class.php";
 require_once "exceptions/DAOException.class.php";
+include_once "base/Logger.class.php";
 
 class GenericDAO{
 	/**
@@ -14,6 +15,8 @@ class GenericDAO{
 	protected $tableName;
 	
 	protected $columns;
+
+	protected $log;
 	
 	public function __construct() {
 		if(file_exists(self::$properties)){
@@ -26,6 +29,7 @@ class GenericDAO{
 				die("Erro na conexao. Arquivo inexistente ".self::$properties. " ou ".self::$propertiesLinux);
 			}
 		}
+		$this->log = new Logger();
 	}
 
 	public function __get($campo) {
@@ -284,12 +288,16 @@ class GenericDAO{
 	protected function getById($id){
 		reset($this->columns);
 		$campoId = current($this->columns);
-		if($campoId !== FALSE){
-			$condition = array($campoId."=".$id);
-			$result = $this->select($condition);
-			foreach($result as $obj){
-				return $obj;
-			}
+		if($campoId === FALSE){
+			throw new DAOException("Coluna primaria da tabela nao obtida");
+		}
+		$condition = array($campoId."=".$id);
+		$result = $this->select($condition);
+		if(!is_array($result) || count($result) == 0){
+			throw new DAOException("Consulta ID $id nao encontrado");
+		}
+		foreach($result as $obj){
+			return $obj;
 		}
 		return NULL;
 	}

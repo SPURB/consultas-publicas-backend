@@ -59,7 +59,61 @@ Desativa a consulta informada.
 ## Estrutura do banco
 
 ````mysql
-mysql> DESC members;
+mysql> show tables;
++------------------------------------+
+| Tables_in_gestaourbanasp_consultas |
++------------------------------------+
+| arquivos                           |
+| consultas                          |
+| etapas                             |
+| members                            |
+| projetos                           |
+| projetos_arquivos                  |
+| projetos_consultas                 |
+| projetos_usuarios                  |
+| usuarios                           |
++------------------------------------+
+
+mysql> desc arquivos;
++-------------+--------------+------+-----+-------------------+-----------------------------+
+| Field       | Type         | Null | Key | Default           | Extra                       |
++-------------+--------------+------+-----+-------------------+-----------------------------+
+| nome        | varchar(255) | YES  |     | NULL              |                             |
+| id          | int(11)      | NO   | PRI | NULL              | auto_increment              |
+| id_etapa    | int(11)      | YES  | MUL | NULL              |                             |
+| url         | mediumtext   | YES  |     | NULL              |                             |
+| atualizacao | timestamp    | NO   |     | CURRENT_TIMESTAMP | on update CURRENT_TIMESTAMP |
+| fonte       | mediumtext   | NO   |     | NULL              |                             |
+| autor       | mediumtext   | NO   |     | NULL              |                             |
+| extensao    | varchar(8)   | YES  |     | NULL              |                             |
++-------------+--------------+------+-----+-------------------+-----------------------------+
+
+mysql> desc consultas;
++----------------+--------------+------+-----+---------+----------------+
+| Field          | Type         | Null | Key | Default | Extra          |
++----------------+--------------+------+-----+---------+----------------+
+| id_consulta    | int(11)      | NO   | PRI | NULL    | auto_increment |
+| nome           | varchar(200) | NO   |     | NULL    |                |
+| data_cadastro  | date         | YES  |     | NULL    |                |
+| ativo          | tinyint(1)   | NO   |     | NULL    |                |
+| nome_publico   | varchar(200) | NO   |     | NULL    |                |
+| data_final     | date         | YES  |     | NULL    |                |
+| texto_intro    | text         | NO   |     | NULL    |                |
+| url_consulta   | text         | NO   |     | NULL    |                |
+| url_capa       | text         | NO   |     | NULL    |                |
+| url_devolutiva | text         | YES  |     | NULL    |                |
++----------------+--------------+------+-----+---------+----------------+
+
+mysql> desc etapas;
++------------+--------------+------+-----+---------+----------------+
+| Field      | Type         | Null | Key | Default | Extra          |
++------------+--------------+------+-----+---------+----------------+
+| id         | int(11)      | NO   | PRI | NULL    | auto_increment |
+| nome       | varchar(255) | YES  |     | NULL    |                |
+| fk_projeto | int(11)      | YES  | MUL | NULL    |                |
++------------+--------------+------+-----+---------+----------------+
+
+mysql> desc members;
 +----------------+-------------+------+-----+---------+----------------+
 | Field          | Type        | Null | Key | Default | Extra          |
 +----------------+-------------+------+-----+---------+----------------+
@@ -75,24 +129,56 @@ mysql> DESC members;
 | commentcontext | text        | NO   |     | NULL    |                |
 | id_consulta    | int(11)     | NO   | MUL | NULL    |                |
 +----------------+-------------+------+-----+---------+----------------+
-11 rows in set (0.00 sec)
 
-mysql> DESC consultas;
-+---------------+--------------+------+-----+---------+----------------+
-| Field         | Type         | Null | Key | Default | Extra          |
-+---------------+--------------+------+-----+---------+----------------+
-| id_consulta   | int(11)      | NO   | PRI | NULL    | auto_increment |
-| nome          | varchar(200) | NO   |     | NULL    |                |
-| data_cadastro | date         | YES  |     | NULL    |                |
-+---------------+--------------+------+-----+---------+----------------+
-3 rows in set (0.00 sec)
+mysql> desc projetos;
++-------------+--------------+------+-----+-------------------+----------------+
+| Field       | Type         | Null | Key | Default           | Extra          |
++-------------+--------------+------+-----+-------------------+----------------+
+| nome        | varchar(500) | YES  |     | NULL              |                |
+| id          | int(11)      | NO   | PRI | NULL              | auto_increment |
+| ativo       | tinyint(4)   | YES  |     | 1                 |                |
+| autor       | text         | YES  |     | NULL              |                |
+| atualizacao | timestamp    | YES  |     | CURRENT_TIMESTAMP |                |
++-------------+--------------+------+-----+-------------------+----------------+
 
-mysql> SELECT * FROM consultas;
-+-------------+-------------------------------+---------------+-------+
-| id_consulta | nome                          | data_cadastro | ativo |
-+-------------+-------------------------------+---------------+-------+
-|           1 | nome_banco_consulta_1         | 2018-01-01    |     0 |
-|           2 | nome_banco_consulta_2         | 2018-02-02    |     1 |
-+-------------+-------------------------------+---------------+-------+
+mysql> desc projetos_usuarios;
++-------------+---------+------+-----+---------+----------------+
+| Field       | Type    | Null | Key | Default | Extra          |
++-------------+---------+------+-----+---------+----------------+
+| id          | int(11) | NO   | PRI | NULL    | auto_increment |
+| fk_projeto  | int(11) | YES  | MUL | NULL    |                |
+| fk_usuarios | int(11) | YES  | MUL | NULL    |                |
++-------------+---------+------+-----+---------+----------------+
 
+mysql> desc projetos_consultas;
++-------------+---------+------+-----+---------+----------------+
+| Field       | Type    | Null | Key | Default | Extra          |
++-------------+---------+------+-----+---------+----------------+
+| id          | int(11) | NO   | PRI | NULL    | auto_increment |
+| fk_projeto  | int(11) | YES  | MUL | NULL    |                |
+| fk_consulta | int(11) | YES  | MUL | NULL    |                |
++-------------+---------+------+-----+---------+----------------+
+
+mysql> desc projetos_arquivos;
++------------+---------+------+-----+---------+----------------+
+| Field      | Type    | Null | Key | Default | Extra          |
++------------+---------+------+-----+---------+----------------+
+| id         | int(11) | NO   | PRI | NULL    | auto_increment |
+| fk_projeto | int(11) | YES  | MUL | NULL    |                |
+| fk_arquivo | int(11) | YES  | MUL | NULL    |                |
++------------+---------+------+-----+---------+----------------+
+
+mysql> desc usuarios;
++---------------------+--------------+------+-----+-------------------+-----------------------------+
+| Field               | Type         | Null | Key | Default           | Extra                       |
++---------------------+--------------+------+-----+-------------------+-----------------------------+
+| ID                  | int(11)      | NO   | PRI | NULL              | auto_increment              |
+| Email               | varchar(50)  | NO   | UNI | NULL              |                             |
+| Nome                | varchar(255) | NO   |     | NULL              |                             |
+| Organizacao         | varchar(255) | YES  |     | NULL              |                             |
+| CEP                 | varchar(50)  | YES  |     | NULL              |                             |
+| RegioesDeInteresse  | mediumtext   | YES  |     | NULL              |                             |
+| ProjetosDeInteresse | mediumtext   | YES  |     | NULL              |                             |
+| Timestamp           | timestamp    | NO   |     | CURRENT_TIMESTAMP | on update CURRENT_TIMESTAMP |
++---------------------+--------------+------+-----+-------------------+-----------------------------+
 ````

@@ -57,6 +57,7 @@ Desativa a consulta informada.
 **Apontar caminho do arquivo de conexao com o banco na classe GenericDAO (linha 11)**
 
 ## Estrutura do banco
+O arquivo `consultas_schema.sql` contém a estrutura do banco.
 
 ````mysql
 mysql> show tables;
@@ -70,7 +71,9 @@ mysql> show tables;
 | projetos                           |
 | projetos_arquivos                  |
 | projetos_consultas                 |
+| projetos_urls                      |
 | projetos_usuarios                  |
+| urls                               |
 | usuarios                           |
 +------------------------------------+
 
@@ -83,9 +86,9 @@ mysql> desc arquivos;
 | id_etapa    | int(11)      | YES  | MUL | NULL              |                             |
 | url         | mediumtext   | YES  |     | NULL              |                             |
 | atualizacao | timestamp    | NO   |     | CURRENT_TIMESTAMP | on update CURRENT_TIMESTAMP |
-| fonte       | mediumtext   | NO   |     | NULL              |                             |
 | autor       | mediumtext   | NO   |     | NULL              |                             |
-| extensao    | varchar(8)   | YES  |     | NULL              |                             |
+| descricao   | mediumtext   | YES  |     | NULL              |                             |
+| posicao     | int(11)      | YES  |     | NULL              |                             |
 +-------------+--------------+------+-----+-------------------+-----------------------------+
 
 mysql> desc consultas;
@@ -111,6 +114,7 @@ mysql> desc etapas;
 | id         | int(11)      | NO   | PRI | NULL    | auto_increment |
 | nome       | varchar(255) | YES  |     | NULL    |                |
 | fk_projeto | int(11)      | YES  | MUL | NULL    |                |
+| slug       | varchar(255) | YES  |     | NULL    |                |
 +------------+--------------+------+-----+---------+----------------+
 
 mysql> desc members;
@@ -137,36 +141,19 @@ mysql> desc projetos;
 | nome        | varchar(500) | YES  |     | NULL              |                |
 | id          | int(11)      | NO   | PRI | NULL              | auto_increment |
 | ativo       | tinyint(4)   | YES  |     | 1                 |                |
-| autor       | text         | YES  |     | NULL              |                |
 | atualizacao | timestamp    | YES  |     | CURRENT_TIMESTAMP |                |
+| slug        | varchar(255) | YES  |     | NULL              |                |
 +-------------+--------------+------+-----+-------------------+----------------+
 
-mysql> desc projetos_usuarios;
-+-------------+---------+------+-----+---------+----------------+
-| Field       | Type    | Null | Key | Default | Extra          |
-+-------------+---------+------+-----+---------+----------------+
-| id          | int(11) | NO   | PRI | NULL    | auto_increment |
-| fk_projeto  | int(11) | YES  | MUL | NULL    |                |
-| fk_usuarios | int(11) | YES  | MUL | NULL    |                |
-+-------------+---------+------+-----+---------+----------------+
-
-mysql> desc projetos_consultas;
-+-------------+---------+------+-----+---------+----------------+
-| Field       | Type    | Null | Key | Default | Extra          |
-+-------------+---------+------+-----+---------+----------------+
-| id          | int(11) | NO   | PRI | NULL    | auto_increment |
-| fk_projeto  | int(11) | YES  | MUL | NULL    |                |
-| fk_consulta | int(11) | YES  | MUL | NULL    |                |
-+-------------+---------+------+-----+---------+----------------+
-
-mysql> desc projetos_arquivos;
-+------------+---------+------+-----+---------+----------------+
-| Field      | Type    | Null | Key | Default | Extra          |
-+------------+---------+------+-----+---------+----------------+
-| id         | int(11) | NO   | PRI | NULL    | auto_increment |
-| fk_projeto | int(11) | YES  | MUL | NULL    |                |
-| fk_arquivo | int(11) | YES  | MUL | NULL    |                |
-+------------+---------+------+-----+---------+----------------+
+mysql> desc urls;
++------------+---------------+------+-----+---------+----------------+
+| Field      | Type          | Null | Key | Default | Extra          |
++------------+---------------+------+-----+---------+----------------+
+| id         | int(11)       | NO   | PRI | NULL    | auto_increment |
+| url        | varchar(2083) | YES  |     | NULL    |                |
+| extensao   | varchar(20)   | YES  |     | NULL    |                |
+| id_arquivo | int(11)       | YES  | MUL | NULL    |                |
++------------+---------------+------+-----+---------+----------------+
 
 mysql> desc usuarios;
 +---------------------+--------------+------+-----+-------------------+-----------------------------+
@@ -181,4 +168,40 @@ mysql> desc usuarios;
 | ProjetosDeInteresse | mediumtext   | YES  |     | NULL              |                             |
 | Timestamp           | timestamp    | NO   |     | CURRENT_TIMESTAMP | on update CURRENT_TIMESTAMP |
 +---------------------+--------------+------+-----+-------------------+-----------------------------+
+
+mysql> desc projetos_arquivos;
++------------+---------+------+-----+---------+----------------+
+| Field      | Type    | Null | Key | Default | Extra          |
++------------+---------+------+-----+---------+----------------+
+| id         | int(11) | NO   | PRI | NULL    | auto_increment |
+| fk_projeto | int(11) | YES  | MUL | NULL    |                |
+| fk_arquivo | int(11) | YES  | MUL | NULL    |                |
++------------+---------+------+-----+---------+----------------+
+
+mysql> desc projetos_consultas;
++-------------+---------+------+-----+---------+----------------+
+| Field       | Type    | Null | Key | Default | Extra          |
++-------------+---------+------+-----+---------+----------------+
+| id          | int(11) | NO   | PRI | NULL    | auto_increment |
+| fk_projeto  | int(11) | YES  | MUL | NULL    |                |
+| fk_consulta | int(11) | YES  | MUL | NULL    |                |
++-------------+---------+------+-----+---------+----------------+
+
+mysql> desc projetos_urls;
++------------+---------+------+-----+---------+----------------+
+| Field      | Type    | Null | Key | Default | Extra          |
++------------+---------+------+-----+---------+----------------+
+| id         | int(11) | NO   | PRI | NULL    | auto_increment |
+| fk_projeto | int(11) | YES  | MUL | NULL    |                |
+| fk_url     | int(11) | YES  | MUL | NULL    |                |
++------------+---------+------+-----+---------+----------------+
+
+mysql> desc projetos_usuarios;
++-------------+---------+------+-----+---------+----------------+
+| Field       | Type    | Null | Key | Default | Extra          |
++-------------+---------+------+-----+---------+----------------+
+| id          | int(11) | NO   | PRI | NULL    | auto_increment |
+| fk_projeto  | int(11) | YES  | MUL | NULL    |                |
+| fk_usuarios | int(11) | YES  | MUL | NULL    |                |
++-------------+---------+------+-----+---------+----------------+
 ````

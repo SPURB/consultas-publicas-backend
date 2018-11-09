@@ -23,43 +23,44 @@ if(isset($_SERVER['REMOTE_ADDR'])){
 		}
 	}
 }
-if($allowed === FALSE){
-	http_response_code(403);
-	echo json_encode("Nao autorizado ".$_SERVER['REMOTE_ADDR']);
-}
-else{
-	$method = $_SERVER['REQUEST_METHOD'];
-	$info = 
-		(isset($_SERVER['PATH_INFO']) && $_SERVER['PATH_INFO'] != "") ? $_SERVER['PATH_INFO'] : $_SERVER['REQUEST_URI'];
-	if($info == NULL || $info == ""){
-		http_response_code(404);
-		echo json_encode("Requisicao invalida");
-	}else{
-		$request = explode('/', trim($info,'/'));
-		$result = NULL;
-		switch ($method) {
-			case 'GET':
-				$result = get($request);
-			break;
-			case 'PUT':
-				$result = put($request);
-			break;
-			case 'POST':
-				$result = post($request);
-			break;
-			case 'DELETE':
-				$result = del($request);
-			break;
-		}
-		$resultEnc = json_encode($result);
-		if(json_last_error() != JSON_ERROR_NONE){
-			logErro(json_last_error_msg());
-		}else{
-			$result = $resultEnc;
-		}
-		echo $result;
+
+$method = $_SERVER['REQUEST_METHOD'];
+$info = 
+	(isset($_SERVER['PATH_INFO']) && $_SERVER['PATH_INFO'] != "") ? $_SERVER['PATH_INFO'] : $_SERVER['REQUEST_URI'];
+if($info == NULL || $info == ""){
+	http_response_code(404);
+	echo json_encode("Requisicao invalida");
+}else{
+	$request = explode('/', trim($info,'/'));
+	$result = NULL;
+	switch ($method) {
+		case 'GET':
+			$result = get($request);
+		break;
+		case 'PUT':
+			$result = put($request);
+		break;
+		case 'POST':
+			if(allow() === TRUE){
+				$result = post($request);			
+			}else{
+				http_response_code(403);
+				$result = "Nao autorizado ".$_SERVER['REMOTE_ADDR'];
+			}
+		break;
+		case 'DELETE':
+			$result = del($request);
+		break;
 	}
+	$resultEnc = json_encode($result);
+	if(json_last_error() != JSON_ERROR_NONE){
+		logErro(json_last_error_msg());
+	}else{
+		$result = $resultEnc;
+	}
+	echo $result;
 }
+
 
 function get($request){
 	$memberDAO = new Member();
@@ -293,7 +294,12 @@ function getTable($function){
 		throw new Exception("Requisicao incorreta.");
 	}
 	return $functions[$function];
-}	
+}
+
+function allow(){
+	$key = "SPurbanismo";
+	return (md5($key) == $_SERVER['token']);
+}
 
 
 ?>

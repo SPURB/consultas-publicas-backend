@@ -13,17 +13,6 @@ header('Access-Control-Allow-Credentials: false');
 header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE');
 header("Content-type: application/json");
 
-$allowed = FALSE;
-if(isset($_SERVER['REMOTE_ADDR'])){
-	$allow = array("10.");
-	foreach($allow as $a){
-		if(stripos($_SERVER['REMOTE_ADDR'], $a) !== FALSE){
-			$allowed = TRUE;
-			break;
-		}
-	}
-}
-
 $method = $_SERVER['REQUEST_METHOD'];
 $info = 
 	(isset($_SERVER['PATH_INFO']) && $_SERVER['PATH_INFO'] != "") ? $_SERVER['PATH_INFO'] : $_SERVER['REQUEST_URI'];

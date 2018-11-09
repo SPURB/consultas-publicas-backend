@@ -46,6 +46,21 @@ class Member extends GenericDAO{
 	public function __set($campo, $valor) {
 		$this -> $campo = $valor;
 	}
+
+	public function buscar($input, $page=NULL){
+		$filtro = array();
+		foreach($input as $key => $val){
+			if(array_search($key, $this->columns) === FALSE){
+				throw new Exception("$key parametro incorreto", 400);
+			}
+			$filtro[$key] = $val;
+		}
+		if(array_count_values($filtro) == 0){
+			throw new Exception("Parametros de busca incorretos", 400);
+		}
+
+		return ($page != NULL) ? $this->listarAtivos($page, $filtro) : $this->listar($filtro);
+	}
 	
 	public function listar($filtro = NULL){
 		try{
@@ -92,8 +107,22 @@ class Member extends GenericDAO{
 		return $this->listarPorConsulta($idConsulta, $filtro);
 	}
 	
-	public function cadastrar(){
+	public function cadastrar($input = NULL){
 		try{			
+			if($input != NULL){
+				foreach($input as $key => $val){
+					if(array_search($key, $this->columns) === FALSE){
+						throw new Exception("$key parametro incorreto", 400);
+					}
+					$this->$key = $val;
+				}
+			}
+
+			if($this->isComentarioRepetido($this->content, $this->idConsulta)){
+				throw new Exception("Texto repetido nao autorizado.", 403);
+			}
+			$this->commentdate = date("Y-m-d H:i:s");
+			$this->content = trim($this->content);
 			return $this->insert();
 		}catch(Exception $ex){
 			$this->log->write($ex->getMessage());

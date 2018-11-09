@@ -39,6 +39,10 @@ class GenericDAO{
 	public function __set($campo, $valor) {
 		$this -> $campo = $valor;
 	}
+
+	public function listar($conditions = NULL, $orderColumns = NULL, $orderType = NULL, $selectColumns = NULL){
+		return $this->select($conditions, $orderColumns, $orderType, $selectColumns);
+	}
 	
 	/*
 	* A primeira coluna da classe filha deve ser referente ao ID / Primary Key da tabela

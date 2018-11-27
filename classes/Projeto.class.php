@@ -7,7 +7,6 @@ class Projeto extends GenericDAO{
 	private $nome;
 	private $ativo;
 	private $atualizacao;
-	private $slug;
 	private $wordpress_user_id;
 	private $consultas;
 	private $etapas;
@@ -25,7 +24,6 @@ class Projeto extends GenericDAO{
 			"nome" => "nome",
 			"ativo" => "ativo",
 			"atualizacao" => "atualizacao",
-			"slug" => "slug",
 			"autor_wp_admin_id" => "wordpress_user_id"
 		);
 

@@ -6,7 +6,6 @@ class Etapa extends GenericDAO{
 	private $id;
 	private $nome;
 	private $idProjeto;
-	private $slug;
 	
 	public function __construct(){	
 		parent::__construct();
@@ -19,8 +18,7 @@ class Etapa extends GenericDAO{
 		$this->columns = array(
 			"id" => "id",
 			"nome" => "nome",
-			"fk_projeto" => "idProjeto",
-			"slug" => "slug"
+			"fk_projeto" => "idProjeto"
 		);
 	}
 	

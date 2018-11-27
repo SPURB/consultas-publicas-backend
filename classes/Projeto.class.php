@@ -8,6 +8,9 @@ class Projeto extends GenericDAO{
 	private $ativo;
 	private $atualizacao;
 	private $slug;
+	private $wordpress_user_id;
+	private $consultas;
+	private $etapas;
 	
 	public function __construct(){	
 		parent::__construct();
@@ -22,8 +25,12 @@ class Projeto extends GenericDAO{
 			"nome" => "nome",
 			"ativo" => "ativo",
 			"atualizacao" => "atualizacao",
-			"slug" => "slug"
+			"slug" => "slug",
+			"autor_wp_admin_id" => "wordpress_user_id"
 		);
+
+		$this->consultas = array();
+		$this->etapas = array();
 	}
 	
 	public function __get($campo) {
@@ -38,8 +45,12 @@ class Projeto extends GenericDAO{
 		if($filtro == NULL){
 			$filtro = array();
 		}
+
 		try{
 			$lista = $this->select($filtro);
+			foreach ($lista as $projeto) {
+				$this->getLists($projeto);
+			}
 			return $lista;
 		}catch(Exception $ex){
 			$this->log->write($ex->getMessage());
@@ -49,8 +60,9 @@ class Projeto extends GenericDAO{
 	
 	public function obter($id){
 		try{
-			$consulta = $this->getById($id);
-			return $consulta;
+			$projeto = $this->getById($id);
+			$this->getLists($projeto);
+			return $projeto;
 		}catch(Exception $ex){
 			$this->log->write($ex->getMessage());
 			return FALSE;
@@ -92,6 +104,36 @@ class Projeto extends GenericDAO{
 		}catch(Exception $ex){
 			$this->log->write($ex->getMessage());
 			return FALSE;
+		}
+	}
+
+	private function getLists($projeto){
+		include_once "Etapa.class.php";
+		include_once "Consulta.class.php";
+		include_once "ProjetoConsulta.class.php";
+		if($projeto != NULL){
+			$DAO = new Etapa();
+			$idProjeto = $projeto->id;
+			$filtro = array("idProjeto" => "=".$idProjeto);
+			$etapas = $DAO->listar($filtro);
+			$projeto->etapas = ($etapas != NULL) ? $this->encodeObject($etapas) : array();
+
+			$DAO = new ProjetoConsulta();
+			$filtro = array("idProjeto" => "=".$idProjeto);
+			$prcons = $DAO->listar($filtro);
+			if($prcons != NULL && is_array($prcons)){
+				$DAO = new Consulta();
+				foreach ($prcons as $prcon) {
+					$filtro = array("id_consulta" => "=".$prcon->idConsulta);
+					$consultas = $DAO->listar($filtro);
+					if($consultas != null && is_array($consultas)){
+						$projeto->consultas = array();
+						foreach ($consultas as $con) {
+							array_push($projeto->consultas, $this->encodeObject($con));
+						}
+					}
+				}
+			}
 		}
 	}
 	

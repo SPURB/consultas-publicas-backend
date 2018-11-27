@@ -250,7 +250,7 @@ function encodeObject($obj){
 		}
 	}else if(is_object($obj)){
 		foreach($obj as $key => $val){
-			if($val != NULL){
+			if($val != NULL && !is_array($val) && !is_object($val)){
 				$obj->$key = utf8_encode($val);
 			}
 		}

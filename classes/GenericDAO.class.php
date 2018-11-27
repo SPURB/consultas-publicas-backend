@@ -312,6 +312,21 @@ class GenericDAO{
 		}
 		return "TRUE";
 	}
+
+	public function encodeObject($obj){
+		if(is_array($obj)){
+			foreach($obj as $item){
+				$item = encodeObject($item);
+			}
+		}else if(is_object($obj)){
+			foreach($obj as $key => $val){
+				if($val != NULL && !is_array($val) && !is_object($val)){
+					$obj->$key = utf8_encode($val);
+				}
+			}
+		}
+	return $obj;
+}
 	
 	
 }

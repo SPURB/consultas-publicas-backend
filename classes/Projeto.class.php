@@ -46,9 +46,12 @@ class Projeto extends GenericDAO{
 
 		try{
 			$lista = $this->select($filtro);
+			/*
+			FILL LIST ONLY WHEN RETURNS A SINGLE OBJECT
 			foreach ($lista as $projeto) {
 				$this->getLists($projeto);
 			}
+			*/
 			return $lista;
 		}catch(Exception $ex){
 			$this->log->write($ex->getMessage());

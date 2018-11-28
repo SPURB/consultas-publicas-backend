@@ -6,6 +6,7 @@ class Etapa extends GenericDAO{
 	private $id;
 	private $nome;
 	private $idProjeto;
+	private $arquivos;
 	
 	public function __construct(){	
 		parent::__construct();
@@ -36,6 +37,9 @@ class Etapa extends GenericDAO{
 		}
 		try{
 			$lista = $this->select($filtro);
+			foreach ($lista as $etapa) {
+				$this->getLists($etapa);
+			}
 			return $lista;
 		}catch(Exception $ex){
 			$this->log->write($ex->getMessage());
@@ -97,6 +101,21 @@ class Etapa extends GenericDAO{
 		}catch(Exception $ex){
 			$this->log->write($ex->getMessage());
 			return FALSE;
+		}
+	}
+
+	private function getLists($etapa){
+		include_once "Arquivo.class.php";
+		if($etapa != NULL){
+			$DAO = new Arquivo();
+			$filtro = array("idEtapa" => "=".$etapa->id);
+			$arquivos = $DAO->listar($filtro);
+			if($arquivos != NULL && is_array($arquivos)){
+				$etapa->arquivos = array();
+				foreach ($arquivos as $arquivo) {
+					array_push($etapa->arquivos, $this->encodeObject($arquivo));
+				}
+			}
 		}
 	}
 	

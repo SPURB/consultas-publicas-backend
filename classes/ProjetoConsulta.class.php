@@ -38,9 +38,11 @@ class ProjetoConsulta extends GenericDAO{
 		}
 		try{
 			$lista = $this->select($filtro);
+			/*
 			foreach ($lista as $prco) {
 				$this->getFKs($prco);
 			}
+			*/
 			return $lista;
 		}catch(Exception $ex){
 			$this->log->write($ex->getMessage());
@@ -60,10 +62,26 @@ class ProjetoConsulta extends GenericDAO{
 */
 		$DAO = new Consulta();
 		$filtro = array("id_consulta" => "=".$projetoConsulta->idConsulta);
-		$this->log->write("ID CON ".$projetoConsulta->idConsulta);
 		$consulta = $DAO->listar($filtro);
 		$projetoConsulta->consulta = ($consulta != NULL && is_array($consulta)) ? $this->encodeObject($consulta[0]) : NULL;
 
+	}
+
+	public function cadastrar($input = NULL){
+		try{
+			if($input != NULL){
+				foreach($input as $key => $val){
+					if(array_search($key, $this->columns) === FALSE){
+						throw new Exception("$key parametro incorreto", 400);
+					}
+					$this->$key = $val;
+				}
+			}
+			return $this->insert();
+		}catch(Exception $ex){
+			$this->log->write($ex->getMessage());
+			return FALSE;
+		}
 	}
 
 }

@@ -5,6 +5,7 @@ require_once "classes/Arquivo.class.php";
 require_once "classes/Etapa.class.php";
 require_once "classes/Projeto.class.php";
 require_once "classes/Url.class.php";
+require_once "classes/ProjetoConsulta.class.php";
 include_once "classes/base/Logger.class.php";
 
 header("Access-Control-Allow-Origin: *");
@@ -30,12 +31,7 @@ if($info == NULL || $info == ""){
 			$result = put($request);
 		break;
 		case 'POST':
-			if(allow() === TRUE){
-				$result = post($request);			
-			}else{
-				http_response_code(403);
-				$result = "Nao autorizado ".$_SERVER['REMOTE_ADDR'];
-			}
+			$result = post($request);	
 		break;
 		case 'DELETE':
 			$result = del($request);
@@ -102,6 +98,10 @@ function post($request){
 	$input = json_decode(file_get_contents('php://input'),true);
 	
 	try{
+		if(!isset($input["token"]) || allow($input["token"]) !== TRUE){
+			throw new Exception($_SERVER['REMOTE_ADDR']." Token incorreto", 403);
+		}
+		unset($input["token"]);
 		if($table == "members"){
 			$member = new Member();
 			$result = NULL;
@@ -276,7 +276,8 @@ function getTable($function){
 		"arquivos" => new Arquivo(),
 		"etapas" => new Etapa(),
 		"projetos" => new Projeto(),
-		"urls" => new Url()
+		"urls" => new Url(),
+		"projetoConsulta" => new ProjetoConsulta()
 	);
 
 	if(!array_key_exists($function, $functions)){
@@ -285,9 +286,9 @@ function getTable($function){
 	return $functions[$function];
 }
 
-function allow(){
+function allow($token){
 	$key = "SPurbanismo";
-	return (md5($key) == $_SERVER['token']);
+	return (md5($key) == $token);
 }
 
 

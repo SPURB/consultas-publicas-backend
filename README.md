@@ -114,7 +114,6 @@ mysql> desc etapas;
 | id         | int(11)      | NO   | PRI | NULL    | auto_increment |
 | nome       | varchar(255) | YES  |     | NULL    |                |
 | fk_projeto | int(11)      | YES  | MUL | NULL    |                |
-| slug       | varchar(255) | YES  |     | NULL    |                |
 +------------+--------------+------+-----+---------+----------------+
 
 mysql> desc members;
@@ -142,7 +141,6 @@ mysql> desc projetos;
 | id          | int(11)      | NO   | PRI | NULL              | auto_increment |
 | ativo       | tinyint(4)   | YES  |     | 1                 |                |
 | atualizacao | timestamp    | YES  |     | CURRENT_TIMESTAMP |                |
-| slug        | varchar(255) | YES  |     | NULL              |                |
 +-------------+--------------+------+-----+-------------------+----------------+
 
 mysql> desc urls;

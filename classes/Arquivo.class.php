@@ -10,6 +10,7 @@ class Arquivo extends GenericDAO{
 	private $autor;
 	private $descricao;
 	private $posicao;
+	private $urls;
 	
 	public function __construct(){	
 		parent::__construct();
@@ -44,6 +45,9 @@ class Arquivo extends GenericDAO{
 		}
 		try{
 			$lista = $this->select($filtro);
+			foreach ($lista as $arquivo) {
+				$this->getLists($arquivo);
+			}
 			return $lista;
 		}catch(Exception $ex){
 			$this->log->write($ex->getMessage());
@@ -105,6 +109,21 @@ class Arquivo extends GenericDAO{
 		}catch(Exception $ex){
 			$this->log->write($ex->getMessage());
 			return FALSE;
+		}
+	}
+
+	public function getLists($arquivo){
+		include_once "Url.class.php";
+		if($arquivo != NULL){
+			$DAO = new Url();
+			$filtro = array("idArquivo" => "=".$arquivo->id);
+			$urls = $DAO->listar($filtro);
+			if($urls != NULL && is_array($urls)){
+				$arquivo->urls = array();
+				foreach ($urls as $url) {
+					array_push($arquivo->urls, $this->encodeObject($url));
+				}
+			}
 		}
 	}
 	

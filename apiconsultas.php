@@ -98,10 +98,11 @@ function post($request){
 	$input = json_decode(file_get_contents('php://input'),true);
 	
 	try{
-		if(!isset($input["token"]) || allow($input["token"]) !== TRUE){
+		$headers = getallheaders();
+		$token = $headers['Content-Post'];
+		if(!isset($token) || allow($token) !== TRUE){
 			throw new Exception($_SERVER['REMOTE_ADDR']." Token incorreto", 403);
 		}
-		unset($input["token"]);
 		if($table == "members"){
 			$member = new Member();
 			$result = NULL;

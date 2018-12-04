@@ -1,5 +1,5 @@
 <?php
-require_once "GenericDAO.class.php";
+require_once "GenericDAO.php";
 
 class Member extends GenericDAO{
 	

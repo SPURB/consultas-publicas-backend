@@ -1,38 +1,31 @@
 <?php
-require_once "GenericDAO.class.php";
+require_once "GenericDAO.php";
 
-class Arquivo extends GenericDAO{
+class Url extends GenericDAO{
 	
 	private $id;
-	private $nome;
-	private $idEtapa;
-	private $atualizacao;
-	private $autor;
-	private $descricao;
-	private $posicao;
-	private $urls;
+	private $url;
+	private $extensao;
+	private $idArquivo;
 	
 	public function __construct(){	
 		parent::__construct();
 	
-		$this->tableName = "arquivos";
+		$this->tableName = "urls";
 		
 		/*
 			key = coluna do banco => value = property da classe
 		*/
 		$this->columns = array(
 			"id" => "id",
-			"nome" => "nome",
-			"id_etapa" => "idEtapa",
-			"atualizacao" => "atualizacao",
-			"autor" => "autor",
-			"descricao" => "descricao",
-			"posicao" => "posicao"
+			"url" => "url",
+			"extensao" => "extensao",
+			"id_arquivo" => "idArquivo"
 		);
 	}
 	
 	public function __get($campo) {
-		return $this -> $campo;
+		return $this->$campo;
 	}
 
 	public function __set($campo, $valor) {
@@ -45,9 +38,6 @@ class Arquivo extends GenericDAO{
 		}
 		try{
 			$lista = $this->select($filtro);
-			foreach ($lista as $arquivo) {
-				$this->getLists($arquivo);
-			}
 			return $lista;
 		}catch(Exception $ex){
 			$this->log->write($ex->getMessage());
@@ -55,11 +45,11 @@ class Arquivo extends GenericDAO{
 		}
 	}
 
-	public function listarPorEtapa($idEtapa, $filtro=NULL){
+	public function listarPorProjeto($idProjeto, $filtro=NULL){
 		if($filtro != NULL && is_array($filtro)){
-			$filtro["idEtapa"] = "=".$idEtapa;
+			$filtro["idProjeto"] = "=".$idProjeto;
 		}else{
-			$filtro = array("idEtapa" => "= $idEtapa");
+			$filtro = array("idProjeto" => "= $idProjeto");
 		}
 		return $this->listar($filtro);
 	}
@@ -72,15 +62,6 @@ class Arquivo extends GenericDAO{
 			$this->log->write($ex->getMessage());
 			return FALSE;
 		}
-	}
-	
-	public function obterPeloNome($nome){
-		$filtro = array("nome" => "= $nome");
-		$result = $this->listar($filtro);
-		if($result === FALSE || count($result) != 1){
-			return FALSE;
-		}
-		return $result[0];
 	}
 	
 	public function cadastrar($input = NULL){
@@ -109,21 +90,6 @@ class Arquivo extends GenericDAO{
 		}catch(Exception $ex){
 			$this->log->write($ex->getMessage());
 			return FALSE;
-		}
-	}
-
-	public function getLists($arquivo){
-		include_once "Url.class.php";
-		if($arquivo != NULL){
-			$DAO = new Url();
-			$filtro = array("idArquivo" => "=".$arquivo->id);
-			$urls = $DAO->listar($filtro);
-			if($urls != NULL && is_array($urls)){
-				$arquivo->urls = array();
-				foreach ($urls as $url) {
-					array_push($arquivo->urls, $this->encodeObject($url));
-				}
-			}
 		}
 	}
 	

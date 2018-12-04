@@ -1,6 +1,6 @@
 <?php
-include_once "PDOQueryException.class.php";
-include_once "Logger.class.php";
+require_once 'Logger.php';
+require_once APP_PATH.'\classes\base\exceptions\PDOQueryException.php';
 
 class Base{
 	
@@ -21,6 +21,8 @@ class Base{
             unset($this->$key);
         }
     }
+
+	private $conexao = NULL;
 	
 	private static $credentials = array();
 
@@ -37,7 +39,7 @@ class Base{
 			while(!feof($propFile)){
 				$line = fgets($propFile);
 				$split = explode(":", $line);
-				$propParams = array("dbtype", "host", "port", "user", "password", "dbname");
+				$propParams = array("dbtype", "host", "Server", "port", "user", "password", "dbname", "Database");
 				foreach($propParams as $p){
 					$paramObtido = trim($split[0]);
 					if($paramObtido == $p){
@@ -71,12 +73,18 @@ class Base{
     private function connect(){
         try
         {
-            $this->conexao = new PDO($this->getDBType().":host=".$this->getHost().";port=".$this->getPort().";dbname=".$this->getDB(), $this->getUser(), $this->getPassword());
+        	$db = $this->getDBType();
+        	if($db=="sqlsrv"){
+        		 $this->conexao = new PDO($db.":Server=".$this->getHost().",".$this->getPort().";Database=".$this->getDB(), $this->getUser(), $this->getPassword());
+        	}else{
+            	$this->conexao = new PDO($db.":host=".$this->getHost().";port=".$this->getPort().";dbname=".$this->getDB(), $this->getUser(), $this->getPassword());
+            }
 
         }
         catch (Exception $ex)
         {
-            trigger_error("Banco de dados indisponível: " . $ex->getMessage(), E_USER_ERROR);
+        	$log = new Logger();
+			$log->write("Banco de dados indisponível: " . $ex->getMessage());
         }
          
         return ($this->conexao);
@@ -87,10 +95,11 @@ class Base{
     }
      
     /*Método select que retorna um VO ou um array de objetos*/
-    public function consultar($sql,$params=null){
+    public final function consultar($sql,$params=null){
     	
 		$rs = new ArrayObject();
-		
+		        	$log = new Logger();
+			$log->write("SQL Query $sql");
         try{
 	        $query=$this->connect()->prepare($sql);
 			if($query->execute($params) === FALSE){
@@ -104,12 +113,11 @@ class Base{
 		catch(Exception $ex){
 			$this->logErro($ex->getMessage(), $params, $sql);
 		}
-		
         return $rs;
     }
 	
     /*Método insert que insere valores no banco de dados e retorna o último id inserido*/
-    public function criar($sql,$params=null){
+    public final function criar($sql,$params=null, $sequenceName=null){
 		$rs = NULL;
     	try{
 	        $conexao=$this->connect();
@@ -117,7 +125,10 @@ class Base{
 			if($query->execute($params) === FALSE){
 				throw new PDOQueryException($query->errorInfo());
 			}
-	        $rs = $conexao->lastInsertId() or die(print_r($query->errorInfo(), true));
+	        $rs = $sequenceName != null ? $conexao->lastInsertId($sequenceName) : $conexao->lastInsertId();
+	        if($rs == NULL){
+	        	throw new Exception("Erro ao obter o ID inserido. Verificar se a sequence da PK foi informada ou se o driver nao suporta a funcao.");
+	        }
 	        self::__destruct();
 		}
 		catch(Exception $ex){
@@ -128,7 +139,7 @@ class Base{
     }
      
     /*Método update que altera valores do banco de dados e retorna o número de linhas afetadas*/
-    public function atualizar($sql,$params=null){
+    public final function atualizar($sql,$params=null){
     	$rs = NULL;
 		try{
 	        $query=$this->connect()->prepare($sql);
@@ -145,7 +156,7 @@ class Base{
     }
      
     /*Método delete que excluí valores do banco de dados retorna o número de linhas afetadas*/
-    public function deletar($sql,$params=null){
+    public final function deletar($sql,$params=null){
     	try{
 	        $query=$this->connect()->prepare($sql);
 	        if($query->execute($params) === FALSE){

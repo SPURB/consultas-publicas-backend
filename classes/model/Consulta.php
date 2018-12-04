@@ -1,6 +1,6 @@
 <?php
-require_once "GenericDAO.class.php";
-require_once "Member.class.php";
+require_once "GenericDAO.php";
+require_once "Member.php";
 
 class Consulta extends GenericDAO{
 	

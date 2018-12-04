@@ -1,4 +1,5 @@
 <?php
+
 class Logger{
 	
     /*Método construtor do banco de dados*/

@@ -1,7 +1,6 @@
 <?php
-require_once "base/Base.class.php";
-require_once "exceptions/DAOException.class.php";
-include_once "base/Logger.class.php";
+require_once APP_PATH.'\classes\base\main\Base.php';
+require_once APP_PATH.'\classes\base\exceptions\DAOException.php';
 
 class GenericDAO{
 	/**
@@ -9,7 +8,7 @@ class GenericDAO{
 	 */
 	private $base;
 	
-	private static $properties = "C:/xampp/htdocs/bd.properties";
+	private static $properties = "\conf\bd.properties";
 	private static $propertiesLinux = "/var/www/properties/bd.properties";
 	
 	protected $tableName;
@@ -19,8 +18,8 @@ class GenericDAO{
 	protected $log;
 	
 	public function __construct() {
-		if(file_exists(self::$properties)){
-			$this->base = new Base(self::$properties);
+		if(file_exists(APP_PATH.self::$properties)){
+			$this->base = new Base(APP_PATH.self::$properties);
 		}else{
 			if(file_exists(self::$propertiesLinux)){
 				$this->base = new Base(self::$propertiesLinux);
@@ -316,7 +315,7 @@ class GenericDAO{
 	public function encodeObject($obj){
 		if(is_array($obj)){
 			foreach($obj as $item){
-				$item = encodeObject($item);
+				$item = GenericDAO::encodeObject($item);
 			}
 		}else if(is_object($obj)){
 			foreach($obj as $key => $val){

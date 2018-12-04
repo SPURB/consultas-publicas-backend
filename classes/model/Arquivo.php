@@ -1,17 +1,22 @@
 <?php
-require_once "GenericDAO.class.php";
+require_once "GenericDAO.php";
+require_once "Url.php";
 
-class Etapa extends GenericDAO{
+class Arquivo extends GenericDAO{
 	
 	private $id;
 	private $nome;
-	private $idProjeto;
-	private $arquivos;
+	private $idEtapa;
+	private $atualizacao;
+	private $autor;
+	private $descricao;
+	private $posicao;
+	private $urls;
 	
 	public function __construct(){	
 		parent::__construct();
 	
-		$this->tableName = "etapas";
+		$this->tableName = "arquivos";
 		
 		/*
 			key = coluna do banco => value = property da classe
@@ -19,7 +24,11 @@ class Etapa extends GenericDAO{
 		$this->columns = array(
 			"id" => "id",
 			"nome" => "nome",
-			"fk_projeto" => "idProjeto"
+			"id_etapa" => "idEtapa",
+			"atualizacao" => "atualizacao",
+			"autor" => "autor",
+			"descricao" => "descricao",
+			"posicao" => "posicao"
 		);
 	}
 	
@@ -37,8 +46,8 @@ class Etapa extends GenericDAO{
 		}
 		try{
 			$lista = $this->select($filtro);
-			foreach ($lista as $etapa) {
-				$this->getLists($etapa);
+			foreach ($lista as $arquivo) {
+				$this->getLists($arquivo);
 			}
 			return $lista;
 		}catch(Exception $ex){
@@ -47,11 +56,11 @@ class Etapa extends GenericDAO{
 		}
 	}
 
-	public function listarPorProjeto($idProjeto, $filtro=NULL){
+	public function listarPorEtapa($idEtapa, $filtro=NULL){
 		if($filtro != NULL && is_array($filtro)){
-			$filtro["idProjeto"] = "=".$idProjeto;
+			$filtro["idEtapa"] = "=".$idEtapa;
 		}else{
-			$filtro = array("idProjeto" => "= $idProjeto");
+			$filtro = array("idEtapa" => "= $idEtapa");
 		}
 		return $this->listar($filtro);
 	}
@@ -104,16 +113,15 @@ class Etapa extends GenericDAO{
 		}
 	}
 
-	private function getLists($etapa){
-		include_once "Arquivo.class.php";
-		if($etapa != NULL){
-			$DAO = new Arquivo();
-			$filtro = array("idEtapa" => "=".$etapa->id);
-			$arquivos = $DAO->listar($filtro);
-			if($arquivos != NULL && is_array($arquivos)){
-				$etapa->arquivos = array();
-				foreach ($arquivos as $arquivo) {
-					array_push($etapa->arquivos, $this->encodeObject($arquivo));
+	public function getLists($arquivo){
+		if($arquivo != NULL){
+			$DAO = new Url();
+			$filtro = array("idArquivo" => "=".$arquivo->id);
+			$urls = $DAO->listar($filtro);
+			if($urls != NULL && is_array($urls)){
+				$arquivo->urls = array();
+				foreach ($urls as $url) {
+					array_push($arquivo->urls, $this->encodeObject($url));
 				}
 			}
 		}

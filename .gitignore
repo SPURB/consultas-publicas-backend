@@ -2,6 +2,9 @@
 *.properties
 testes-frontend/
 teste.php
+conf/
+*.dontmess
+*.eraseme
 =======
 log/
 users.json 

@@ -1,5 +1,8 @@
 <?php
-require_once "GenericDAO.class.php";
+require_once "GenericDAO.php";
+require_once "Etapa.php";
+require_once "Consulta.php";
+require_once "ProjetoConsulta.php";
 
 class Projeto extends GenericDAO{
 	
@@ -109,9 +112,6 @@ class Projeto extends GenericDAO{
 	}
 
 	private function getLists($projeto){
-		include_once "Etapa.class.php";
-		include_once "Consulta.class.php";
-		include_once "ProjetoConsulta.class.php";
 		if($projeto != NULL){
 			$DAO = new Etapa();
 			$idProjeto = $projeto->id;

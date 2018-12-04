@@ -1,5 +1,6 @@
 <?php
-require_once "GenericDAO.class.php";
+require_once "GenericDAO.php";
+require_once "Consulta.php";
 
 class ProjetoConsulta extends GenericDAO{
 	
@@ -52,7 +53,7 @@ class ProjetoConsulta extends GenericDAO{
 
 	private function getFKs($projetoConsulta){
 		//include_once "Projeto.class.php";
-		include_once "Consulta.class.php";
+
 /*
 		$DAO = new Projeto();
 		$filtro = array("id" => "=".$projetoConsulta->idProjeto);

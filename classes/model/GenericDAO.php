@@ -46,7 +46,7 @@ class GenericDAO{
 	/*
 	* A primeira coluna da classe filha deve ser referente ao ID / Primary Key da tabela
 	*/
-	private function getPKColName(){
+	public function getPKColName(){
 		if(!is_array($this->columns) || count($this->columns) < 1){
 			throw new DAOException("Verifique o mapeamento das propriedades da classe.");
 		}

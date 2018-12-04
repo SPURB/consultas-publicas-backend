@@ -29,7 +29,7 @@ class APIFactory{
 
 		try{
 			if($class == NULL){
-				throw new APIException("$method Invalid HTTP method");
+				throw new APIException("$method Invalid HTTP method", 405);
 			}
 			$result = $class::load($requestData);
 			if($jsonEncode === TRUE){

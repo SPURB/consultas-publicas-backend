@@ -273,7 +273,19 @@ class GenericDAO{
 			
 		}
 		if($orderColumns != NULL){
-			$sql.= " ORDER BY ".$orderColumns;
+			$first = TRUE;
+			$sqlOrder = "";
+			if(!is_array($orderColumns)){
+				throw new DAOException("O parametro com colunas para ordem deve ser um array.");
+			}
+			foreach ($orderColumns as $col) {
+				if(!$first){
+					$sqlOrder.=",";
+				}
+				$sqlOrder .= array_search($col, $this->columns);
+				$first = FALSE;
+			}
+			$sql.= " ORDER BY ".$sqlOrder;
 			if($orderType != NULL){
 				$sql.= " ".$orderType;
 			}

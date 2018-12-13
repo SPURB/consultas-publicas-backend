@@ -15,7 +15,6 @@ class Post extends APIMethod{
 			if(!isset($token) || APIMethod::allow($token) !== TRUE){
 				throw new APIException($_SERVER['REMOTE_ADDR']." Token incorreto", 403);
 			}
-			unset($input["token"]);
 			if($table == "members"){
 				$member = new Member();
 				$result = NULL;

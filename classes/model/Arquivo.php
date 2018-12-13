@@ -44,8 +44,9 @@ class Arquivo extends GenericDAO{
 		if($filtro == NULL){
 			$filtro = array();
 		}
+		$order = array("posicao");
 		try{
-			$lista = $this->select($filtro);
+			$lista = $this->select($filtro, $order);
 			foreach ($lista as $arquivo) {
 				$this->getLists($arquivo);
 			}

@@ -11,7 +11,7 @@ class Delete extends APIMethod{
 		
 		try{
 			if($id <= 0){
-				throw new APIException("$id parametro invalido");
+				throw new APIException("$id parametro invalido", 400);
 			}
 			$result = $memberDAO->desativar($id);
 			

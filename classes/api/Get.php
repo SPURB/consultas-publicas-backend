@@ -11,6 +11,7 @@ class Get extends APIMethod{
 		$etapaDAO = new Etapa();
 		$projetoDAO = new Projeto();
 		$urlDAO = new Url();
+		$projCDAO = new ProjetoConsulta();
 		$result = NULL;
 		$table = preg_replace('/[^a-z0-9_]+/i','',array_shift($request));
 		$id = intval(array_shift($request));
@@ -31,6 +32,8 @@ class Get extends APIMethod{
 				$result = ($id > 0) ? $projetoDAO->obter($id) : $projetoDAO->listar();
 			}else if($table == "urls"){
 				$result = ($id > 0) ? $urlDAO->obter($id) : $urlDAO->listar();
+			}else if($table == "projetoConsulta"){
+				$result = ($id > 0) ? $projCDAO->obter($id) : $projCDAO->listar();
 			}
 		}else{
 			$result = ($id > 0) ? $memberDAO->obterPorConsulta($consulta->id, $id) : $memberDAO->listarPorConsulta($consulta->id);

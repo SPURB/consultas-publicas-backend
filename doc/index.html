@@ -1,0 +1,785 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Participe | Gestão Urbana</title>
+    <style type="text/css">
+      body {
+	font-family: Trebuchet MS, sans-serif;
+	font-size: 15px;
+	color: #444;
+	margin-right: 24px;
+}
+
+h1	{
+	font-size: 25px;
+}
+h2	{
+	font-size: 20px;
+}
+h3	{
+	font-size: 16px;
+	font-weight: bold;
+}
+hr	{
+	height: 1px;
+	border: 0;
+	color: #ddd;
+	background-color: #ddd;
+}
+
+.app-desc {
+  clear: both;
+  margin-left: 20px;
+}
+.param-name {
+  width: 100%;
+}
+.license-info {
+  margin-left: 20px;
+}
+
+.license-url {
+  margin-left: 20px;
+}
+
+.model {
+  margin: 0 0 0px 20px;
+}
+
+.method {
+  margin-left: 20px;
+}
+
+.method-notes	{
+	margin: 10px 0 20px 0;
+	font-size: 90%;
+	color: #555;
+}
+
+pre {
+  padding: 10px;
+  margin-bottom: 2px;
+}
+
+.http-method {
+ text-transform: uppercase;
+}
+
+pre.get {
+  background-color: #0f6ab4;
+}
+
+pre.post {
+  background-color: #10a54a;
+}
+
+pre.put {
+  background-color: #c5862b;
+}
+
+pre.delete {
+  background-color: #a41e22;
+}
+
+.huge	{
+	color: #fff;
+}
+
+pre.example {
+  background-color: #f3f3f3;
+  padding: 10px;
+  border: 1px solid #ddd;
+}
+
+code {
+  white-space: pre;
+}
+
+.nickname {
+  font-weight: bold;
+}
+
+.method-path {
+  font-size: 1.5em;
+  background-color: #0f6ab4;
+}
+
+.up {
+  float:right;
+}
+
+.parameter {
+  width: 500px;
+}
+
+.param {
+  width: 500px;
+  padding: 10px 0 0 20px;
+  font-weight: bold;
+}
+
+.param-desc {
+  width: 700px;
+  padding: 0 0 0 20px;
+  color: #777;
+}
+
+.param-type {
+  font-style: italic;
+}
+
+.param-enum-header {
+width: 700px;
+padding: 0 0 0 60px;
+color: #777;
+font-weight: bold;
+}
+
+.param-enum {
+width: 700px;
+padding: 0 0 0 80px;
+color: #777;
+font-style: italic;
+}
+
+.field-label {
+  padding: 0;
+  margin: 0;
+  clear: both;
+}
+
+.field-items	{
+	padding: 0 0 15px 0;
+	margin-bottom: 15px;
+}
+
+.return-type {
+  clear: both;
+  padding-bottom: 10px;
+}
+
+.param-header {
+  font-weight: bold;
+}
+
+.method-tags {
+  text-align: right;
+}
+
+.method-tag {
+  background: none repeat scroll 0% 0% #24A600;
+  border-radius: 3px;
+  padding: 2px 10px;
+  margin: 2px;
+  color: #FFF;
+  display: inline-block;
+  text-decoration: none;
+}
+
+    </style>
+  </head>
+  <body>
+  <h1>Participe | Gestão Urbana</h1>
+    <div class="app-desc">Referência para uso da API do &quot;Gestão Urbana&quot; e &quot;Participe&quot; da SP Urbanismo.</div>
+    <div class="app-desc">More information: <a href="https://helloreverb.com">https://helloreverb.com</a></div>
+    <div class="app-desc">Contact Info: <a href="desenvolvimento@spurbanismo.sp.gov.br">desenvolvimento@spurbanismo.sp.gov.br</a></div>
+    <div class="app-desc">Version: 1.0.0</div>
+    <div class="app-desc">BasePath:</div>
+    <div class="license-info">Apache 2.0</div>
+    <div class="license-url">http://www.apache.org/licenses/LICENSE-2.0.html</div>
+  <h2>Access</h2>
+    <ol>
+      <li>APIKey KeyParamName:Content-Post KeyInQuery:false KeyInHeader:true</li>
+    </ol>
+
+  <h2><a name="__Methods">Methods</a></h2>
+  [ Jump to <a href="#__Models">Models</a> ]
+
+  <h3>Table of Contents </h3>
+  <div class="method-summary"></div>
+  <h4><a href="#Tabelas">Tabelas</a></h4>
+  <ul>
+  <li><a href="#addReg"><code><span class="http-method">post</span> /tabela</code></a></li>
+  <li><a href="#buscaPaginadaRegs"><code><span class="http-method">post</span> /tabela/pagedsearch</code></a></li>
+  <li><a href="#buscaRegs"><code><span class="http-method">post</span> /tabela/search</code></a></li>
+  <li><a href="#deleteReg"><code><span class="http-method">delete</span> /tabela/{id}</code></a></li>
+  <li><a href="#getRegs"><code><span class="http-method">get</span> /tabela</code></a></li>
+  <li><a href="#obterReg"><code><span class="http-method">get</span> /tabela/{id}</code></a></li>
+  <li><a href="#updateReg"><code><span class="http-method">put</span> /tabela/{id}</code></a></li>
+  <li><a href="#updateRegs"><code><span class="http-method">put</span> /tabela</code></a></li>
+  </ul>
+
+  <h1><a name="Tabelas">Tabelas</a></h1>
+  <div class="method"><a name="addReg"/>
+    <div class="method-path">
+    <a class="up" href="#__Methods">Up</a>
+    <pre class="post"><code class="huge"><span class="http-method">post</span> /tabela</code></pre></div>
+    <div class="method-summary">Cadastrar registro (<span class="nickname">addReg</span>)</div>
+    <div class="method-notes"></div>
+
+
+    <h3 class="field-label">Consumes</h3>
+    This API call consumes the following media types via the <span class="heaader">Content-Type</span> request header:
+    <ul>
+      <li><code>application/json</code></li>
+    </ul>
+
+    <h3 class="field-label">Request body</h3>
+    <div class="field-items">
+      <div class="param">body <a href="#Member">Member</a> (required)</div>
+
+      <div class="param-desc"><span class="param-type">Body Parameter</span> &mdash; Objeto a ser cadastrado </div>
+
+    </div>  <!-- field-items -->
+
+
+
+
+
+    <!--Todo: process Response Object and its headers, schema, examples -->
+
+
+    <h3 class="field-label">Produces</h3>
+    This API call produces the following media types according to the <span class="header">Accept</span> request header;
+    the media type will be conveyed by the <span class="heaader">Content-Type</span> response header.
+    <ul>
+      <li><code>application/json</code></li>
+    </ul>
+
+    <h3 class="field-label">Responses</h3>
+    <h4 class="field-label">204</h4>
+    Nada encontrado
+        <a href="#"></a>
+    <h4 class="field-label">403</h4>
+    Não permitido
+        <a href="#"></a>
+    <h4 class="field-label">500</h4>
+    Erro interno ao atualizar os dados
+        <a href="#"></a>
+  </div> <!-- method -->
+  <hr/>
+  <div class="method"><a name="buscaPaginadaRegs"/>
+    <div class="method-path">
+    <a class="up" href="#__Methods">Up</a>
+    <pre class="post"><code class="huge"><span class="http-method">post</span> /tabela/pagedsearch</code></pre></div>
+    <div class="method-summary">Busca de registros (<span class="nickname">buscaPaginadaRegs</span>)</div>
+    <div class="method-notes">Os valores passados como parâmetro devem conter os operadores. EX: &quot;=teste&quot;, &quot;&gt;=1&quot;</div>
+
+
+    <h3 class="field-label">Consumes</h3>
+    This API call consumes the following media types via the <span class="heaader">Content-Type</span> request header:
+    <ul>
+      <li><code>application/json</code></li>
+    </ul>
+
+    <h3 class="field-label">Request body</h3>
+    <div class="field-items">
+      <div class="param">body <a href="#Member">Member</a> (required)</div>
+
+      <div class="param-desc"><span class="param-type">Body Parameter</span> &mdash; Filtros a serem utilizados na busca, onde a chave é o nome do atributo e o valor é o que se deseja encontrar </div>
+
+    </div>  <!-- field-items -->
+
+
+
+
+    <h3 class="field-label">Return type</h3>
+    <div class="return-type">
+      array[<a href="#Member">Member</a>]
+      
+    </div>
+
+    <!--Todo: process Response Object and its headers, schema, examples -->
+
+    <h3 class="field-label">Example data</h3>
+    <div class="example-data-content-type">Content-Type: application/json</div>
+    <pre class="example"><code>[ {
+  "public" : "1",
+  "commentdate" : "2000-01-23T04:56:07.000+00:00",
+  "name" : "name",
+  "commentid" : "1",
+  "commentcontext" : "commentcontext",
+  "postid" : "1",
+  "idConsulta" : 6,
+  "email" : "email",
+  "content" : "content",
+  "memid" : 0,
+  "trash" : "1"
+}, {
+  "public" : "1",
+  "commentdate" : "2000-01-23T04:56:07.000+00:00",
+  "name" : "name",
+  "commentid" : "1",
+  "commentcontext" : "commentcontext",
+  "postid" : "1",
+  "idConsulta" : 6,
+  "email" : "email",
+  "content" : "content",
+  "memid" : 0,
+  "trash" : "1"
+} ]</code></pre>
+
+    <h3 class="field-label">Produces</h3>
+    This API call produces the following media types according to the <span class="header">Accept</span> request header;
+    the media type will be conveyed by the <span class="heaader">Content-Type</span> response header.
+    <ul>
+      <li><code>application/json</code></li>
+    </ul>
+
+    <h3 class="field-label">Responses</h3>
+    <h4 class="field-label">200</h4>
+    Resultado da busca retornando no máximo 10 registros
+        
+    <h4 class="field-label">204</h4>
+    Nada encontrado
+        <a href="#"></a>
+  </div> <!-- method -->
+  <hr/>
+  <div class="method"><a name="buscaRegs"/>
+    <div class="method-path">
+    <a class="up" href="#__Methods">Up</a>
+    <pre class="post"><code class="huge"><span class="http-method">post</span> /tabela/search</code></pre></div>
+    <div class="method-summary">Busca de registros (<span class="nickname">buscaRegs</span>)</div>
+    <div class="method-notes">Os valores passados como parâmetro devem conter os operadores. EX: &quot;=teste&quot;, &quot;&gt;=1&quot;</div>
+
+
+    <h3 class="field-label">Consumes</h3>
+    This API call consumes the following media types via the <span class="heaader">Content-Type</span> request header:
+    <ul>
+      <li><code>application/json</code></li>
+    </ul>
+
+    <h3 class="field-label">Request body</h3>
+    <div class="field-items">
+      <div class="param">body <a href="#Member">Member</a> (required)</div>
+
+      <div class="param-desc"><span class="param-type">Body Parameter</span> &mdash; Filtros a serem utilizados na busca, onde a chave é o nome do atributo e o valor é o que se deseja encontrar </div>
+
+    </div>  <!-- field-items -->
+
+
+
+
+    <h3 class="field-label">Return type</h3>
+    <div class="return-type">
+      array[<a href="#Member">Member</a>]
+      
+    </div>
+
+    <!--Todo: process Response Object and its headers, schema, examples -->
+
+    <h3 class="field-label">Example data</h3>
+    <div class="example-data-content-type">Content-Type: application/json</div>
+    <pre class="example"><code>[ {
+  "public" : "1",
+  "commentdate" : "2000-01-23T04:56:07.000+00:00",
+  "name" : "name",
+  "commentid" : "1",
+  "commentcontext" : "commentcontext",
+  "postid" : "1",
+  "idConsulta" : 6,
+  "email" : "email",
+  "content" : "content",
+  "memid" : 0,
+  "trash" : "1"
+}, {
+  "public" : "1",
+  "commentdate" : "2000-01-23T04:56:07.000+00:00",
+  "name" : "name",
+  "commentid" : "1",
+  "commentcontext" : "commentcontext",
+  "postid" : "1",
+  "idConsulta" : 6,
+  "email" : "email",
+  "content" : "content",
+  "memid" : 0,
+  "trash" : "1"
+} ]</code></pre>
+
+    <h3 class="field-label">Produces</h3>
+    This API call produces the following media types according to the <span class="header">Accept</span> request header;
+    the media type will be conveyed by the <span class="heaader">Content-Type</span> response header.
+    <ul>
+      <li><code>application/json</code></li>
+    </ul>
+
+    <h3 class="field-label">Responses</h3>
+    <h4 class="field-label">200</h4>
+    Resultado da busca
+        
+    <h4 class="field-label">204</h4>
+    Nada encontrado
+        <a href="#"></a>
+  </div> <!-- method -->
+  <hr/>
+  <div class="method"><a name="deleteReg"/>
+    <div class="method-path">
+    <a class="up" href="#__Methods">Up</a>
+    <pre class="delete"><code class="huge"><span class="http-method">delete</span> /tabela/{id}</code></pre></div>
+    <div class="method-summary">Desativa um único registro (<span class="nickname">deleteReg</span>)</div>
+    <div class="method-notes">Retorna a quantidade de linhas atualizadas</div>
+
+    <h3 class="field-label">Path parameters</h3>
+    <div class="field-items">
+      <div class="param">id (required)</div>
+
+      <div class="param-desc"><span class="param-type">Path Parameter</span> &mdash; ID do comentário format: int64</div>
+    </div>  <!-- field-items -->
+
+
+
+
+
+
+    <h3 class="field-label">Return type</h3>
+    <div class="return-type">
+      
+      Long
+    </div>
+
+    <!--Todo: process Response Object and its headers, schema, examples -->
+
+    <h3 class="field-label">Example data</h3>
+    <div class="example-data-content-type">Content-Type: application/json</div>
+    <pre class="example"><code>0</code></pre>
+
+    <h3 class="field-label">Produces</h3>
+    This API call produces the following media types according to the <span class="header">Accept</span> request header;
+    the media type will be conveyed by the <span class="heaader">Content-Type</span> response header.
+    <ul>
+      <li><code>application/json</code></li>
+    </ul>
+
+    <h3 class="field-label">Responses</h3>
+    <h4 class="field-label">200</h4>
+    Total de Registros atualizados
+        <a href="#Long">Long</a>
+    <h4 class="field-label">204</h4>
+    Nada encontrado
+        <a href="#"></a>
+  </div> <!-- method -->
+  <hr/>
+  <div class="method"><a name="getRegs"/>
+    <div class="method-path">
+    <a class="up" href="#__Methods">Up</a>
+    <pre class="get"><code class="huge"><span class="http-method">get</span> /tabela</code></pre></div>
+    <div class="method-summary">Obter lista de objetos referente à tabela (<span class="nickname">getRegs</span>)</div>
+    <div class="method-notes"></div>
+
+
+
+
+
+
+
+
+    <!--Todo: process Response Object and its headers, schema, examples -->
+
+
+    <h3 class="field-label">Produces</h3>
+    This API call produces the following media types according to the <span class="header">Accept</span> request header;
+    the media type will be conveyed by the <span class="heaader">Content-Type</span> response header.
+    <ul>
+      <li><code>application/json</code></li>
+    </ul>
+
+    <h3 class="field-label">Responses</h3>
+    <h4 class="field-label">204</h4>
+    Nada encontrado
+        <a href="#"></a>
+  </div> <!-- method -->
+  <hr/>
+  <div class="method"><a name="obterReg"/>
+    <div class="method-path">
+    <a class="up" href="#__Methods">Up</a>
+    <pre class="get"><code class="huge"><span class="http-method">get</span> /tabela/{id}</code></pre></div>
+    <div class="method-summary">Obter um único regustri (<span class="nickname">obterReg</span>)</div>
+    <div class="method-notes">Retorna o registro pelo seu ID</div>
+
+    <h3 class="field-label">Path parameters</h3>
+    <div class="field-items">
+      <div class="param">id (required)</div>
+
+      <div class="param-desc"><span class="param-type">Path Parameter</span> &mdash; ID do registro format: int64</div>
+    </div>  <!-- field-items -->
+
+
+
+
+
+
+    <h3 class="field-label">Return type</h3>
+    <div class="return-type">
+      <a href="#Member">Member</a>
+      
+    </div>
+
+    <!--Todo: process Response Object and its headers, schema, examples -->
+
+    <h3 class="field-label">Example data</h3>
+    <div class="example-data-content-type">Content-Type: application/json</div>
+    <pre class="example"><code>{
+  "public" : "1",
+  "commentdate" : "2000-01-23T04:56:07.000+00:00",
+  "name" : "name",
+  "commentid" : "1",
+  "commentcontext" : "commentcontext",
+  "postid" : "1",
+  "idConsulta" : 6,
+  "email" : "email",
+  "content" : "content",
+  "memid" : 0,
+  "trash" : "1"
+}</code></pre>
+
+    <h3 class="field-label">Produces</h3>
+    This API call produces the following media types according to the <span class="header">Accept</span> request header;
+    the media type will be conveyed by the <span class="heaader">Content-Type</span> response header.
+    <ul>
+      <li><code>application/json</code></li>
+    </ul>
+
+    <h3 class="field-label">Responses</h3>
+    <h4 class="field-label">200</h4>
+    Registro encontrado
+        <a href="#Member">Member</a>
+    <h4 class="field-label">204</h4>
+    Nada encontrado
+        <a href="#"></a>
+  </div> <!-- method -->
+  <hr/>
+  <div class="method"><a name="updateReg"/>
+    <div class="method-path">
+    <a class="up" href="#__Methods">Up</a>
+    <pre class="put"><code class="huge"><span class="http-method">put</span> /tabela/{id}</code></pre></div>
+    <div class="method-summary">Atualiza um único registro (<span class="nickname">updateReg</span>)</div>
+    <div class="method-notes">Retorna a quantidade de linhas atualizadas</div>
+
+    <h3 class="field-label">Path parameters</h3>
+    <div class="field-items">
+      <div class="param">id (required)</div>
+
+      <div class="param-desc"><span class="param-type">Path Parameter</span> &mdash; ID do registro format: int64</div>
+    </div>  <!-- field-items -->
+
+
+
+
+
+
+    <h3 class="field-label">Return type</h3>
+    <div class="return-type">
+      
+      Long
+    </div>
+
+    <!--Todo: process Response Object and its headers, schema, examples -->
+
+    <h3 class="field-label">Example data</h3>
+    <div class="example-data-content-type">Content-Type: application/json</div>
+    <pre class="example"><code>0</code></pre>
+
+    <h3 class="field-label">Produces</h3>
+    This API call produces the following media types according to the <span class="header">Accept</span> request header;
+    the media type will be conveyed by the <span class="heaader">Content-Type</span> response header.
+    <ul>
+      <li><code>application/json</code></li>
+    </ul>
+
+    <h3 class="field-label">Responses</h3>
+    <h4 class="field-label">200</h4>
+    Total de Registros atualizados
+        <a href="#Long">Long</a>
+    <h4 class="field-label">204</h4>
+    Nada encontrado
+        <a href="#"></a>
+  </div> <!-- method -->
+  <hr/>
+  <div class="method"><a name="updateRegs"/>
+    <div class="method-path">
+    <a class="up" href="#__Methods">Up</a>
+    <pre class="put"><code class="huge"><span class="http-method">put</span> /tabela</code></pre></div>
+    <div class="method-summary">Atualiza um registro já existente (<span class="nickname">updateRegs</span>)</div>
+    <div class="method-notes"></div>
+
+
+    <h3 class="field-label">Consumes</h3>
+    This API call consumes the following media types via the <span class="heaader">Content-Type</span> request header:
+    <ul>
+      <li><code>application/json</code></li>
+    </ul>
+
+    <h3 class="field-label">Request body</h3>
+    <div class="field-items">
+      <div class="param">body <a href="#Member">Member</a> (required)</div>
+
+      <div class="param-desc"><span class="param-type">Body Parameter</span> &mdash; Objeto a ser atualizado </div>
+
+    </div>  <!-- field-items -->
+
+
+
+
+
+    <!--Todo: process Response Object and its headers, schema, examples -->
+
+
+    <h3 class="field-label">Produces</h3>
+    This API call produces the following media types according to the <span class="header">Accept</span> request header;
+    the media type will be conveyed by the <span class="heaader">Content-Type</span> response header.
+    <ul>
+      <li><code>application/json</code></li>
+    </ul>
+
+    <h3 class="field-label">Responses</h3>
+    <h4 class="field-label">400</h4>
+    ID inválido
+        <a href="#"></a>
+    <h4 class="field-label">404</h4>
+    Member não encontrado
+        <a href="#"></a>
+    <h4 class="field-label">500</h4>
+    Erro ao atualizar os dados
+        <a href="#"></a>
+  </div> <!-- method -->
+  <hr/>
+
+  <h2><a name="__Models">Models</a></h2>
+  [ Jump to <a href="#__Methods">Methods</a> ]
+
+  <h3>Table of Contents</h3>
+  <ol>
+    <li><a href="#ApiResponse"><code>ApiResponse</code> - </a></li>
+    <li><a href="#Arquivo"><code>Arquivo</code> - </a></li>
+    <li><a href="#Consulta"><code>Consulta</code> - </a></li>
+    <li><a href="#Etapa"><code>Etapa</code> - </a></li>
+    <li><a href="#Member"><code>Member</code> - </a></li>
+    <li><a href="#MemberSearch"><code>MemberSearch</code> - </a></li>
+    <li><a href="#Projeto"><code>Projeto</code> - </a></li>
+    <li><a href="#Url"><code>Url</code> - </a></li>
+  </ol>
+
+  <div class="model">
+    <h3><a name="ApiResponse"><code>ApiResponse</code> - </a> <a class="up" href="#__Models">Up</a></h3>
+    <div class='model-description'></div>
+    <div class="field-items">
+      <div class="param">code (optional)</div><div class="param-desc"><span class="param-type"><a href="#integer">Integer</a></span>  format: int32</div>
+<div class="param">statusText (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+<div class="param">responseText (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+    </div>  <!-- field-items -->
+  </div>
+  <div class="model">
+    <h3><a name="Arquivo"><code>Arquivo</code> - </a> <a class="up" href="#__Models">Up</a></h3>
+    <div class='model-description'></div>
+    <div class="field-items">
+      <div class="param">id (optional)</div><div class="param-desc"><span class="param-type"><a href="#long">Long</a></span>  format: int64</div>
+<div class="param">nome (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span> Nome do arquivo </div>
+<div class="param">idEtapa (optional)</div><div class="param-desc"><span class="param-type"><a href="#long">Long</a></span>  format: int64</div>
+<div class="param">atualizacao (optional)</div><div class="param-desc"><span class="param-type"><a href="#DateTime">Date</a></span>  format: date-time</div>
+<div class="param">autor (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+<div class="param">descricao (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+<div class="param">posicao (optional)</div><div class="param-desc"><span class="param-type"><a href="#long">Long</a></span>  format: int64</div>
+    </div>  <!-- field-items -->
+  </div>
+  <div class="model">
+    <h3><a name="Consulta"><code>Consulta</code> - </a> <a class="up" href="#__Models">Up</a></h3>
+    <div class='model-description'></div>
+    <div class="field-items">
+      <div class="param">id_consulta (optional)</div><div class="param-desc"><span class="param-type"><a href="#long">Long</a></span>  format: int64</div>
+<div class="param">nome (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span> Nome da tabela de consulta </div>
+<div class="param">dataCadastro (optional)</div><div class="param-desc"><span class="param-type"><a href="#date">date</a></span>  format: date</div>
+<div class="param">ativo (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+        <div class="param-enum-header">Enum:</div>
+        <div class="param-enum">1</div><div class="param-enum">0</div>
+<div class="param">nomePublico (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span> Nome para apresentação na página </div>
+<div class="param">urlConsulta (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span> URL de acesso à página da consulta </div>
+<div class="param">urlCapa (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+<div class="param">urlDevolutiva (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+<div class="param">nContribuicoes (optional)</div><div class="param-desc"><span class="param-type"><a href="#long">Long</a></span> Quantidade de comentários cadastrados format: int64</div>
+    </div>  <!-- field-items -->
+  </div>
+  <div class="model">
+    <h3><a name="Etapa"><code>Etapa</code> - </a> <a class="up" href="#__Models">Up</a></h3>
+    <div class='model-description'></div>
+    <div class="field-items">
+      <div class="param">id (optional)</div><div class="param-desc"><span class="param-type"><a href="#long">Long</a></span>  format: int64</div>
+<div class="param">nome (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span> Nome da etapa </div>
+<div class="param">idProjeto (optional)</div><div class="param-desc"><span class="param-type"><a href="#long">Long</a></span>  format: int64</div>
+<div class="param">arquivos (optional)</div><div class="param-desc"><span class="param-type"><a href="#Arquivo">array[Arquivo]</a></span>  </div>
+    </div>  <!-- field-items -->
+  </div>
+  <div class="model">
+    <h3><a name="Member"><code>Member</code> - </a> <a class="up" href="#__Models">Up</a></h3>
+    <div class='model-description'></div>
+    <div class="field-items">
+      <div class="param">memid (optional)</div><div class="param-desc"><span class="param-type"><a href="#long">Long</a></span>  format: int64</div>
+<div class="param">name (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span> Nome do Usuário </div>
+<div class="param">email (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span> E-mail do Usuário </div>
+<div class="param">content (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span> Comentário </div>
+<div class="param">commentdate (optional)</div><div class="param-desc"><span class="param-type"><a href="#DateTime">Date</a></span> Data e horário do comentário format: date-time</div>
+<div class="param">public (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span> Explícito ou não </div>
+        <div class="param-enum-header">Enum:</div>
+        <div class="param-enum">1</div><div class="param-enum">0</div>
+<div class="param">postid (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+        <div class="param-enum-header">Enum:</div>
+        <div class="param-enum">1</div><div class="param-enum">0</div>
+<div class="param">trash (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span> Comentário eliminado ou não </div>
+        <div class="param-enum-header">Enum:</div>
+        <div class="param-enum">1</div><div class="param-enum">0</div>
+<div class="param">commentid (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+        <div class="param-enum-header">Enum:</div>
+        <div class="param-enum">1</div><div class="param-enum">0</div>
+<div class="param">commentcontext (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span> Tipo do comentário </div>
+<div class="param">idConsulta (optional)</div><div class="param-desc"><span class="param-type"><a href="#long">Long</a></span>  format: int64</div>
+    </div>  <!-- field-items -->
+  </div>
+  <div class="model">
+    <h3><a name="MemberSearch"><code>MemberSearch</code> - </a> <a class="up" href="#__Models">Up</a></h3>
+    <div class='model-description'></div>
+    <div class="field-items">
+      <div class="param">memid (optional)</div><div class="param-desc"><span class="param-type"><a href="#long">Long</a></span>  format: int64</div>
+<div class="param">name (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span> Nome do Usuário com operador = ou &lt;&gt; </div>
+<div class="param">email (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span> E-mail do Usuário com operador = ou &lt;&gt; </div>
+<div class="param">content (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span> Comentário com operador = ou &lt;&gt; </div>
+<div class="param">commentdate (optional)</div><div class="param-desc"><span class="param-type"><a href="#DateTime">Date</a></span> Data e horário do comentário com operador =, &lt;&gt;, &gt;=, &lt;= format: date-time</div>
+<div class="param">public (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+        <div class="param-enum-header">Enum:</div>
+        <div class="param-enum">=1</div><div class="param-enum">=0</div>
+<div class="param">postid (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+        <div class="param-enum-header">Enum:</div>
+        <div class="param-enum">=1</div><div class="param-enum">=0</div>
+<div class="param">trash (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+        <div class="param-enum-header">Enum:</div>
+        <div class="param-enum">=1</div><div class="param-enum">=0</div>
+<div class="param">commentid (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+        <div class="param-enum-header">Enum:</div>
+        <div class="param-enum">=1</div><div class="param-enum">=0</div>
+<div class="param">commentcontext (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span> Tipo do comentário com operador =, &lt;&gt;, LIKE </div>
+<div class="param">idConsulta (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span> ID com operador =, &lt;&gt;, &lt;=, &gt;= </div>
+    </div>  <!-- field-items -->
+  </div>
+  <div class="model">
+    <h3><a name="Projeto"><code>Projeto</code> - </a> <a class="up" href="#__Models">Up</a></h3>
+    <div class='model-description'></div>
+    <div class="field-items">
+      <div class="param">id (optional)</div><div class="param-desc"><span class="param-type"><a href="#long">Long</a></span>  format: int64</div>
+<div class="param">nome (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span> Nome do projeto </div>
+<div class="param">ativo (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+        <div class="param-enum-header">Enum:</div>
+        <div class="param-enum">1</div><div class="param-enum">0</div>
+<div class="param">atualizacao (optional)</div><div class="param-desc"><span class="param-type"><a href="#DateTime">Date</a></span> Data da última atualização format: date-time</div>
+<div class="param">wordpress_user_id (optional)</div><div class="param-desc"><span class="param-type"><a href="#long">Long</a></span>  format: int64</div>
+    </div>  <!-- field-items -->
+  </div>
+  <div class="model">
+    <h3><a name="Url"><code>Url</code> - </a> <a class="up" href="#__Models">Up</a></h3>
+    <div class='model-description'></div>
+    <div class="field-items">
+      <div class="param">id (optional)</div><div class="param-desc"><span class="param-type"><a href="#long">Long</a></span>  format: int64</div>
+<div class="param">url (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+<div class="param">extensao (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span> Extensão esperada do arquivo </div>
+<div class="param">idArquivo (optional)</div><div class="param-desc"><span class="param-type"><a href="#long">Long</a></span>  format: int64</div>
+    </div>  <!-- field-items -->
+  </div>
+  </body>
+</html>

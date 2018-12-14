@@ -30,7 +30,7 @@ class Post extends APIMethod{
 					$result = $member->buscar($input, $page);
 
 					if(!$result || $result == NULL){
-						throw new APIException("Nenhum resultado encontrado", 200);
+						throw new APIException("Nenhum resultado encontrado", 204);
 					}
 					$result = encodeObject($result);
 				}else if($action == ""){

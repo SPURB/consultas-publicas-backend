@@ -14,7 +14,7 @@ class Put extends APIMethod{
 		try{
 			if($id <= 0){
 				if(!is_array($input) || count($input) <= 0){
-					throw new APIException("$id nao encontrado", 404);
+					throw new APIException("$id nao encontrado", 400);
 				}
 				$updated = 0;
 				foreach ($input as $item) {

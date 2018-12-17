@@ -85,4 +85,11 @@ class ProjetoConsulta extends GenericDAO{
 		}
 	}
 
+	public function obter($id){
+		$filtroId = array("id" => "= $id");
+		$result = $this->listar($filtroId);
+		reset($result);
+		return current($result);
+	}
+
 }

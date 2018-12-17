@@ -41,7 +41,7 @@ class Put extends APIMethod{
 				if($objOrig === FALSE){
 					throw new APIException("$id nao encontrado", 404);
 				}
-				$result = Put::updateObject($obj, $objOrig, $item);
+				$result = Put::updateObject($obj, $objOrig, $input);
 			}
 
 			if(!$result || $result == 0){

@@ -32,7 +32,7 @@ abstract class APIMethod{
 	}
 
 	protected function getConsulta($table){
-		$tables = array("members", "consultas", "arquivos", "etapas", "projetos", "urls", "pagedmembers");
+		$tables = array("members", "consultas", "arquivos", "etapas", "projetos", "urls", "pagedmembers", "projetoConsulta");
 		$consultaDAO = new Consulta();
 		if(array_search($table, $tables) !== FALSE){
 			return FALSE;

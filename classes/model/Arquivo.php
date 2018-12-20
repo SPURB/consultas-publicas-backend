@@ -68,8 +68,9 @@ class Arquivo extends GenericDAO{
 	
 	public function obter($id){
 		try{
-			$consulta = $this->getById($id);
-			return $consulta;
+			$arquivo = $this->getById($id);
+			$this->getLists($arquivo);
+			return $arquivo;
 		}catch(Exception $ex){
 			$this->log->write($ex->getMessage());
 			return FALSE;

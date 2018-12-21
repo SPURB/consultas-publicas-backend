@@ -49,6 +49,7 @@ class Arquivo extends GenericDAO{
 			$lista = $this->select($filtro, $order);
 			foreach ($lista as $arquivo) {
 				$this->getLists($arquivo);
+				unset($arquivo->posicao);
 			}
 			return $lista;
 		}catch(Exception $ex){

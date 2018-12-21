@@ -96,6 +96,17 @@ class Etapa extends GenericDAO{
 	public function atualizar($campos = NULL, $filtro = NULL){
 		try{
 			if($campos == NULL){
+				/*
+				if(isset($this->arquivos)){
+					$i = 0;
+					foreach($this->arquivos as $arq){
+						$dao = new Arquivo();
+						$arq["posicao"] = ($i+1);
+						$dao->atualizar($arq, array("id" => "=".$arq["id"]));
+					}
+					$this->arquivos = NULL;
+				}
+				*/
 				return $this->selfUpdate($this->id);
 			}
 			return $this->update($campos, $filtro);

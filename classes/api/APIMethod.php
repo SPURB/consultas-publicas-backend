@@ -26,7 +26,7 @@ abstract class APIMethod{
 		);
 
 		if(!array_key_exists($function, $functions)){
-			throw new Exception("Requisicao incorreta.");
+			throw new Exception("$function - Requisicao incorreta.", 400);
 		}
 		return $functions[$function];
 	}

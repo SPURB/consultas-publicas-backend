@@ -36,12 +36,22 @@ class Put extends APIMethod{
 
 			$result = $updated;
 		}else{
+
+/*
+			if(isset($input["arquivos"])){
+				Put::updateArray($input["arquivos"], "arquivos");
+				unset($input["arquivos"]);
+			}
+*/
+			Put::updateArray($input);
 			$obj = APIMethod::getTable($table);
 			$objOrig = $obj->obter($id);
 			if($objOrig === FALSE || !is_object($objOrig)){
-				throw new APIException("$id nao encontrado", 404);
+				throw new APIException("$table $id nao encontrado", 404);
 			}
 			$result = Put::updateObject($obj, $objOrig, $input);
+
+
 		}
 
 		if(!$result || $result == 0){
@@ -67,7 +77,27 @@ class Put extends APIMethod{
 			}
 		}
 		return $obj->atualizar();
+	}
 
+	private static function updateArray($input){
+		foreach ($input as $name => $arrayInput) {
+			if(!is_array($arrayInput)){
+				continue;
+			}
+			$i = 0;
+			foreach($arrayInput as $item){
+				$obj = APIMethod::getTable($name);
+				$id = $item[$obj->getPKColName()];
+				$objOrig = $obj->obter($id);
+				if($objOrig === FALSE || !is_object($objOrig)){
+					throw new APIException("$name $id nao encontrado", 404);
+				}
+				if($name == "arquivos"){
+					$item["posicao"] = ++$i;
+				}
+				Put::updateObject($obj, $objOrig, $item);
+			}
+		}
 	}
 
 }

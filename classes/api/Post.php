@@ -32,7 +32,7 @@ class Post extends APIMethod{
 					if(!$result || $result == NULL){
 						throw new APIException("Nenhum resultado encontrado", 204);
 					}
-					$result = encodeObject($result);
+					$result = GenericDAO::encodeObject($result);
 				}else if($action == ""){
 					//INSERT MEMBER
 					$consulta = getConsulta($table);

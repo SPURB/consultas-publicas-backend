@@ -13,7 +13,8 @@ class Get extends APIMethod{
 		$urlDAO = new Url();
 		$projCDAO = new ProjetoConsulta();
 		$result = NULL;
-		$table = preg_replace('/[^a-z0-9_]+/i','',array_shift($request));
+		$table = preg_replace('/[^a-z0-9_]+/i','',array_shift($request));	
+		$table = APIMethod::removerVersao($table);
 		$id = intval(array_shift($request));
 
 		$consulta = APIMethod::getConsulta($table);
@@ -58,16 +59,8 @@ class Get extends APIMethod{
 		}
 
 		$obj = APIMethod::getTable($function);
-		$filtro = NULL;
-		if($function == "candidato" && $param == "eleicao"){
-			$filtro = array(
-				"idEleicao" => "=$id"
-			);
-			$result = $obj->listar($filtro);
-		}
-		else{
-			$result = ($id > 0) ? $obj->obter($id) : $obj->listar();			
-		}
+
+		$result = ($id > 0) ? $obj->obter($id) : $obj->listar();			
 
 		if(!$result || $result == NULL){
 			throw new APIException("Nada encontrado.", 204);

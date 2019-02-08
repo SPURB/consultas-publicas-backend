@@ -1,6 +1,6 @@
 <?php
 
-require_once APP_PATH.'\classes\base\main\Logger.php';
+require_once APP_PATH.'/classes/base/main/Logger.php';
 
 class APIException extends Exception{
 	private $log;

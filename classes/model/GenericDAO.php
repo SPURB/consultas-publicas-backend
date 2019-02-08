@@ -1,6 +1,6 @@
 <?php
-require_once APP_PATH.'\classes\base\main\Base.php';
-require_once APP_PATH.'\classes\base\exceptions\DAOException.php';
+require_once APP_PATH.'/classes/base/main/Base.php';
+require_once APP_PATH.'/classes/base/exceptions/DAOException.php';
 
 class GenericDAO{
 	/**
@@ -8,7 +8,7 @@ class GenericDAO{
 	 */
 	private $base;
 	
-	private static $properties = "\conf\bd.properties";
+	private static $properties = "/conf/bd.properties";
 	private static $propertiesLinux = "/var/www/properties/bd.properties";
 	
 	protected $tableName;

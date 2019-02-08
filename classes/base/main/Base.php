@@ -1,6 +1,6 @@
 <?php
 require_once 'Logger.php';
-require_once APP_PATH.'\classes\base\exceptions\PDOQueryException.php';
+require_once APP_PATH.'/classes/base/exceptions/PDOQueryException.php';
 
 class Base{
 	

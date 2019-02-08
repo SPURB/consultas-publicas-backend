@@ -6,6 +6,7 @@ class Post extends APIMethod{
 	public static function load($request){
 
 		$table = preg_replace('/[^a-z0-9_]+/i','',array_shift($request));
+		$table = APIMethod::removerVersao($table);
 		$action = preg_replace('/[^a-z0-9_]+/i','',array_shift($request));
 		$input = json_decode(file_get_contents('php://input'),true);
 		
@@ -35,7 +36,7 @@ class Post extends APIMethod{
 					$result = GenericDAO::encodeObject($result);
 				}else if($action == ""){
 					//INSERT MEMBER
-					$consulta = getConsulta($table);
+					$consulta = APIMethod::getConsulta($table);
 					if($consulta !== FALSE){
 						if($consulta->ativo == '0'){
 							throw new APIException("Consulta encerrada. Periodo de participacao terminado.", 403);

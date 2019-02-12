@@ -43,7 +43,7 @@ abstract class APIMethod{
 	}
 
 	protected function getConsulta($table){
-		$function = APIMethod::removerVersao($function);
+		$table = APIMethod::removerVersao($table);
 		
 		$tables = array("members", "consultas", "arquivos", "etapas", "projetos", "urls", "pagedmembers", "projetoConsulta");
 		$consultaDAO = new Consulta();

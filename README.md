@@ -2,7 +2,7 @@
 Backend de consulta públicas de Projetos de Intervenções Urbanas municipais de São Paulo.
 
 ## Documentação
-[github.com/spurb/consultas-publicas-backend](github.com/spurb/consultas-publicas-backend)
+[https://spurb.github.io/consultas-publicas-backend/](https://spurb.github.io/consultas-publicas-backend/)
 
 ## Para montar localmente
 * Criar `conf/bd.properties` na raiz do projeto e incluir os parâmetros:

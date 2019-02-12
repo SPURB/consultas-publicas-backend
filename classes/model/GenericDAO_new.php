@@ -1,6 +1,7 @@
 <?php
-require_once "base/Base.class.php";
-require_once "exceptions/DAOException.class.php";
+
+require_once APP_PATH.'\classes\base\main\Base.php';
+require_once APP_PATH.'\classes\base\exceptions\DAOException.php';
 
 class GenericDAO{
 	/**
@@ -8,17 +9,23 @@ class GenericDAO{
 	 */
 	private $base;
 	
-	private static $properties = "C:/xampp/htdocs/testes/consultas-publicas-backend/classes/base/bd.properties";
+	private static $properties = "C:/xampp/htdocs/bd_eleicao.properties";
+	private static $propertiesLinux = "/var/www/properties/bd_eleicao.properties";
 	
 	protected $tableName;
-	
 	protected $columns;
+	protected $pkSequenceName = NULL;
 	
 	public function __construct() {
 		if(file_exists(self::$properties)){
 			$this->base = new Base(self::$properties);
 		}else{
-			die("Erro na conexao. Arquivo inexistente ".self::$properties);
+			if(file_exists(self::$propertiesLinux)){
+				$this->base = new Base(self::$propertiesLinux);
+			}
+			else{
+				die("Erro na conexao. Arquivo inexistente ".self::$properties. " ou ".self::$propertiesLinux);
+			}
 		}
 	}
 
@@ -28,6 +35,24 @@ class GenericDAO{
 
 	public function __set($campo, $valor) {
 		$this -> $campo = $valor;
+	}
+
+	public function obter($id){
+		$filtroId = array($this->getPKColName() => "= $id");
+		$result = $this->listar($filtroId);
+		reset($result);
+		return current($result);
+	}
+	
+	/*
+	* A primeira coluna da classe filha deve ser referente ao ID / Primary Key da tabela
+	*/
+	private function getPKColName($bd = FALSE){
+		if(!is_array($this->columns) || count($this->columns) < 1){
+			throw new DAOException("Verifique o mapeamento das propriedades da classe.");
+		}
+		reset($this->columns);
+		return ($bd === FALSE) ? current($this->columns) : key($this->columns);
 	}
 	
 	/**
@@ -62,11 +87,19 @@ class GenericDAO{
 			throw new DAOException("O objeto não tem o id da base e não poderá ser removido.");
 		}
 		$values = array();
-		$campoId = $this->columns[0];
+		$campoId = $this->getPKColName();
 		$sql = "DELETE FROM ".$this->tableName." WHERE ".$campoId." = ?";
 		array_push($values, $id);
 		
-		return $this->base->deletar($sql, $values);
+		$result = $this->base->deletar($sql, $values);
+		if($result == 0){
+			$errMsg = "$sql ";
+			foreach($values as $v){
+				$errMsg.=" | $v";
+			}
+			throw new DAOException("$errMsg O comando foi executado mas nenhum registro da base foi modificado para o ID $id.");
+		}
+		return $result;
 	}
 	
 	protected function selfUpdate($id){
@@ -77,9 +110,10 @@ class GenericDAO{
 		$sqlColunas = "";
 		$values = array();
 		$first = true; 
-		$campoId = $this->columns[0];
+		$campoId = $this->getPKColName(TRUE);
+		
 		foreach($this->columns as $campobd => $campoClass){
-			if($campoClass != $campoId){
+			if($campobd != $campoId){
 				if(!$first){
 					$sqlColunas.=",";
 				}
@@ -90,8 +124,16 @@ class GenericDAO{
 		}
 		$sql = "UPDATE ".$this->tableName." SET ".$sqlColunas." WHERE ".$campoId." = ?";
 		array_push($values, $id);
-		
-		return $this->base->atualizar($sql, $values);
+
+		$result = $this->base->atualizar($sql, $values);
+		if($result == 0){
+			$errMsg = "$sql ";
+			foreach($values as $v){
+				$errMsg.=" | $v";
+			}
+			throw new DAOException("$errMsg O comando foi executado mas nenhum registro da base foi modificado para o ID $id.");
+		}
+		return $result;
 	}
 	
 	protected function update($columns, $conditions = NULL){
@@ -110,13 +152,20 @@ class GenericDAO{
 			if(!$first){
 				$sqlColunas.=",";
 			}
-			$sqlColunas.=$column."=?";
-			array_push($values, $val);
-			$first = false;
+			$bdCol = array_search($column, $this->columns, TRUE);
+			if($bdCol !== FALSE){
+				$sqlColunas.=$bdCol."=?";
+				array_push($values, $val);
+				$first = false;
+			}
+		}
+
+		if(strlen($sqlColunas) < 1){
+			throw new DAOException("Pelo menos uma coluna para atualização deve ser especificada.");
 		}
 		
-		$sql = "UPDATE ".$this->tableName." SET ";
-		
+		$sql = "UPDATE ".$this->tableName." SET ".$sqlColunas;
+		$first = TRUE;
 		if($conditions != NULL){
 			if(!is_array($conditions)){
 				throw new DAOException("Condicoes para update devem ser um array.");
@@ -145,21 +194,31 @@ class GenericDAO{
 			}
 		}
 		
-		if(strlen($sqlConditions) > 1){
-			$sql .= " WHERE ".$sqlConditions;
-		}else{
+		if(strlen($sqlConditions) < 1){
 			throw new DAOException("Filtro nao reconhecido. Operadores aceitos =,<>,NOT LIKE,LIKE,IS" );
 		}
-		
-		return $this->base->atualizar($sql, $values);
+		$sql .= " WHERE ".$sqlConditions;
+		$result = $this->base->atualizar($sql, $values);
+		if($result == 0){
+			$errMsg = "$sql ";
+			foreach($values as $v){
+				$errMsg.=" | $v";
+			}
+			throw new DAOException("$errMsg O comando foi executado mas nenhum registro da base foi modificado.");
+		}
+		return $result;
 	}
 	
 	protected function insert(){
 		$sqlColunas = "";
 		$sqlVals = "";
 		$values = array();
-		$first = true; 
+		$first = true;
+		$pk = $this->getPKColName();
 		foreach($this->columns as $campobd => $campoClass){
+			if($campoClass == $pk && $this->$campoClass == NULL){
+				continue;
+			}
 			if(!$first){
 				$sqlColunas.=",";
 				$sqlVals.=",";
@@ -171,11 +230,11 @@ class GenericDAO{
 		}
 		$sql = "INSERT INTO ".$this->tableName."( ".$sqlColunas." ) VALUES ( ".$sqlVals." )";
 		
-		return $this->base->criar($sql, $values);
+		return $this->base->criar($sql, $values, $this->pkSequenceName);
 		
 	}
 	
-	protected function select($conditions = NULL, $orderColumns = NULL, $orderType = NULL, $selectColumns = NULL){
+	protected function listar($conditions = NULL, $orderColumns = NULL, $orderType = NULL, $selectColumns = NULL){
 		$sqlColunas = "";
 		$values = NULL;
 		if($selectColumns == NULL){
@@ -225,13 +284,24 @@ class GenericDAO{
 			
 		}
 		if($orderColumns != NULL){
-			$sql.= " ORDER BY ".$orderColumns;
+			$first = TRUE;
+			$sqlOrder = "";
+			if(!is_array($orderColumns)){
+				throw new DAOException("O parametro com colunas para ordem deve ser um array.");
+			}
+			foreach ($orderColumns as $col) {
+				if(!$first){
+					$sqlOrder.=",";
+				}
+				$sqlOrder .= array_search($col, $this->columns);
+				$first = FALSE;
+			}
+			$sql.= " ORDER BY ".$sqlOrder;
 			if($orderType != NULL){
 				$sql.= " ".$orderType;
 			}
 		}
 		$rows = array();
-		error_log($sql);
 		$result = $this->base->consultar($sql, $values);
 		foreach($result as $row){
 			foreach($row as $obj){
@@ -253,7 +323,7 @@ class GenericDAO{
 		return NULL;
 	}
 	
-	protected function parseBoolean($value){
+	protected final function parseBoolean($value){
 		if($val == 0){
 			return "FALSE";
 		}

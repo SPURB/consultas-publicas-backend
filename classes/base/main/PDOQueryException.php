@@ -1,5 +1,7 @@
 <?php
 
+namespace classes\base\main;
+
 class PDOQueryException extends Exception{
 	
 	public function __construct($errorInfo = NULL){
@@ -10,7 +12,7 @@ class PDOQueryException extends Exception{
 				$code = $errorInfo[1];
 			}
 			if(isset($errorInfo[2])){
-				$msg = $errorInfo[2];
+				$msg .= $errorInfo[2];
 			}
 		}
 		parent::__construct($msg, $code);

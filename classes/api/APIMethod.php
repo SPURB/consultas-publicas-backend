@@ -15,17 +15,17 @@ abstract class APIMethod{
 	public abstract static function load($request);
 
 	protected static $ext_versao = "_v1";
-	
-	protected static function removerVersao($nome){		
+
+	protected static function removerVersao($nome){
 		if(strripos($nome, APIMethod::$ext_versao) !== FALSE){
 			$nome = substr($nome, 0, strlen(APIMethod::$ext_versao) * -1);
 		}
 		return $nome;
 	}
-	
-	protected function getTable($function){		
+
+	protected function getTable($function){
 		$function = APIMethod::removerVersao($function);
-		
+
 		$functions = array(
 			"members" => new Member(),
 			"consultas" => new Consulta(),
@@ -44,7 +44,7 @@ abstract class APIMethod{
 
 	protected function getConsulta($table){
 		$table = APIMethod::removerVersao($table);
-		
+
 		$tables = array("members", "consultas", "arquivos", "etapas", "projetos", "urls", "pagedmembers", "projetoConsulta");
 		$consultaDAO = new Consulta();
 		if(array_search($table, $tables) !== FALSE){
@@ -60,6 +60,19 @@ abstract class APIMethod{
 	protected function allow($token){
 		$key = "SPurbanismo";
 		return (md5($key) == $token);
+	}
+
+	protected function getAllHeaders(){
+		if(!function_exists('getallheaders')){
+			$headers = [];
+			foreach($_SERVER as $name => $value){
+				if (substr($name, 0, 5) == 'HTTP_'){
+					$headers[str_replace(' ', '-', ucwords(strtolower(str_replace('_', ' ', substr($name, 5)))))] = $value;
+				}
+			}
+			return $headers;
+		}
+		return getallheaders();
 	}
 
 }

@@ -9,9 +9,9 @@ class Post extends APIMethod{
 		$table = APIMethod::removerVersao($table);
 		$action = preg_replace('/[^a-z0-9_]+/i','',array_shift($request));
 		$input = json_decode(file_get_contents('php://input'),true);
-		
+
 		try{
-			$headers = getallheaders();
+			$headers = APIMethod::getAllHeaders();
 			$token = $headers['Content-Post'];
 			if(!isset($token) || APIMethod::allow($token) !== TRUE){
 				throw new APIException($_SERVER['REMOTE_ADDR']." Token incorreto", 403);
@@ -19,7 +19,7 @@ class Post extends APIMethod{
 			if($table == "members"){
 				$member = new Member();
 				$result = NULL;
-				$actions = array("search", "pagedsearch");		
+				$actions = array("search", "pagedsearch");
 				if(array_search($action, $actions) !== FALSE){
 					//SEARCH MEMBER
 					if($action == "pagedsearch"){
@@ -66,7 +66,7 @@ class Post extends APIMethod{
 			http_response_code(200);
 		}catch(Exception $ex){
 			http_response_code($ex->getCode());
-			$result=$ex->getMessage();	
+			$result=$ex->getMessage();
 		}
 		return $result;
 

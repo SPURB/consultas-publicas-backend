@@ -25,6 +25,8 @@ class APIFactory{
 			case 'DELETE':
 				$class = "Delete";
 			break;
+			case 'OPTIONS':
+				return NULL;
 		}
 
 		try{
@@ -44,7 +46,7 @@ class APIFactory{
 			http_response_code($ex->getCode());
 			$result=$ex->getMessage();
 		}
-		
+
 		return $result;
 	}
 

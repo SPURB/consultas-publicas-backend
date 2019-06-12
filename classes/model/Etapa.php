@@ -2,7 +2,7 @@
 require_once "GenericDAO.php";
 require_once "Arquivo.php";
 
-class Etapa extends GenericDAO{
+class Etapa extends GenericDAO {
 	
 	private $id;
 	private $nome;
@@ -19,8 +19,7 @@ class Etapa extends GenericDAO{
 		*/
 		$this->columns = array(
 			"id" => "id",
-			"nome" => "nome",
-			"fk_projeto" => "idProjeto"
+			"nome" => "nome"
 		);
 	}
 	

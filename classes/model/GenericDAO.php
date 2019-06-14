@@ -7,26 +7,17 @@ class GenericDAO{
 	 * Efetua transação com bd
 	 */
 	private $base;
-	
 	private static $properties = "/conf/bd.properties";
-	private static $propertiesLinux = "/var/www/properties/bd.properties";
-	
 	protected $tableName;
-	
 	protected $columns;
-
 	protected $log;
 	
 	public function __construct() {
 		if(file_exists(APP_PATH.self::$properties)){
 			$this->base = new Base(APP_PATH.self::$properties);
-		}else{
-			if(file_exists(self::$propertiesLinux)){
-				$this->base = new Base(self::$propertiesLinux);
-			}
-			else{
-				die("Erro na conexao. Arquivo inexistente ".self::$properties. " ou ".self::$propertiesLinux);
-			}
+		}
+		else{
+			die("Erro na conexao. Arquivo inexistente ".self::$properties);
 		}
 		$this->log = new Logger();
 	}

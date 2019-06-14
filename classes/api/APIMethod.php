@@ -4,36 +4,33 @@ require_once 'exceptions/APIException.php';
 
 require_once APP_PATH.'/classes/model/Member.php';
 require_once APP_PATH.'/classes/model/Consulta.php';
-require_once APP_PATH.'/classes/model/Arquivo.php';
 require_once APP_PATH.'/classes/model/Etapa.php';
+require_once APP_PATH.'/classes/model/SubEtapa.php';
+require_once APP_PATH.'/classes/model/Arquivo.php';
 require_once APP_PATH.'/classes/model/Projeto.php';
-require_once APP_PATH.'/classes/model/Url.php';
-require_once APP_PATH.'/classes/model/ProjetoConsulta.php';
-require_once APP_PATH.'/classes/model/Consulta.php';
 
-abstract class APIMethod{
+require_once APP_PATH.'/classes/model/Extensao.php';
+
+// require_once APP_PATH.'/classes/model/Url.php';
+// require_once APP_PATH.'/classes/model/ProjetoConsulta.php';
+// require_once APP_PATH.'/classes/model/Consulta.php';
+
+abstract class APIMethod {
 	public abstract static function load($request);
-
-	protected static $ext_versao = "_v1";
-	
-	protected static function removerVersao($nome){		
-		if(strripos($nome, APIMethod::$ext_versao) !== FALSE){
-			$nome = substr($nome, 0, strlen(APIMethod::$ext_versao) * -1);
-		}
-		return $nome;
-	}
-	
 	protected function getTable($function){		
-		$function = APIMethod::removerVersao($function);
 		
 		$functions = array(
 			"members" => new Member(),
 			"consultas" => new Consulta(),
-			"arquivos" => new Arquivo(),
 			"etapas" => new Etapa(),
+			"subetapas" => new SubEtapa(),
+			"arquivos" => new Arquivo(),
 			"projetos" => new Projeto(),
-			"urls" => new Url(),
-			"projetoConsulta" => new ProjetoConsulta()
+
+			"extensoes" => new Extensao(),
+
+			// "urls" => new Url(),
+			// "projetoConsulta" => new ProjetoConsulta()
 		);
 
 		if(!array_key_exists($function, $functions)){
@@ -43,9 +40,18 @@ abstract class APIMethod{
 	}
 
 	protected function getConsulta($table){
-		$table = APIMethod::removerVersao($table);
-		
-		$tables = array("members", "consultas", "arquivos", "etapas", "projetos", "urls", "pagedmembers", "projetoConsulta");
+		$tables = array(
+			"members",
+			"consultas",
+			"etapas",
+			"subetapas",
+			"arquivos",
+			"projetos",
+			"extensoes"
+			// "urls",
+			// "pagedmembers", 
+			// "projetoConsulta"
+		);
 		$consultaDAO = new Consulta();
 		if(array_search($table, $tables) !== FALSE){
 			return FALSE;
@@ -61,7 +67,6 @@ abstract class APIMethod{
 		$key = "SPurbanismo";
 		return (md5($key) == $token);
 	}
-
 }
 
 ?>

@@ -12,7 +12,7 @@ class Projeto extends GenericDAO{
 	private $atualizacao;
 	private $wordpress_user_id;
 	private $consultas;
-	private $etapas;
+	// private $etapas;
 	
 	public function __construct(){	
 		parent::__construct();
@@ -27,11 +27,13 @@ class Projeto extends GenericDAO{
 			"nome" => "nome",
 			"ativo" => "ativo",
 			"atualizacao" => "atualizacao",
-			"autor_wp_admin_id" => "wordpress_user_id"
+			"autor_wp_admin_id" => "wordpress_user_id",
+			"id_etapa" => "id_etapa",
+			"piu" => "piu"
 		);
 
 		$this->consultas = array();
-		$this->etapas = array();
+		// $this->etapas = array();
 	}
 	
 	public function __get($campo) {
@@ -116,8 +118,8 @@ class Projeto extends GenericDAO{
 			$DAO = new Etapa();
 			$idProjeto = $projeto->id;
 			$filtro = array("idProjeto" => "=".$idProjeto);
-			$etapas = $DAO->listar($filtro);
-			$projeto->etapas = ($etapas != NULL) ? $this->encodeObject($etapas) : array();
+			// $etapas = $DAO->listar($filtro);
+			// $projeto->etapas = ($etapas != NULL) ? $this->encodeObject($etapas) : array();
 
 			$DAO = new ProjetoConsulta();
 			$filtro = array("idProjeto" => "=".$idProjeto);

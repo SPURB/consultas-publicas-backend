@@ -25,7 +25,7 @@ if($info == NULL || $info == ""){
 	 /*
 	 * Remove versão de url de 0 até 255. Exemplos:
 	 * /v1/consultas => /consultas
-	 * v255/members => /members
+	 * /v255/members => /members
 	*/
 	function removeVersion($pathItem) {
 		preg_match('/[v][1-255]/', $pathItem, $matches); // v1, v2, ..., v255

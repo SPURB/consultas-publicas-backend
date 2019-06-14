@@ -7,7 +7,6 @@ class Put extends APIMethod{
 	public static function load($request){
 
 		$table = preg_replace('/[^a-z0-9_]+/i','',array_shift($request));
-		$table = APIMethod::removerVersao($table);
 		$id = intval(array_shift($request));
 		$input = json_decode(file_get_contents('php://input'),true);
 

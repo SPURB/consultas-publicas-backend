@@ -1,18 +1,14 @@
 <?php
 require_once "GenericDAO.php";
-// require_once "Arquivo.php";
 
-class Etapa extends GenericDAO {
-	
+class SubEtapa extends GenericDAO {
 	private $id;
 	private $nome;
-	private $idProjeto;
-	// private $arquivos;
 	
 	public function __construct(){	
 		parent::__construct();
 	
-		$this->tableName = "etapas";
+		$this->tableName = "subetapas";
 		
 		/*
 			key = coluna do banco => value = property da classe
@@ -37,8 +33,8 @@ class Etapa extends GenericDAO {
 		}
 		try{
 			$lista = $this->select($filtro);
-			foreach ($lista as $etapa) {
-				$this->getLists($etapa);
+			foreach ($lista as $subetapa) {
+				$this->getLists($subetapa);
 			}
 			return $lista;
 		}catch(Exception $ex){
@@ -47,15 +43,6 @@ class Etapa extends GenericDAO {
 		}
 	}
 
-	public function listarPorProjeto($idProjeto, $filtro=NULL){
-		if($filtro != NULL && is_array($filtro)){
-			$filtro["idProjeto"] = "=".$idProjeto;
-		}else{
-			$filtro = array("idProjeto" => "= $idProjeto");
-		}
-		return $this->listar($filtro);
-	}
-	
 	public function obter($id){
 		try{
 			$consulta = $this->getById($id);
@@ -95,17 +82,6 @@ class Etapa extends GenericDAO {
 	public function atualizar($campos = NULL, $filtro = NULL){
 		try{
 			if($campos == NULL){
-				/*
-				if(isset($this->arquivos)){
-					$i = 0;
-					foreach($this->arquivos as $arq){
-						$dao = new Arquivo();
-						$arq["posicao"] = ($i+1);
-						$dao->atualizar($arq, array("id" => "=".$arq["id"]));
-					}
-					$this->arquivos = NULL;
-				}
-				*/
 				return $this->selfUpdate($this->id);
 			}
 			return $this->update($campos, $filtro);
@@ -115,18 +91,9 @@ class Etapa extends GenericDAO {
 		}
 	}
 
-	private function getLists($etapa){
-		if($etapa != NULL){
-			// $DAO = new Arquivo();
-			$filtro = array("idEtapa" => "=".$etapa->id);
-			// $arquivos = $DAO->listar($filtro);
-			// if($arquivos != NULL && is_array($arquivos)){
-			// 	$etapa->arquivos = array();
-			// 	foreach ($arquivos as $arquivo) {
-			// 		array_push($etapa->arquivos, $this->encodeObject($arquivo));
-			// 	}
-			// }
+	private function getLists($subetapa){
+		if($subetapa != NULL){
+			$filtro = array("idSubEtapa" => "=".$subetapa->id);
 		}
 	}
-	
 }

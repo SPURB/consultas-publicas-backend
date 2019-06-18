@@ -215,6 +215,9 @@ class GenericDAO{
 	}
 	
 	protected final function select($conditions = NULL, $orderColumns = NULL, $orderType = NULL, $selectColumns = NULL){
+
+		// print_r($conditions);
+
 		$sqlColunas = "";
 		$values = NULL;
 		if($selectColumns == NULL){
@@ -328,8 +331,11 @@ class GenericDAO{
 			}
 		}
 	return $obj;
-}
-	
+	}
+
+	public function filterTable($table, $params) { 
+		return $params;
+	}
 	
 }
 

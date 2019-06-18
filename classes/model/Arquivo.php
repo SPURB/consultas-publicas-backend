@@ -9,7 +9,7 @@ class Arquivo extends GenericDAO{
 	private $idEtapa;
 	private $posicao;
 	
-	public function __construct(){	
+	public function __construct(){
 		parent::__construct();
 	
 		$this->tableName = "arquivos";

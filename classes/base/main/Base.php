@@ -86,7 +86,6 @@ class Base{
 			$log = new Logger();
 			$log->write("Banco de dados indisponível: " . $ex->getMessage());
 		}
-			
 		return ($this->conexao);
 	}
 		

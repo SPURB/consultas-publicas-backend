@@ -13,7 +13,8 @@ require_once APP_PATH.'/classes/model/Extensao.php';
 
 abstract class APIMethod {
 	public abstract static function load($request);
-	protected function getTable($function){		
+
+	protected function getTable($function){
 		
 		$functions = array(
 			"members" => new Member(),

@@ -9,29 +9,24 @@ class APIFactory{
 
 	public function __construct(){}
 
-	public static function executeRequest($method, $requestData, $jsonEncode = TRUE){
+	public static function executeRequest($method, $requestData, $jsonEncode = TRUE, $filtros = FALSE){
 		$class = NULL;
 		$result = NULL;
+
 		switch ($method) {
-			case 'GET':
-				$class = "Get";
-			break;
-			case 'POST':
-				$class = "Post";
-			break;
-			case 'PUT':
-				$class = "Put";
-			break;
-			case 'DELETE':
-				$class = "Delete";
-			break;
+			case 'GET': $class = "Get"; break;
+			case 'POST': $class = "Post"; break;
+			case 'PUT': $class = "Put"; break;
+			case 'DELETE': $class = "Delete"; break;
 		}
 
 		try{
 			if($class == NULL){
 				throw new APIException("$method Invalid HTTP method", 405);
 			}
-			$result = $class::load($requestData);
+
+			$result = $filtros ? $class::load($requestData, $filtros) : $class::load($requestData);
+
 			if($jsonEncode === TRUE){
 				$resultEnc = json_encode($result);
 				if(json_last_error() != JSON_ERROR_NONE){

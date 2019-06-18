@@ -1,14 +1,14 @@
 <?php
 require_once "GenericDAO.php";
-// require_once "Arquivo.php";
 
 class Etapa extends GenericDAO {
 	
 	private $id;
 	private $nome;
 	private $idProjeto;
-	// private $arquivos;
-	
+	private $filtro;
+	private $filtros;
+
 	public function __construct(){	
 		parent::__construct();
 	
@@ -32,11 +32,13 @@ class Etapa extends GenericDAO {
 	}
 	
 	public function listar($filtro = NULL){
-		if($filtro == NULL){
+		if($filtro === NULL){
 			$filtro = array();
 		}
+
 		try{
 			$lista = $this->select($filtro);
+
 			foreach ($lista as $etapa) {
 				$this->getLists($etapa);
 			}
@@ -47,14 +49,14 @@ class Etapa extends GenericDAO {
 		}
 	}
 
-	public function listarPorProjeto($idProjeto, $filtro=NULL){
-		if($filtro != NULL && is_array($filtro)){
-			$filtro["idProjeto"] = "=".$idProjeto;
-		}else{
-			$filtro = array("idProjeto" => "= $idProjeto");
-		}
-		return $this->listar($filtro);
-	}
+	// public function listarPorProjeto($idProjeto, $filtro=NULL){
+	// 	if($filtro != NULL && is_array($filtro)){
+	// 		$filtro["idProjeto"] = "=".$idProjeto;
+	// 	}else{
+	// 		$filtro = array("idProjeto" => "= $idProjeto");
+	// 	}
+	// 	return $this->listar($filtro);
+	// }
 	
 	public function obter($id){
 		try{

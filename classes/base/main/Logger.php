@@ -1,8 +1,8 @@
 <?php
 
-class Logger{
+class Logger {
 	
-    /*Método construtor do banco de dados*/
+	/*Método construtor do banco de dados*/
 	public function __construct($logPath = NULL){
 		if($logPath != NULL){
 			self::$LOGPATH = $logPath;
@@ -11,9 +11,9 @@ class Logger{
 	
 	private static $LOGPATHPROD = '/var/www/minuta.gestaourbana.prefeitura.sp.gov.br/public/apiconsultas/log/apiconsultas.log';
 	private static $LOGPATHLOCAL = 'C:\\xampp\\htdocs\\apiconsultas.log';
-     
-    /*Evita que a classe seja clonada*/
-    private function __clone(){}
+
+	/*Evita que a classe seja clonada*/
+	private function __clone(){}
 	
 	public function write($message){
 		$logPath = file_exists(self::$LOGPATHPROD) ? self::$LOGPATHPROD : self::$LOGPATHLOCAL;

@@ -1,11 +1,11 @@
 <?php
 require_once "GenericDAO.php";
-require_once "Url.php";
 
 class Arquivo extends GenericDAO{
 	
 	private $nome;
 	private $id;
+	private $url;
 	private $idEtapa;
 	private $posicao;
 	
@@ -117,15 +117,7 @@ class Arquivo extends GenericDAO{
 
 	public function getLists($arquivo){
 		if($arquivo != NULL){
-			$DAO = new Url();
-			$filtro = array("idArquivo" => "=".$arquivo->id);
-			// $urls = $DAO->listar($filtro);
-			// if($urls != NULL && is_array($urls)){
-			// 	$arquivo->urls = array();
-			// 	foreach ($urls as $url) {
-			// 		array_push($arquivo->urls, $this->encodeObject($url));
-			// 	}
-			// }
+			$filtro = array("idArquivo" => "=" . $arquivo->id);
 		}
 	}
 	

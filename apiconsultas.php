@@ -12,7 +12,6 @@ require_once APP_PATH.'/classes/api/APIFactory.php';
 
 $method = $_SERVER['REQUEST_METHOD'];
 
-
 $info = (isset($_SERVER['PATH_INFO']) && $_SERVER['PATH_INFO'] != "") ? $_SERVER['PATH_INFO'] : $_SERVER['REQUEST_URI'];
 
 if($info == NULL || $info == ""){
@@ -25,7 +24,7 @@ if($info == NULL || $info == ""){
 	 /*
 	 * Remove versão de url de 0 até 255. Exemplos:
 	 * /v1/consultas => /consultas
-	 * /v255/members => /members
+	//  * /v255/members => /members
 	*/
 	function removeVersion($pathItem) {
 		preg_match('/[v][1-255]/', $pathItem, $matches); // v1, v2, ..., v255
@@ -34,6 +33,7 @@ if($info == NULL || $info == ""){
 	}
 
 	$request = array_filter($requestPaths, 'removeVersion');
+	// print_r(request);
 	$result = NULL;
 	$result = APIFactory::executeRequest($method, $request, TRUE);
 	echo $result;

@@ -8,12 +8,8 @@ require_once APP_PATH.'/classes/model/Etapa.php';
 require_once APP_PATH.'/classes/model/SubEtapa.php';
 require_once APP_PATH.'/classes/model/Arquivo.php';
 require_once APP_PATH.'/classes/model/Projeto.php';
-
 require_once APP_PATH.'/classes/model/Extensao.php';
-
-// require_once APP_PATH.'/classes/model/Url.php';
 // require_once APP_PATH.'/classes/model/ProjetoConsulta.php';
-// require_once APP_PATH.'/classes/model/Consulta.php';
 
 abstract class APIMethod {
 	public abstract static function load($request);
@@ -26,10 +22,8 @@ abstract class APIMethod {
 			"subetapas" => new SubEtapa(),
 			"arquivos" => new Arquivo(),
 			"projetos" => new Projeto(),
-
 			"extensoes" => new Extensao(),
 
-			// "urls" => new Url(),
 			// "projetoConsulta" => new ProjetoConsulta()
 		);
 
@@ -48,7 +42,6 @@ abstract class APIMethod {
 			"arquivos",
 			"projetos",
 			"extensoes"
-			// "urls",
 			// "pagedmembers", 
 			// "projetoConsulta"
 		);

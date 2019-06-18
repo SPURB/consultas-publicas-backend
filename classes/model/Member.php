@@ -1,7 +1,7 @@
 <?php
 require_once "GenericDAO.php";
 
-class Member extends GenericDAO{
+class Member extends GenericDAO {
 	
 	private $memid;
 	private $name;
@@ -14,7 +14,10 @@ class Member extends GenericDAO{
 	private $commentid;
 	private $commentcontext;
 	private $idConsulta;
-	
+	private $proposta;
+	private $justificativa;
+	private $opiniao;
+
 	public function __construct(){	
 		parent::__construct();
 	
@@ -35,7 +38,10 @@ class Member extends GenericDAO{
 			"trash" => "trash",
 			"commentid" => "commentid",
 			"commentcontext" => "commentcontext",
-			"id_consulta" => "idConsulta"
+			"id_consulta" => "idConsulta",
+			"proposta" => "idProposta",
+			"justificativa" => "justificativa",
+			"opiniao" => "idOpiniao"
 		);
 	}
 	

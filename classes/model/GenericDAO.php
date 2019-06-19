@@ -12,11 +12,14 @@ class GenericDAO{
 	protected $columns;
 	protected $log;
 	
-	public function __construct() {
+	public function __construct($table = FALSE) {
 		if(file_exists(APP_PATH.self::$properties)){
 			$this->base = new Base(APP_PATH.self::$properties);
 		}
-		else{
+
+		else if ($table) { $this -> $tableName = $table; }
+
+		else {
 			die("Erro na conexao. Arquivo inexistente ".self::$properties);
 		}
 		$this->log = new Logger();
@@ -30,7 +33,12 @@ class GenericDAO{
 		$this -> $campo = $valor;
 	}
 
-	public function listar($conditions = NULL, $orderColumns = NULL, $orderType = NULL, $selectColumns = NULL){
+	public function listar(
+		$conditions = NULL, 
+		$orderColumns = NULL, 
+		$orderType = NULL,
+		$selectColumns = NULL){
+
 		return $this->select($conditions, $orderColumns, $orderType, $selectColumns);
 	}
 	
@@ -211,12 +219,65 @@ class GenericDAO{
 		$sql = "INSERT INTO ".$this->tableName."( ".$sqlColunas." ) VALUES ( ".$sqlVals." )";
 		
 		return $this->base->criar($sql, $values);
-		
 	}
-	
-	protected final function select($conditions = NULL, $orderColumns = NULL, $orderType = NULL, $selectColumns = NULL){
 
-		// print_r($conditions);
+
+	/**
+	 * Converte array unidimensional em um string para concatenar em queries.
+	 * ['id', 'nome'] => 'id, nome' ou 'id AND nome'
+	 * @param Array arr
+	 * @param Boolean keys Se falso utiliza os valores da array
+	 * @param String caluse Separador de argumentos (',', AND' etc)
+	 * @return String
+	 */
+	static function arrayToSelectorString($arr, $keys = TRUE, $clause = ',') {
+		if(!is_array($arr)){
+			throw new DAOException("O parametro com arr deve ser um array.");
+		}
+
+		$selectors = '';
+
+		$last_key = end(array_keys($arr));
+
+		foreach ($arr as $key => $value) {
+
+			if ($key == $last_key && $keys) { $selectors.=$key.' '; } 
+			else if ($keys){ $selectors.=$key.$clause.' '; }
+
+			else if ($key == $last_key && !$keys) { $selectors.=$value.' '; }
+			else if (!$keys){ $selectors.=$value.' '.$clause.' '; }
+
+		}
+		return $selectors;
+	}
+
+	/**
+	 * Método invocado por Filtro. Filtra os resultados de acordo com parâmetros colocados na url
+	 * Exemplo da view: /members?id_consulta=45&public=1
+	 * @param Array $conditions é um array de Strings com os parâmetros dos filtros. 
+	 * Exemplo: array("id_consulta=45", "public=1")
+	 */
+	protected final function filtrar($conditions) {
+		if(!is_array($conditions)){
+			throw new DAOException("O parametro com condicoes de filtragem deve ser um array.");
+		}
+
+		$selectors = $this->arrayToSelectorString($this->columns);
+		$limits = $this->arrayToSelectorString($conditions, FALSE, 'AND');
+
+		$sql = "SELECT " .$selectors. " FROM ".$this->tableName." WHERE ".$limits;
+
+		$result = $this->base->consultar($sql);
+		$resultEncoded = $this->encodeArray($result);
+		
+		return $resultEncoded;
+	}
+
+	protected final function select(
+		$conditions = NULL,
+		$orderColumns = NULL,
+		$orderType = NULL, 
+		$selectColumns = NULL){
 
 		$sqlColunas = "";
 		$values = NULL;
@@ -241,10 +302,13 @@ class GenericDAO{
 			$sqlConditions = " ";
 			$values = array();
 			$validOper = array("LIKE",">=","<=","<>",">","<","=");
+
 			foreach($conditions as $property => $val){
 				$column = array_search($property, $this->columns);
+
 				foreach($validOper as $oper){
-					$operPos = stripos($val,$oper);					
+					$operPos = stripos($val,$oper);
+
 					if($operPos !== FALSE){
 						$param = trim(substr($val, $operPos+strlen($oper), strlen($val)));
 						if($first === FALSE){
@@ -284,6 +348,7 @@ class GenericDAO{
 				$sql.= " ".$orderType;
 			}
 		}
+
 		$rows = array();
 		$result = $this->base->consultar($sql, $values);
 		foreach($result as $row){
@@ -318,6 +383,7 @@ class GenericDAO{
 		return "TRUE";
 	}
 
+
 	public function encodeObject($obj){
 		if(is_array($obj)){
 			foreach($obj as $item){
@@ -330,12 +396,31 @@ class GenericDAO{
 				}
 			}
 		}
-	return $obj;
+		return $obj;
 	}
 
-	public function filterTable($table, $params) { 
-		return $params;
+	/**
+	 * Encode de arrays para utf8 recursivamente
+	 * @param $dat
+	 * @return array|string
+	 */
+	public static function encodeArray($dat)
+	{
+		if (is_string($dat)) {
+			return utf8_encode($dat);
+		} elseif (is_array($dat)) {
+			$ret = array();
+			foreach ($dat as $i => $d) $ret[ $i ] = self::encodeArray($d);
+
+			return $ret;
+		} elseif (is_object($dat)) {
+			foreach ($dat as $i => $d) $dat->$i = self::encodeArray($d);
+
+			return $dat;
+		} else {
+			return $dat;
+		}
 	}
-	
+
 }
 

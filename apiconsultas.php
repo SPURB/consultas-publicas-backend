@@ -35,7 +35,6 @@ else {
 	 * Checa parâmetros $_GET para filtrar resultados:
 	 * /consultas?ativo=1 => array("ativo" => 1)
 	 * /members?id_consulta=32&public=1 => array("id_consulta" => 32, "public" => 1)
-	 * @param
 	 */
 	function checkFilters($reqMethod, $filtros) {
 		if ($reqMethod != "GET" || count($filtros) <= 0) { return FALSE; }

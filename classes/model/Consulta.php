@@ -25,7 +25,7 @@ class Consulta extends GenericDAO{
 			key = coluna do banco => value = property da classe
 		*/
 		$this->columns = array(
-			"id_consulta" => "id_consulta",
+			"id_consulta" => "idConsulta",
 			"nome" => "nome",
 			"data_cadastro" => "dataCadastro",
 			"ativo" => "ativo",

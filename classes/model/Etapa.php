@@ -30,7 +30,7 @@ class Etapa extends GenericDAO {
 	public function __set($campo, $valor) {
 		$this -> $campo = $valor;
 	}
-	
+
 	public function listar($filtro = NULL){
 		if($filtro === NULL){
 			$filtro = array();
@@ -43,21 +43,12 @@ class Etapa extends GenericDAO {
 				$this->getLists($etapa);
 			}
 			return $lista;
-		}catch(Exception $ex){
+		} catch (Exception $ex){
 			$this->log->write($ex->getMessage());
 			return FALSE;
 		}
 	}
 
-	// public function listarPorProjeto($idProjeto, $filtro=NULL){
-	// 	if($filtro != NULL && is_array($filtro)){
-	// 		$filtro["idProjeto"] = "=".$idProjeto;
-	// 	}else{
-	// 		$filtro = array("idProjeto" => "= $idProjeto");
-	// 	}
-	// 	return $this->listar($filtro);
-	// }
-	
 	public function obter($id){
 		try{
 			$consulta = $this->getById($id);
@@ -71,6 +62,7 @@ class Etapa extends GenericDAO {
 	public function obterPeloNome($nome){
 		$filtro = array("nome" => "= $nome");
 		$result = $this->listar($filtro);
+
 		if($result === FALSE || count($result) != 1){
 			return FALSE;
 		}

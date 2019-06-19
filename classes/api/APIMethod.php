@@ -9,6 +9,7 @@ require_once APP_PATH.'/classes/model/SubEtapa.php';
 require_once APP_PATH.'/classes/model/Arquivo.php';
 require_once APP_PATH.'/classes/model/Projeto.php';
 require_once APP_PATH.'/classes/model/Extensao.php';
+require_once APP_PATH.'/classes/model/Filtro.php';
 // require_once APP_PATH.'/classes/model/ProjetoConsulta.php';
 
 abstract class APIMethod {
@@ -23,8 +24,7 @@ abstract class APIMethod {
 			"subetapas" => new SubEtapa(),
 			"arquivos" => new Arquivo(),
 			"projetos" => new Projeto(),
-			"extensoes" => new Extensao(),
-
+			"extensoes" => new Extensao()
 			// "projetoConsulta" => new ProjetoConsulta()
 		);
 

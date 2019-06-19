@@ -27,8 +27,8 @@ class Projeto extends GenericDAO{
 			"nome" => "nome",
 			"ativo" => "ativo",
 			"atualizacao" => "atualizacao",
-			"autor_wp_admin_id" => "wordpress_user_id",
-			"id_etapa" => "id_etapa",
+			"autor_wp_admin_id" => "wordpressUserId",
+			"id_etapa" => "idEtapa",
 			"piu" => "piu"
 		);
 

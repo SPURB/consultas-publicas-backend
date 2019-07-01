@@ -14,6 +14,12 @@ class Filtro extends GenericDAO {
 					"nome" => "nome"
 				); break;
 
+			case 'subetapas':
+				$this->columns = array(
+					"id" => "id",
+					"nome" => "nome"
+				); break;
+
 			case 'extensao':
 				$this->columns = array(
 					"id" => "id",

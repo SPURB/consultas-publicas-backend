@@ -4,7 +4,7 @@ require_once "Member.php";
 
 class Consulta extends GenericDAO{
 	
-	private $id_consulta;
+	private $idConsulta;
 	private $nome;
 	private $dataCadastro;
 	private $ativo;
@@ -60,7 +60,7 @@ class Consulta extends GenericDAO{
 		try{
 			$lista = $this->select($filtro);
 			foreach ($lista as $consulta) {
-				$consulta->nContribuicoes = $this->getNContribuicoes($consulta->id_consulta);
+				$consulta->nContribuicoes = $this->getNContribuicoes($consulta->idConsulta);
 			}
 			return $lista;
 		}catch(Exception $ex){
@@ -72,7 +72,7 @@ class Consulta extends GenericDAO{
 	public function obter($id){
 		try{
 			$consulta = $this->getById($id);
-			$consulta->nContribuicoes = $this->getNContribuicoes($consulta->id_consulta);
+			$consulta->nContribuicoes = $this->getNContribuicoes($consulta->idConsulta);
 			return $consulta;
 		}catch(Exception $ex){
 			$this->log->write($ex->getMessage());
@@ -112,7 +112,7 @@ class Consulta extends GenericDAO{
 	public function atualizar($campos = NULL, $filtro = NULL){
 		try{
 			if($campos == NULL){
-				return $this->selfUpdate($this->id_consulta);
+				return $this->selfUpdate($this->idConsulta);
 			}
 			return $this->update($campos, $filtro);
 		}catch(Exception $ex){

@@ -1,6 +1,7 @@
 *.properties
 testes-frontend/
 teste.php
-conf/
+properties/
 *.dontmess
 *.eraseme
+logs/

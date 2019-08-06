@@ -39,9 +39,9 @@ class Member extends GenericDAO {
 			"commentid" => "commentid",
 			"commentcontext" => "commentcontext",
 			"id_consulta" => "idConsulta",
-			"proposta" => "idProposta",
+			"proposta" => "proposta",
 			"justificativa" => "justificativa",
-			"opiniao" => "idOpiniao"
+			"opiniao" => "opiniao"
 		);
 	}
 	
@@ -52,7 +52,45 @@ class Member extends GenericDAO {
 	public function __set($campo, $valor) {
 		$this -> $campo = $valor;
 	}
-
+    
+    function getTableName(){
+        return "members";
+    }
+    
+    function getColumns(){
+		/*
+			key = coluna do banco => value = property da classe
+		*/
+        return array(
+			"memid" => "memid",
+			"name" => "name",
+			"email" => "email",
+			"content" => "content",
+			"commentdate" => "commentdate",
+			"public" => "public",
+			"postid" => "postid",
+			"trash" => "trash",
+			"commentid" => "commentid",
+			"commentcontext" => "commentcontext",
+			"id_consulta" => "idConsulta",
+			"proposta" => "idProposta",
+			"justificativa" => "justificativa",
+			"opiniao" => "idOpiniao"
+		);
+    }
+    
+    function getOneMany(){
+        return array();
+    }
+    
+    function getManyOne(){
+        return array();
+    }
+    
+    function getManyOneId(){
+        return "";
+    }
+/*
 	public function buscar($input, $page=NULL){
 		$filtro = array();
 		foreach($input as $key => $val){
@@ -67,53 +105,31 @@ class Member extends GenericDAO {
 
 		return ($page != NULL) ? $this->listarAtivos($page, $filtro) : $this->listar($filtro);
 	}
-	
-	public function listar($filtro = NULL){
-		try{
-			return $this->select($filtro);
-		}catch(Exception $ex){
-			$this->log->write($ex->getMessage());
-			return FALSE;
-		}
-	}
+	*/
 
-	public function listarAtivos($pagina = NULL, $filtro = NULL){
+	public function getList($filtro = NULL, $limite = 0, $pagina = 1){
 		if($filtro == NULL){
 			$filtro = array();
 		}
 		$filtro['trash'] = "=0";
-		$result = $this->select($filtro);
-		if($pagina != NULL){
-			$limite = 10;
-			$primeiro = ($pagina * $limite) - $limite;
-			$result = array_slice($result, $primeiro, $limite);
-		}
-		return $result;
+		return parent::getList($filtro, $limite, $pagina);
 	}
 	
 	public function listarPorConsulta($idConsulta, $filtro = NULL){
-		
 		if($filtro != NULL && is_array($filtro)){
 			$filtro["idConsulta"] = "=".$idConsulta;
 		}else{
 			$filtro = array("idConsulta" => "= $idConsulta");
 		}
-		return $this->listar($filtro);
-	}
-	
-	public function obter($id){
-		$filtroId = array("memid" => "= $id");
-		$result = $this->listar($filtroId);
-		reset($result);
-		return current($result);
+		return $this->getList($filtro);
 	}
 	
 	public function obterPorConsulta($idConsulta, $idMember){
 		$filtro = array("memid" => "= $idMember");
 		return $this->listarPorConsulta($idConsulta, $filtro);
 	}
-	
-	public function cadastrar($input = NULL){
+	/*
+	protected function beforeInsert($input){
 		try{			
 			if($input != NULL){
 				foreach($input as $key => $val){
@@ -129,7 +145,6 @@ class Member extends GenericDAO {
 			}
 			$this->commentdate = date("Y-m-d H:i:s");
 			$this->content = trim($this->content);
-			return $this->insert();
 		}catch(Exception $ex){
 			$this->log->write($ex->getMessage());
 			return FALSE;
@@ -153,14 +168,41 @@ class Member extends GenericDAO {
 		$filtros = array("memid" => "=".$id);
 		return $this->atualizar($colunas, $filtros);
 	}
+    */
 	
-	public function isComentarioRepetido($comentario, $idConsulta){
+	private function isComentarioRepetido($comentario, $idConsulta){
 		$comentario = trim($comentario);
 		$filtro = array(
 			"content" => "= $comentario",
 		);
 		$result = $this->listarPorConsulta($idConsulta, $filtro);		
 		return (count($result) > 0);
+	}
+    
+    protected function beforeInsert($input){
+        parent::beforeInsert($input);
+        $consulta = $this->getConsulta($this->idConsulta);
+        if($consulta !== FALSE){
+            if($consulta->ativo == '0'){
+                throw new Exception("Consulta encerrada. Periodo de participacao terminado.", 403);
+            }
+            $this->idConsulta = $consulta->idConsulta;
+        }
+        if($this->isComentarioRepetido($this->content, $this->idConsulta)){
+            throw new Exception("Texto repetido nao autorizado.", 403);
+        }
+        $this->commentdate = date("Y-m-d H:i:s");
+        $this->content = trim($this->content);
+    }
+    
+    private function getConsulta(){
+        require_once APP_PATH.'/classes/model/Consulta.php';
+		$consultaDAO = new Consulta();
+		$consulta = $consultaDAO->obter($this->idConsulta);
+		if($consulta === FALSE){
+			throw new Exception("Erro ao obter a consulta em Member.", 404);
+		}
+		return $consulta;
 	}
 	
 }

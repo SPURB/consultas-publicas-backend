@@ -3,7 +3,7 @@
 class PDOQueryException extends Exception{
 	
 	public function __construct($errorInfo = NULL){
-		$msg = "Erro desconhecido.";
+		$msg = "Erro de query.";
 		$code = 0;
 		if($errorInfo != NULL){
 			if(isset($errorInfo[1])){

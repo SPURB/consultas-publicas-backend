@@ -26,7 +26,7 @@ else {
 	 * /v255/members => /members
 	 */
 	function removeVersion($pathItem) {
-		preg_match('/[v][1-255]/', $pathItem, $matches); // v1, v2, ..., v255
+		preg_match('/^[v][0-9]?[0-9]?[0-9]$/', $pathItem, $matches); // v1, v2, ..., v999
 		if ( count($matches) > 0 ) return;
 		else return $pathItem;
 	}
@@ -36,17 +36,19 @@ else {
 	 * /consultas?ativo=1 => array("ativo" => 1)
 	 * /members?id_consulta=32&public=1 => array("id_consulta" => 32, "public" => 1)
 	 */
+    /*
 	function checkFilters($reqMethod, $filtros) {
 		if ($reqMethod != "GET" || count($filtros) <= 0) { return FALSE; }
 		else return $filtros;
 	}
+    */
 
 	$request = array_filter($requestPaths, 'removeVersion');
-	$gets = isset($_GET) ? $_GET : 0;
+	//$gets = isset($_GET) ? $_GET : 0;
 
-	$filtros = checkFilters($method, $gets);
+	//$filtros = checkFilters($method, $gets);
 	$result = NULL;
-	$result = APIFactory::executeRequest($method, $request, TRUE, $filtros);
+	$result = APIFactory::executeRequest($method, $request, TRUE);
 	echo $result;
 }
 

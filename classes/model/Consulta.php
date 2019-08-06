@@ -17,7 +17,8 @@ class Consulta extends GenericDAO{
 	private $urlDevolutiva;
 	
 	public function __construct(){	
-		parent::__construct();
+		
+        parent::__construct();
 	
 		$this->tableName = "consultas";
 		
@@ -36,6 +37,8 @@ class Consulta extends GenericDAO{
 			"url_capa" => "urlCapa",
 			"url_devolutiva" => "urlDevolutiva"
 		);
+        
+
 	}
 	
 	public function __get($campo) {
@@ -48,41 +51,70 @@ class Consulta extends GenericDAO{
 	public function __set($campo, $valor) {
 		$this -> $campo = $valor;
 	}
+    
+    function getTableName(){
+        return "consultas";
+    }
+    
+    function getColumns(){
+		/*
+			key = coluna do banco => value = property da classe
+		*/
+        return array(
+			"id_consulta" => "idConsulta",
+			"nome" => "nome",
+			"data_cadastro" => "dataCadastro",
+			"ativo" => "ativo",
+			"nome_publico" => "nomePublico",
+			"data_final" => "dataFinal",
+			"texto_intro" => "textoIntro",
+			"url_consulta" => "urlConsulta",
+			"url_capa" => "urlCapa",
+			"url_devolutiva" => "urlDevolutiva"
+		);
+    }
+    
+    function getOneMany(){
+        return array();
+    }
+    
+    function getManyOne(){
+        return array();
+    }
+    
+    function getManyOneId(){
+        return "";
+    }
 
 	public function listarPadrao($conditions = NULL, $orderColumns = NULL, $orderType = NULL, $selectColumns = NULL){
 		return $this->lista();
 	}
 	
-	public function listar($filtro = NULL){
+	public function getList($filtro = NULL){
 		if($filtro == NULL){
 			$filtro = array();
 		}
-		try{
-			$lista = $this->select($filtro);
-			foreach ($lista as $consulta) {
-				$consulta->nContribuicoes = $this->getNContribuicoes($consulta->idConsulta);
-			}
-			return $lista;
-		}catch(Exception $ex){
-			$this->log->write($ex->getMessage());
-			return FALSE;
-		}
+        $lista = parent::getList($filtro);
+        foreach ($lista as $consulta) {
+            $consulta->nContribuicoes = $this->getNContribuicoes($consulta->idConsulta);
+        }
+        return $lista;
 	}
 	
 	public function obter($id){
 		try{
-			$consulta = $this->getById($id);
+			$consulta = parent::obter($id);
 			$consulta->nContribuicoes = $this->getNContribuicoes($consulta->idConsulta);
 			return $consulta;
 		}catch(Exception $ex){
-			$this->log->write($ex->getMessage());
+			Logger::write($ex->getMessage());
 			return FALSE;
 		}
 	}
 	
 	public function obterPeloNome($nome){
 		$filtro = array("nome" => "= $nome");
-		$result = $this->listar($filtro);
+		$result = $this->getList($filtro);
 		if($result === FALSE || count($result) != 1){
 			return FALSE;
 		}
@@ -104,7 +136,7 @@ class Consulta extends GenericDAO{
 
 			return $this->insert();
 		}catch(Exception $ex){
-			$this->log->write($ex->getMessage());
+			Logger::write($ex->getMessage());
 			return FALSE;
 		}
 	}
@@ -116,7 +148,7 @@ class Consulta extends GenericDAO{
 			}
 			return $this->update($campos, $filtro);
 		}catch(Exception $ex){
-			$this->log->write($ex->getMessage());
+			Logger::write($ex->getMessage());
 			return FALSE;
 		}
 	}
@@ -129,7 +161,7 @@ class Consulta extends GenericDAO{
 
 	public function getNContribuicoes($idConsulta = NULL){
 		if($idConsulta == NULL){
-			$idConsulta = $this->id_consulta;
+			$idConsulta = $this->idConsulta;
 		}
 		try{
 			$m = new Member();

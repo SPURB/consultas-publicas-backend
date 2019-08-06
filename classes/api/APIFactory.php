@@ -9,7 +9,7 @@ class APIFactory{
 
 	public function __construct(){}
 
-	public static function executeRequest($method, $requestData, $jsonEncode = TRUE, $filtros = FALSE){
+	public static function executeRequest($method, $requestData, $jsonEncode = TRUE){
 		$class = NULL;
 		$result = NULL;
 
@@ -18,6 +18,10 @@ class APIFactory{
 			case 'POST': $class = "Post"; break;
 			case 'PUT': $class = "Put"; break;
 			case 'DELETE': $class = "Delete"; break;
+            case 'OPTIONS':
+                header('Access-Control-Max-Age: 86400');
+				header("Content-Length: 0");
+                return NULL;
 		}
 
 		try{
@@ -25,12 +29,12 @@ class APIFactory{
 				throw new APIException("$method Invalid HTTP method", 405);
 			}
 
-			$result = $filtros ? $class::load($requestData, $filtros) : $class::load($requestData);
+			$result = $class::load($requestData);
 
 			if($jsonEncode === TRUE){
 				$resultEnc = json_encode($result);
 				if(json_last_error() != JSON_ERROR_NONE){
-					throw new APIException(json_last_error_msg());
+					throw new APIException("Erro de encode ".json_last_error_msg());
 				}else{
 					$result = $resultEnc;
 				}

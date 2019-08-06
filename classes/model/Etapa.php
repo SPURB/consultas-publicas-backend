@@ -14,13 +14,11 @@ class Etapa extends GenericDAO {
 	
 		$this->tableName = "etapas";
 		
-		/*
-			key = coluna do banco => value = property da classe
-		*/
 		$this->columns = array(
 			"id" => "id",
 			"nome" => "nome"
 		);
+        
 	}
 	
 	public function __get($campo) {
@@ -31,25 +29,25 @@ class Etapa extends GenericDAO {
 		$this -> $campo = $valor;
 	}
 
-	public function listar($filtro = NULL){
+	public function getList($filtro = NULL){
 		if($filtro === NULL){
 			$filtro = array();
 		}
 
 		try{
-			$lista = $this->select($filtro);
+			$lista = parent::getList($filtro);
 
 			foreach ($lista as $etapa) {
 				$this->getLists($etapa);
 			}
 			return $lista;
 		} catch (Exception $ex){
-			$this->log->write($ex->getMessage());
+			//$this->log->write($ex->getMessage());
 			return FALSE;
 		}
 	}
 
-	public function obter($id){
+	public function getById($id){
 		try{
 			$consulta = $this->getById($id);
 			return $consulta;

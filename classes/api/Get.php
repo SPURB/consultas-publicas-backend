@@ -3,36 +3,47 @@ require_once 'APIMethod.php';
 
 class Get extends APIMethod{
 
-	public static function load($request, $filtros = FALSE){
+	public static function load($request){
 
 		$result = NULL;
 		$table = preg_replace('/[^a-z0-9_]+/i','', array_shift($request));
 		$id = intval(array_shift($request));
-
-		$memberDAO = new Member();
-		$consultaDAO = new Consulta();
-		$etapaDAO = new Etapa();
-		$subetapaDAO = new SubEtapa();
-		$arquivoDAO = new Arquivo();
-		$projetoDAO = new Projeto();
-		$extensaoDAO = new Extensao();
-		$filtrarDAO = new Filtro($table);
-		// $projCDAO = new ProjetoConsulta();
-
+        $filtros = isset($_GET) ? $_GET : array();
+        $conditions = array();
+        foreach ($filtros as $value) {
+			$key = array_search ($value, $filtros);
+            $conditions[$key] = "=".$value;
+		}
+        
+		$DAO = parent::getTable($table);
+        
+        $result = ($id > 0) ? $DAO->obter($id) : $DAO->getList($conditions); 
+/*
 		$consulta = APIMethod::getConsulta($table);
-		if($consulta === FALSE && !$filtros && $table === "members"){ $result = ($id > 0) ? $memberDAO->obter($id) : $memberDAO->listarAtivos(); }
-		else if($consulta === FALSE && !$filtros && $table === "consultas"){ $result = ($id > 0) ? $consultaDAO->obter($id) : $consultaDAO->listar(); }
-		else if($consulta === FALSE && !$filtros && $table === "subetapas"){ $result = ($id > 0) ? $subetapaDAO->obter($id) : $subetapaDAO->listar(); }
-		else if($consulta === FALSE && !$filtros && $table === "arquivos"){ $result = ($id > 0) ? $arquivoDAO->obter($id) : $arquivoDAO->listar(); }
-		else if($consulta === FALSE && !$filtros && $table === "projetos"){ $result = ($id > 0) ? $projetoDAO->obter($id) : $projetoDAO->listar(); }
-		else if($consulta === FALSE && !$filtros && $table === "extensoes"){ $result = ($id > 0) ? $extensaoDAO->obter($id) : $extensaoDAO->listar(); }
-		else if($consulta === FALSE && !$filtros && $table === "etapas"){ $result = ($id > 0) ? $etapaDAO->obter($id) : $etapaDAO->listar(); }
-		// else if($consulta === FALSE && !$filtros && $table == "pagedmembers"){ $result = ($id > 0) ? $memberDAO->listarAtivos($id) : $memberDAO->listarAtivos(1);
-		// else if($consulta === FALSE && !$filtros && $table == "projetoConsulta"){ $result = ($id > 0) ? $projCDAO->obter($id) : $projCDAO->listar()
+        if($consulta !== FALSE){
+            $result = $DAO->execAction("listarPorConsulta", $filtros, $id);
+        }else{
+            $result = ($id > 0) ? $DAO->getById($id) : $DAO->getList($conditions); 
+        }
 
-		else if($filtros) { $result = $filtrarDAO->listar($filtros); }
+        -----
 
-		else { $result = ($id > 0) ? $memberDAO->obterPorConsulta($consulta->id, $id) : $memberDAO->listarPorConsulta($consulta->id); }
+        /*
+		if($consulta === FALSE && !$filtros && $table === "members"){
+            $result = ($id > 0) ? $DAO->obter($id) : $DAO->listarAtivos(); 
+        }
+		else if($consulta === FALSE && !$filtros){ 
+            $result = ($id > 0) ? $DAO->obter($id) : $DAO->select(); 
+        }
+		else if($filtros) { 
+            require_once APP_PATH.'/classes/model/Filtro.php';
+            $filtrarDAO = new Filtro($table);
+            $result = $filtrarDAO->listar($filtros); 
+        }
+		else { 
+            $result = ($id > 0) ? $memberDAO->obterPorConsulta($consulta->id, $id) : $memberDAO->listarPorConsulta($consulta->id); 
+        }
+        */
 		if (!$result || $result == NULL){ throw new APIException("Nada encontrado.", 204); }
 
 		Get::cleanEmail($result);
@@ -40,7 +51,7 @@ class Get extends APIMethod{
 		http_response_code(200);
 
 		return $result;
-
+/*
 		$result = NULL;
 		$id = preg_replace('/[^a-z0-9_]+/i','',array_shift($request));
 		$param = (intval($id) > 0) ? preg_replace('/[^a-z0-9_]+/i','',array_shift($request)) : $id;
@@ -58,6 +69,7 @@ class Get extends APIMethod{
 		}
 			
 		return $result;
+        */
 	}
 
 	private function cleanEmail($obj){

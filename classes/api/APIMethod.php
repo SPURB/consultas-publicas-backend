@@ -2,40 +2,51 @@
 
 require_once 'exceptions/APIException.php';
 
-require_once APP_PATH.'/classes/model/Member.php';
-require_once APP_PATH.'/classes/model/Consulta.php';
-require_once APP_PATH.'/classes/model/Etapa.php';
-require_once APP_PATH.'/classes/model/SubEtapa.php';
-require_once APP_PATH.'/classes/model/Arquivo.php';
-require_once APP_PATH.'/classes/model/Projeto.php';
-require_once APP_PATH.'/classes/model/Extensao.php';
-require_once APP_PATH.'/classes/model/Filtro.php';
-// require_once APP_PATH.'/classes/model/ProjetoConsulta.php';
-
 abstract class APIMethod {
-	public abstract static function load($request);
-
-	protected function getTable($function){
-		
+	abstract static function load($request);
+    
+    protected static function getFunctionClass(){
+        /*
+            key = nome da função na url
+            val = nome da classe
+        */
 		$functions = array(
-			"members" => new Member(),
-			"consultas" => new Consulta(),
-			"etapas" => new Etapa(),
-			"subetapas" => new SubEtapa(),
-			"arquivos" => new Arquivo(),
-			"projetos" => new Projeto(),
-			"extensoes" => new Extensao()
+			"members" => "Member",
+			"consultas" => "Consulta",
+			"etapas" => "Etapa",
+			"subetapas" => "SubEtapa",
+			"arquivos" => "Arquivo",
+			"projetos" => "Projeto",
+			"extensoes" => "Extensao"
 			// "projetoConsulta" => new ProjetoConsulta()
 		);
+        return $functions;
+    }
 
+	protected static function getTable($function){
+        $functions = self::getFunctionClass();
 		if(!array_key_exists($function, $functions)){
-			throw new Exception("Oops! $function - Requisicao incorreta.", 400);
+			throw new Exception("Erro! $function - Requisicao incorreta.", 400);
 		}
-		return $functions[$function];
+        $className = $functions[$function];
+        $classPath = APP_PATH.'/classes/model/'.$className.'.php';
+        if(!file_exists($classPath)){
+            throw new Exception("APIMethod Classe não encontrada! $className", 500);
+        }
+        require_once APP_PATH.'/classes/model/Model.php';
+        require_once $classPath;
+		$model = new $className();
+        /*
+        if(!$model instanceof GenericDAO){
+            throw new Exception("APIMethod Classe inválida! $className", 500);
+        }
+        */
+        return $model;
 	}
 
-	protected function getConsulta($table){
-		$tables = array(
+	protected static function getConsulta($table){
+        require_once APP_PATH.'/classes/model/Consulta.php';
+        $tables = array(
 			"members",
 			"consultas",
 			"etapas",
@@ -55,11 +66,6 @@ abstract class APIMethod {
 			throw new Exception("Oops! $table recurso nao encontrado", 404);
 		}
 		return $consulta;
-	}
-
-	protected function allow($token){
-		$key = "SPurbanismo";
-		return (md5($key) == $token);
 	}
 }
 

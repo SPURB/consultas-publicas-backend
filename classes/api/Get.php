@@ -17,7 +17,7 @@ class Get extends APIMethod{
         
 		$DAO = parent::getTable($table);
         
-        $result = ($id > 0) ? $DAO->obter($id) : $DAO->getList($conditions); 
+        $result = ($id > 0) ? $DAO->get($id) : $DAO->getList($conditions); 
 /*
 		$consulta = APIMethod::getConsulta($table);
         if($consulta !== FALSE){

@@ -2,8 +2,9 @@
 require_once APP_PATH.'/classes/base/main/Base.php';
 require_once APP_PATH.'/classes/base/main/Logger.php';
 require_once APP_PATH.'/classes/base/exceptions/DAOException.php';
+require_once 'APICallableModel.php';
 
-class GenericDAO{
+class GenericDAO implements APICallableModel{
 	/**
 	 * Efetua transação com bd
 	 */
@@ -43,7 +44,7 @@ class GenericDAO{
     /*
     * Obter um unico registro pelo ID
     */
-	public function obter($id){
+	public function get($id){
 		$filtroId = array($this->getPKColName() => "= $id");
 		$result = $this->getList($filtroId, 1);
 		reset($result);
@@ -107,7 +108,7 @@ class GenericDAO{
 	}
     
     protected function beforeSelfUpdate($input, $id){
-        $objOrig = $this->obter($id);
+        $objOrig = $this->get($id);
 		if($objOrig === FALSE){
 			throw new DAOException("$id nao encontrado", 404);
 		}
@@ -271,7 +272,7 @@ class GenericDAO{
                 array_push($rows, $obj);
 			}
 		}
-		if($limite > 0){
+		if(intval($limite) > 0){
 			$primeiro = ($pagina * $limite) - $limite;
 			$result = array_slice($rows, $primeiro, $limite);
 		}

@@ -39,15 +39,15 @@ class Arquivo extends GenericDAO{
 		$this -> $campo = $valor;
 	}
 	
-	public function listar($filtro = NULL){
+	public function getList($filtro = NULL){
 		if($filtro == NULL){
 			$filtro = array();
 		}
 		$order = array("posicao");
 		try{
-			$lista = $this->select($filtro, $order);
+			$lista = parent::getList($filtro, NULL, NULL, $order);
 			foreach ($lista as $arquivo) {
-				$this->getLists($arquivo);
+				//$this->getLists($arquivo);
 				unset($arquivo->posicao);
 			}
 			return $lista;
@@ -65,7 +65,7 @@ class Arquivo extends GenericDAO{
 		}
 		return $this->listar($filtro);
 	}
-	
+	/*
 	public function obter($id){
 		try{
 			$arquivo = $this->getById($id);
@@ -76,7 +76,7 @@ class Arquivo extends GenericDAO{
 			return FALSE;
 		}
 	}
-	
+	*/
 	public function obterPeloNome($nome){
 		$filtro = array("nome" => "= $nome");
 		$result = $this->listar($filtro);

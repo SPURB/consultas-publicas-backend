@@ -42,16 +42,6 @@ class Extensao extends GenericDAO {
 			return FALSE;
 		}
 	}
-
-	public function obter($id){
-		try{
-			$consulta = $this->getById($id);
-			return $consulta;
-		}catch(Exception $ex){
-			$this->log->write($ex->getMessage());
-			return FALSE;
-		}
-	}
 	
 	public function obterPeloNome($nome){
 		$filtro = array("nome" => "= $nome");

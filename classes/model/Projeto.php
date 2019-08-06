@@ -64,7 +64,7 @@ class Projeto extends GenericDAO{
 		}
 	}
 	
-	public function obter($id){
+	public function getById($id){
 		try{
 			$projeto = $this->getById($id);
 			$this->getLists($projeto);

@@ -1,6 +1,7 @@
 <?php
 
 require_once 'exceptions/APIException.php';
+require_once APP_PATH.'/classes/model/APICallableModel.php';
 
 abstract class APIMethod {
 	abstract static function load($request);
@@ -36,11 +37,11 @@ abstract class APIMethod {
         require_once APP_PATH.'/classes/model/Model.php';
         require_once $classPath;
 		$model = new $className();
-        /*
-        if(!$model instanceof GenericDAO){
+        
+        if(!$model instanceof APICallableModel){
             throw new Exception("APIMethod Classe inválida! $className", 500);
         }
-        */
+        
         return $model;
 	}
 

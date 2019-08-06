@@ -52,11 +52,11 @@ class Consulta extends GenericDAO{
 		$this -> $campo = $valor;
 	}
     
-    function getTableName(){
+    public function setTableName(){
         return "consultas";
     }
     
-    function getColumns(){
+    public function setColumns(){
 		/*
 			key = coluna do banco => value = property da classe
 		*/
@@ -101,9 +101,9 @@ class Consulta extends GenericDAO{
         return $lista;
 	}
 	
-	public function obter($id){
+	public function get($id){
 		try{
-			$consulta = parent::obter($id);
+			$consulta = parent::get($id);
 			$consulta->nContribuicoes = $this->getNContribuicoes($consulta->idConsulta);
 			return $consulta;
 		}catch(Exception $ex){

@@ -26,6 +26,10 @@ class SubEtapa extends GenericDAO {
 	public function __set($campo, $valor) {
 		$this -> $campo = $valor;
 	}
+    
+    public function setTableName(){
+        return "subetapas";
+    }
 	
 	public function listar($filtro = NULL){
 		if($filtro == NULL){
@@ -37,16 +41,6 @@ class SubEtapa extends GenericDAO {
 				$this->getLists($subetapa);
 			}
 			return $lista;
-		}catch(Exception $ex){
-			$this->log->write($ex->getMessage());
-			return FALSE;
-		}
-	}
-
-	public function obter($id){
-		try{
-			$consulta = $this->getById($id);
-			return $consulta;
 		}catch(Exception $ex){
 			$this->log->write($ex->getMessage());
 			return FALSE;

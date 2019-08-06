@@ -1,7 +1,7 @@
 <?php
 
 header("Access-Control-Allow-Origin: *");
-header("Access-Control-Allow-Headers: Content-Type");
+header("Access-Control-Allow-Headers: Content-Type, Current");
 header('Access-Control-Allow-Credentials: false');
 header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE');
 header("Content-type: application/json");

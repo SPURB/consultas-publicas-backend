@@ -4,8 +4,8 @@ class Delete extends APIMethod{
 
     public static function load($request){
 
-		$id = intval(array_shift($request));
 		$table = preg_replace('/[^a-z0-9_]+/i','',array_shift($request));
+		$id = intval(array_shift($request));
 		$result=NULL;
 
 		if($id <= 0){

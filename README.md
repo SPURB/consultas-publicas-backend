@@ -14,3 +14,6 @@ user:root
 password:yourpassword
 dbname:yourdbname
 ```
+
+## Logs
+Criar na raiz do projeto o arquivo `logs/api.log`

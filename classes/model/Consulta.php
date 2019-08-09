@@ -1,6 +1,6 @@
 <?php
+
 require_once "GenericDAO.php";
-require_once "Member.php";
 
 class Consulta extends GenericDAO{
 	
@@ -18,13 +18,14 @@ class Consulta extends GenericDAO{
 	
 	public function __construct(){	
 		
-        parent::__construct();
+        parent::__construct($this->setColumns());
 	
 		$this->tableName = "consultas";
 		
 		/*
 			key = coluna do banco => value = property da classe
 		*/
+        
 		$this->columns = array(
 			"id_consulta" => "idConsulta",
 			"nome" => "nome",
@@ -102,14 +103,12 @@ class Consulta extends GenericDAO{
 	}
 	
 	public function get($id){
-		try{
-			$consulta = parent::get($id);
-			$consulta->nContribuicoes = $this->getNContribuicoes($consulta->idConsulta);
-			return $consulta;
-		}catch(Exception $ex){
-			Logger::write($ex->getMessage());
-			return FALSE;
-		}
+        $consulta = parent::get($id);
+        if(empty($consulta)){
+            throw new Exception("Consulta $id não encontrada", 400);
+        }
+        $consulta->nContribuicoes = $this->getNContribuicoes($consulta->idConsulta);
+        return $consulta;
 	}
 	
 	public function obterPeloNome($nome){
@@ -120,7 +119,13 @@ class Consulta extends GenericDAO{
 		}
 		return $result[0];
 	}
-	
+    
+    public function beforeInsert($input){
+        parent::beforeInsert($input);
+        $this->dataCadastro = date("Y-m-d H:i:s");
+        $this->ativo = "1";
+    }
+	/*
 	public function cadastrar($input = NULL){
 		try{
 			if($input != NULL){
@@ -152,17 +157,18 @@ class Consulta extends GenericDAO{
 			return FALSE;
 		}
 	}
-
-	public function desativar($id){
+*/
+	public function remove($id){
 		$colunas = array("ativo" => "=0");
 		$filtros = array("id_consulta" => $id);
-		return $this->atualizar($colunas, $filtros);
+		return $this->update($colunas, $filtros);
 	}
 
 	public function getNContribuicoes($idConsulta = NULL){
 		if($idConsulta == NULL){
 			$idConsulta = $this->idConsulta;
 		}
+        require_once "Member.php";
 		try{
 			$m = new Member();
 			$filtro = array("public" => "=1");

@@ -26,11 +26,6 @@ class GenericDAO implements APICallableModel{
             throw new DAOException(": Erro na conexão. Arquivo inexistente ".self::$properties. " ou ".self::$properties);
         }
         $this->base = new Base(self::$properties);
-		/*
-        $this->tableName = $tableName;
-        $this->columns = $columns;
-        $this->pkSequenceName = $sequenceName;
-        */
 	}
 
 	public function __get($campo) {
@@ -45,8 +40,11 @@ class GenericDAO implements APICallableModel{
     * Obter um unico registro pelo ID
     */
 	public function get($id){
+        if(intval($id) <= 0){
+            throw new DAOException("ID $id inválido.");
+        }
 		$filtroId = array($this->getPKColName() => "= $id");
-		$result = $this->getList($filtroId, 1);
+		$result = $this->getList($filtroId);
 		reset($result);
 		return current($result);
 	}
@@ -230,6 +228,7 @@ class GenericDAO implements APICallableModel{
 			foreach($this->columns as $nomeCampo){
 				if(isset($input[$nomeCampo])){
 					$this->$nomeCampo = $input[$nomeCampo];
+
 				}
 			}
 		}

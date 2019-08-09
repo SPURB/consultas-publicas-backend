@@ -2,7 +2,7 @@
 require_once "GenericDAO.php";
 
 class Filtro extends GenericDAO {
-
+/*
 	public function __construct($table){
 		parent::__construct($table);
 		$this->tableName = $table;
@@ -86,4 +86,5 @@ class Filtro extends GenericDAO {
 
 		return $result;
 	}
+    */
 }

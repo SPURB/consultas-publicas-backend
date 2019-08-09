@@ -2,6 +2,31 @@
 
 class Delete extends APIMethod{
 
+    public static function load($request){
+
+		$id = intval(array_shift($request));
+		$table = preg_replace('/[^a-z0-9_]+/i','',array_shift($request));
+		$result=NULL;
+
+		if($id <= 0){
+			throw new Exception("$id nao encontrado", 404);
+		}
+
+		$obj = parent::getTable($table);
+		$result = $obj->remove($id);
+
+		if($result == NULL || $result === FALSE){
+			http_response_code(500);
+		}
+		return $result;
+
+
+	}
+
+    
+    
+    
+    /*
 	public static function load($request){
 		$memberDAO = new Member();
 		$result = NULL;
@@ -25,7 +50,7 @@ class Delete extends APIMethod{
 		}
 		return $result;
 	}
-
+*/
 }
 
 ?>

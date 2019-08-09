@@ -30,7 +30,7 @@ class SubEtapa extends GenericDAO {
     public function setTableName(){
         return "subetapas";
     }
-	
+	/*
 	public function listar($filtro = NULL){
 		if($filtro == NULL){
 			$filtro = array();
@@ -46,16 +46,16 @@ class SubEtapa extends GenericDAO {
 			return FALSE;
 		}
 	}
-	
+	*/
 	public function obterPeloNome($nome){
 		$filtro = array("nome" => "= $nome");
-		$result = $this->listar($filtro);
+		$result = $this->getList($filtro);
 		if($result === FALSE || count($result) != 1){
 			return FALSE;
 		}
 		return $result[0];
 	}
-	
+	/*
 	public function cadastrar($input = NULL){
 		try{
 			if($input != NULL){
@@ -90,4 +90,5 @@ class SubEtapa extends GenericDAO {
 			$filtro = array("idSubEtapa" => "=".$subetapa->id);
 		}
 	}
+    */
 }

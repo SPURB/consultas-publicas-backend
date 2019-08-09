@@ -67,7 +67,7 @@ class Projeto extends GenericDAO{
 	public function getById($id){
 		try{
 			$projeto = $this->getById($id);
-			$this->getLists($projeto);
+			//$this->getLists($projeto);
 			return $projeto;
 		}catch(Exception $ex){
 			$this->log->write($ex->getMessage());
@@ -77,13 +77,19 @@ class Projeto extends GenericDAO{
 	
 	public function obterPeloNome($nome){
 		$filtro = array("nome" => "= $nome");
-		$result = $this->listar($filtro);
+		$result = $this->getList($filtro);
 		if($result === FALSE || count($result) != 1){
 			return FALSE;
 		}
 		return $result[0];
 	}
-	
+    
+    public function beforeSelfUpdate($input, $id){
+        parent::beforeSelfUpdate($input, $id);
+        $this->atualizacao = date("Y-m-d H:i:s");
+    }
+    
+	/*
 	public function cadastrar($input = NULL){
 		try{
 			if($input != NULL){
@@ -112,6 +118,7 @@ class Projeto extends GenericDAO{
 			return FALSE;
 		}
 	}
+    */
 
 	private function getLists($projeto){
 		if($projeto != NULL){

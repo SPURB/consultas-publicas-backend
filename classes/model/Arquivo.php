@@ -85,7 +85,7 @@ class Arquivo extends GenericDAO{
 		}
 		return $result[0];
 	}
-	
+	/*
 	public function cadastrar($input = NULL){
 		try{
 			if($input != NULL){
@@ -120,5 +120,5 @@ class Arquivo extends GenericDAO{
 			$filtro = array("idArquivo" => "=" . $arquivo->id);
 		}
 	}
-	
+	*/
 }

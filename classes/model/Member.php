@@ -198,7 +198,7 @@ class Member extends GenericDAO {
     private function getConsulta(){
         require_once APP_PATH.'/classes/model/Consulta.php';
 		$consultaDAO = new Consulta();
-		$consulta = $consultaDAO->obter($this->idConsulta);
+		$consulta = $consultaDAO->get($this->idConsulta);
 		if($consulta === FALSE){
 			throw new Exception("Erro ao obter a consulta em Member.", 404);
 		}

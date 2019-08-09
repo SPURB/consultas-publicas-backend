@@ -28,7 +28,7 @@ class Etapa extends GenericDAO {
 	public function __set($campo, $valor) {
 		$this -> $campo = $valor;
 	}
-
+/*
 	public function getList($filtro = NULL){
 		if($filtro === NULL){
 			$filtro = array();
@@ -56,7 +56,7 @@ class Etapa extends GenericDAO {
 			return FALSE;
 		}
 	}
-	
+	*/
 	public function obterPeloNome($nome){
 		$filtro = array("nome" => "= $nome");
 		$result = $this->listar($filtro);
@@ -66,7 +66,7 @@ class Etapa extends GenericDAO {
 		}
 		return $result[0];
 	}
-	
+	/*
 	public function cadastrar($input = NULL){
 		try{
 			if($input != NULL){
@@ -97,7 +97,7 @@ class Etapa extends GenericDAO {
 					}
 					$this->arquivos = NULL;
 				}
-				*/
+				
 				return $this->selfUpdate($this->id);
 			}
 			return $this->update($campos, $filtro);
@@ -106,7 +106,7 @@ class Etapa extends GenericDAO {
 			return FALSE;
 		}
 	}
-
+*/
 	private function getLists($etapa){
 		if($etapa != NULL){
 			// $DAO = new Arquivo();

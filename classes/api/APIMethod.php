@@ -34,7 +34,6 @@ abstract class APIMethod {
         if(!file_exists($classPath)){
             throw new Exception("APIMethod Classe não encontrada! $className", 500);
         }
-        require_once APP_PATH.'/classes/model/Model.php';
         require_once $classPath;
 		$model = new $className();
         

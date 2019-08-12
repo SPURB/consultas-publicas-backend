@@ -7,17 +7,22 @@ class Arquivo extends GenericDAO{
 	private $id;
 	private $url;
 	private $idEtapa;
+    private $idSubEtapa;
+    private $idProjeto;
+    private $atualizacao;
+    private $idExtensao;
 	private $posicao;
+    private $fonte;
 	
 	public function __construct(){
-		parent::__construct();
+
 	
-		$this->tableName = "arquivos";
+		$tableName = "arquivos";
 		
 		/*
 			key = coluna do banco => value = property da classe
 		*/
-		$this->columns = array(
+		$columns = array(
 			"id" => "id",
 			"nome" => "nome",
 			"id_etapa" => "idEtapa",
@@ -29,6 +34,8 @@ class Arquivo extends GenericDAO{
 			"posicao" => "posicao",
 			"fonte" => "fonte"
 		);
+
+		parent::__construct($tableName, $columns);
 	}
 	
 	public function __get($campo) {
@@ -47,12 +54,11 @@ class Arquivo extends GenericDAO{
 		try{
 			$lista = parent::getList($filtro, NULL, NULL, $order);
 			foreach ($lista as $arquivo) {
-				//$this->getLists($arquivo);
 				unset($arquivo->posicao);
 			}
 			return $lista;
 		}catch(Exception $ex){
-			$this->log->write($ex->getMessage());
+			Logger::write($ex->getMessage());
 			return FALSE;
 		}
 	}
@@ -65,18 +71,7 @@ class Arquivo extends GenericDAO{
 		}
 		return $this->listar($filtro);
 	}
-	/*
-	public function obter($id){
-		try{
-			$arquivo = $this->getById($id);
-			$this->getLists($arquivo);
-			return $arquivo;
-		}catch(Exception $ex){
-			$this->log->write($ex->getMessage());
-			return FALSE;
-		}
-	}
-	*/
+
 	public function obterPeloNome($nome){
 		$filtro = array("nome" => "= $nome");
 		$result = $this->listar($filtro);
@@ -85,40 +80,4 @@ class Arquivo extends GenericDAO{
 		}
 		return $result[0];
 	}
-	/*
-	public function cadastrar($input = NULL){
-		try{
-			if($input != NULL){
-				foreach($input as $key => $val){
-					if(array_search($key, $this->columns) === FALSE){
-						throw new Exception("$key parametro incorreto", 400);
-					}
-					$this->$key = $val;
-				}
-			}
-			return $this->insert();
-		}catch(Exception $ex){
-			$this->log->write($ex->getMessage());
-			return FALSE;
-		}
-	}
-
-	public function atualizar($campos = NULL, $filtro = NULL){
-		try{
-			if($campos == NULL){
-				return $this->selfUpdate($this->id);
-			}
-			return $this->update($campos, $filtro);
-		}catch(Exception $ex){
-			$this->log->write($ex->getMessage());
-			return FALSE;
-		}
-	}
-
-	public function getLists($arquivo){
-		if($arquivo != NULL){
-			$filtro = array("idArquivo" => "=" . $arquivo->id);
-		}
-	}
-	*/
 }

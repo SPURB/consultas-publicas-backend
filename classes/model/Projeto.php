@@ -15,14 +15,14 @@ class Projeto extends GenericDAO{
 	// private $etapas;
 	
 	public function __construct(){	
-		parent::__construct();
+
 	
-		$this->tableName = "projetos";
+		$tableName = "projetos";
 		
 		/*
 			key = coluna do banco => value = property da classe
 		*/
-		$this->columns = array(
+		$columns = array(
 			"id" => "id",
 			"nome" => "nome",
 			"ativo" => "ativo",
@@ -31,6 +31,8 @@ class Projeto extends GenericDAO{
 			"id_etapa" => "idEtapa",
 			"piu" => "piu"
 		);
+
+        parent::__construct($tableName, $columns);
 
 		$this->consultas = array();
 		// $this->etapas = array();
@@ -88,37 +90,6 @@ class Projeto extends GenericDAO{
         parent::beforeSelfUpdate($input, $id);
         $this->atualizacao = date("Y-m-d H:i:s");
     }
-    
-	/*
-	public function cadastrar($input = NULL){
-		try{
-			if($input != NULL){
-				foreach($input as $key => $val){
-					if(array_search($key, $this->columns) === FALSE){
-						throw new Exception("$key parametro incorreto", 400);
-					}
-					$this->$key = $val;
-				}
-			}
-			return $this->insert();
-		}catch(Exception $ex){
-			$this->log->write($ex->getMessage());
-			return FALSE;
-		}
-	}
-
-	public function atualizar($campos = NULL, $filtro = NULL){
-		try{
-			if($campos == NULL){
-				return $this->selfUpdate($this->id);
-			}
-			return $this->update($campos, $filtro);
-		}catch(Exception $ex){
-			$this->log->write($ex->getMessage());
-			return FALSE;
-		}
-	}
-    */
 
 	private function getLists($projeto){
 		if($projeto != NULL){

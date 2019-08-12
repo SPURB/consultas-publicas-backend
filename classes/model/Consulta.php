@@ -16,17 +16,15 @@ class Consulta extends GenericDAO{
 	private $urlCapa;
 	private $urlDevolutiva;
 	
-	public function __construct(){	
-		
-        parent::__construct($this->setColumns());
+	public function __construct(){
 	
-		$this->tableName = "consultas";
+		$tableName = "consultas";
 		
 		/*
 			key = coluna do banco => value = property da classe
 		*/
         
-		$this->columns = array(
+		$columns = array(
 			"id_consulta" => "idConsulta",
 			"nome" => "nome",
 			"data_cadastro" => "dataCadastro",
@@ -38,7 +36,7 @@ class Consulta extends GenericDAO{
 			"url_capa" => "urlCapa",
 			"url_devolutiva" => "urlDevolutiva"
 		);
-        
+        parent::__construct($tableName, $columns);
 
 	}
 	
@@ -52,40 +50,6 @@ class Consulta extends GenericDAO{
 	public function __set($campo, $valor) {
 		$this -> $campo = $valor;
 	}
-    
-    public function setTableName(){
-        return "consultas";
-    }
-    
-    public function setColumns(){
-		/*
-			key = coluna do banco => value = property da classe
-		*/
-        return array(
-			"id_consulta" => "idConsulta",
-			"nome" => "nome",
-			"data_cadastro" => "dataCadastro",
-			"ativo" => "ativo",
-			"nome_publico" => "nomePublico",
-			"data_final" => "dataFinal",
-			"texto_intro" => "textoIntro",
-			"url_consulta" => "urlConsulta",
-			"url_capa" => "urlCapa",
-			"url_devolutiva" => "urlDevolutiva"
-		);
-    }
-    
-    function getOneMany(){
-        return array();
-    }
-    
-    function getManyOne(){
-        return array();
-    }
-    
-    function getManyOneId(){
-        return "";
-    }
 
 	public function listarPadrao($conditions = NULL, $orderColumns = NULL, $orderType = NULL, $selectColumns = NULL){
 		return $this->lista();
@@ -125,39 +89,7 @@ class Consulta extends GenericDAO{
         $this->dataCadastro = date("Y-m-d H:i:s");
         $this->ativo = "1";
     }
-	/*
-	public function cadastrar($input = NULL){
-		try{
-			if($input != NULL){
-				foreach($input as $key => $val){
-					if(array_search($key, $this->columns) === FALSE){
-						throw new Exception("$key parametro incorreto", 400);
-					}
-					$this->$key = $val;
-				}
-			}
-			$this->dataCadastro = date("Y-m-d H:i:s");
-			$this->ativo = "1";
 
-			return $this->insert();
-		}catch(Exception $ex){
-			Logger::write($ex->getMessage());
-			return FALSE;
-		}
-	}
-
-	public function atualizar($campos = NULL, $filtro = NULL){
-		try{
-			if($campos == NULL){
-				return $this->selfUpdate($this->idConsulta);
-			}
-			return $this->update($campos, $filtro);
-		}catch(Exception $ex){
-			Logger::write($ex->getMessage());
-			return FALSE;
-		}
-	}
-*/
 	public function remove($id){
 		$colunas = array("ativo" => "=0");
 		$filtros = array("id_consulta" => $id);

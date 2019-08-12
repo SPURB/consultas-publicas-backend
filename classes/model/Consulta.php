@@ -52,7 +52,7 @@ class Consulta extends GenericDAO{
 	}
 
 	public function listarPadrao($conditions = NULL, $orderColumns = NULL, $orderType = NULL, $selectColumns = NULL){
-		return $this->lista();
+		return $this->getList($conditions);
 	}
 	
 	public function getList($filtro = NULL){

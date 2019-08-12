@@ -12,20 +12,28 @@ class GenericDAO implements APICallableModel{
 
 	private static $properties = APP_PATH.'/properties/bd.properties';
 
-	protected $tableName;
-	protected $columns;
-    protected $oneMany;
-    protected $manyOne;
-    protected $manyOneId;
+	private $tableName;
+	private $columns;
+    private $oneMany;
+    private $manyOne;
+    private $manyOneId;
 
 	/* Necessário informar o nome da Sequence da PK para o POSTGRE */
 	private $pkSequenceName;
 
-	public function __construct() {
+	public function __construct($tableName, $columns, $oneMany = array(), $manyOne = array(), $manyOneId = NULL) {
         if(!file_exists(self::$properties)){
             throw new DAOException(": Erro na conexão. Arquivo inexistente ".self::$properties. " ou ".self::$properties);
         }
+        if(!is_array($columns)){
+            throw new Exception("Mapeamento das propriedades deve ser um array onde key=nome da coluna no banco, value=nome da propriedade da classe");
+        }
         $this->base = new Base(self::$properties);
+        $this->tableName = $tableName;
+        $this->columns = $columns;
+        $this->oneMany = $oneMany;
+        $this->manyOne = $manyOne;
+        $this->manyOneId = $manyOneId;
 	}
 
 	public function __get($campo) {
@@ -77,7 +85,7 @@ class GenericDAO implements APICallableModel{
 			throw new DAOException("Falha no mapeamento do banco de dados. As colunas devem ser definidas em um array.");
 
 		if($objetoclass === NULL){
-			$objetoclass = new $classe();
+			$objetoclass = new $classe($this->tableName, $this->columns);
 		}
 
 		foreach($this->columns as $campobd => $campoclass){

@@ -18,12 +18,16 @@ abstract class APIMethod {
 			"subetapas" => "SubEtapa",
 			"arquivos" => "Arquivo",
 			"projetos" => "Projeto",
-			"extensoes" => "Extensao"
-			// "projetoConsulta" => new ProjetoConsulta()
+			"extensoes" => "Extensao",
+            "projetoConsulta" => "ProjetoConsulta"
 		);
         return $functions;
     }
-
+    
+    
+    /*
+    * Obter instancia da classe correspondente a tabela requisitada
+    */
 	protected static function getTable($function){
         $functions = self::getFunctionClass();
 		if(!array_key_exists($function, $functions)){

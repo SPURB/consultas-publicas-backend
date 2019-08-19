@@ -64,10 +64,6 @@ class Base{
 			}
 			$msg.=$msgParam;
 		}
-        /*
-		$log = new Logger();
-		$log->write($msg);
-        */
 	}
 	
 	private function connect(){
@@ -90,8 +86,6 @@ class Base{
 	/*Método select que retorna um VO ou um array de objetos*/
 	public final function consultar($sql,$params=null){
 		$rs = new ArrayObject();
-		//$log = new Logger();
-		//$log->write("SQL Query $sql");
 
         $query=$this->connect()->prepare($sql);
         if($query->execute($params) === FALSE){

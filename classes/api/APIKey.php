@@ -1,9 +1,15 @@
 <?php
 
+/*
+* Classe para gerar a chave de autorização
+*/
 class APIKey{
     
     private static $KEYS = array();
     
+    /*
+    * Ler o arquivo com as palavras chave
+    */
     private static function openPropertiesFile(){
         $filePath = APP_PATH.'/properties/keys.properties';
 		if($propFile = fopen($filePath, "r")){
@@ -45,7 +51,8 @@ class APIKey{
                     }
                     return $n >= $min;
                 },
-                ARRAY_FILTER_USE_KEY)
+                ARRAY_FILTER_USE_KEY
+            )
         );
     }
 

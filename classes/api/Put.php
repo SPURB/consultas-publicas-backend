@@ -6,14 +6,17 @@ class Put extends APIMethod{
 
 	public static function load($request){
 		
+        //Formato esperado: host/table/id
 		$table = preg_replace('/[^a-z0-9_]+/i','',array_shift($request));
         $id = intval(array_shift($request));
+        //obter dados do formulario enviado via POST; espera-se que possa ser um formulario chamado 'data'
 		$input = isset($_PUT["data"]) ? $_PUT["data"] : file_get_contents('php://input');
 		$input = json_decode($input, true);
 		$result=NULL;
         
         try{
             $headers = getallheaders();
+            //Header 'Current' deve conter a key de autorização
             $token = $headers['Current'];
             if(!isset($token) || APIKey::check($token) !== TRUE){
                 throw new APIException($_SERVER['REMOTE_ADDR']." Token incorreto ", 403);

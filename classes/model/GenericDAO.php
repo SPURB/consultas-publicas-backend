@@ -345,20 +345,7 @@ class GenericDAO implements APICallableModel{
 		}
 		$rows = array();
 		$result = $this->base->consultar($sql, $values);
-        return $result;
-        /*
-		foreach($result as $row){
-			foreach($row as $obj){
-				$obj = $this->bind($obj);
-				$obj = $this->mapOneToMany($obj);
-				$obj = $this->mapManyToOne($obj);
-                array_push($rows, $obj);
-			}
-		}
-
-		return $rows;
-        */
-        
+        return $result;        
 	}
     
     private function mapOneToMany($obj){
@@ -369,7 +356,7 @@ class GenericDAO implements APICallableModel{
                         $clazzName = $this->oneMany[$prop];
                         require_once $clazzName.".php";
                         $objClazz = new $clazzName();
-                        if(!$objClazz instanceof Model){
+                        if(!$objClazz instanceof APICallableModel){
                             throw new Exception($clazzName." classe incompativel.");
                         }
                         $objRelac = $objClazz->obter($valor);
@@ -390,7 +377,7 @@ class GenericDAO implements APICallableModel{
                     $filtro = array($this->manyOneId => "=".$obj->id);
                     require_once $clazzName.".php";
                     $objClazz = new $clazzName();
-                    if(!$objClazz instanceof Model){
+                    if(!$objClazz instanceof APICallableModel){
                         throw new Exception($clazzName." classe incompativel.");
                     }
                     $obj->$prop = $objClazz->select($filtro);

@@ -12,26 +12,30 @@ class Projeto extends GenericDAO{
 	private $atualizacao;
 	private $wordpress_user_id;
 	private $consultas;
-	private $etapas;
+	// private $etapas;
 	
 	public function __construct(){	
-		parent::__construct();
+
 	
-		$this->tableName = "projetos";
+		$tableName = "projetos";
 		
 		/*
 			key = coluna do banco => value = property da classe
 		*/
-		$this->columns = array(
+		$columns = array(
 			"id" => "id",
 			"nome" => "nome",
 			"ativo" => "ativo",
 			"atualizacao" => "atualizacao",
-			"autor_wp_admin_id" => "wordpress_user_id"
+			"autor_wp_admin_id" => "wordpressUserId",
+			"id_etapa" => "idEtapa",
+			"piu" => "piu"
 		);
 
+        parent::__construct($tableName, $columns);
+
 		$this->consultas = array();
-		$this->etapas = array();
+		// $this->etapas = array();
 	}
 	
 	public function __get($campo) {
@@ -62,10 +66,10 @@ class Projeto extends GenericDAO{
 		}
 	}
 	
-	public function obter($id){
+	public function getById($id){
 		try{
 			$projeto = $this->getById($id);
-			$this->getLists($projeto);
+			//$this->getLists($projeto);
 			return $projeto;
 		}catch(Exception $ex){
 			$this->log->write($ex->getMessage());
@@ -75,49 +79,25 @@ class Projeto extends GenericDAO{
 	
 	public function obterPeloNome($nome){
 		$filtro = array("nome" => "= $nome");
-		$result = $this->listar($filtro);
+		$result = $this->getList($filtro);
 		if($result === FALSE || count($result) != 1){
 			return FALSE;
 		}
 		return $result[0];
 	}
-	
-	public function cadastrar($input = NULL){
-		try{
-			if($input != NULL){
-				foreach($input as $key => $val){
-					if(array_search($key, $this->columns) === FALSE){
-						throw new Exception("$key parametro incorreto", 400);
-					}
-					$this->$key = $val;
-				}
-			}
-			return $this->insert();
-		}catch(Exception $ex){
-			$this->log->write($ex->getMessage());
-			return FALSE;
-		}
-	}
-
-	public function atualizar($campos = NULL, $filtro = NULL){
-		try{
-			if($campos == NULL){
-				return $this->selfUpdate($this->id);
-			}
-			return $this->update($campos, $filtro);
-		}catch(Exception $ex){
-			$this->log->write($ex->getMessage());
-			return FALSE;
-		}
-	}
+    
+    public function beforeSelfUpdate($input, $id){
+        parent::beforeSelfUpdate($input, $id);
+        $this->atualizacao = date("Y-m-d H:i:s");
+    }
 
 	private function getLists($projeto){
 		if($projeto != NULL){
 			$DAO = new Etapa();
 			$idProjeto = $projeto->id;
 			$filtro = array("idProjeto" => "=".$idProjeto);
-			$etapas = $DAO->listar($filtro);
-			$projeto->etapas = ($etapas != NULL) ? $this->encodeObject($etapas) : array();
+			// $etapas = $DAO->listar($filtro);
+			// $projeto->etapas = ($etapas != NULL) ? $this->encodeObject($etapas) : array();
 
 			$DAO = new ProjetoConsulta();
 			$filtro = array("idProjeto" => "=".$idProjeto);

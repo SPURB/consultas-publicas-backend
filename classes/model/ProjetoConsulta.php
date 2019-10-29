@@ -11,18 +11,19 @@ class ProjetoConsulta extends GenericDAO{
 	private $projeto;
 	
 	public function __construct(){
-		parent::__construct();
 	
-		$this->tableName = "projetos_consultas";
+		$tableName = "projetos_consultas";
 		
 		/*
 			key = coluna do banco => value = property da classe
 		*/
-		$this->columns = array(
+		$columns = array(
 			"id" => "id",
 			"fk_projeto" => "idProjeto",
 			"fk_consulta" => "idConsulta"
 		);
+
+        parent::__construct($tableName, $columns);
 	}
 	
 	public function __get($campo) {
@@ -66,30 +67,6 @@ class ProjetoConsulta extends GenericDAO{
 		$consulta = $DAO->listar($filtro);
 		$projetoConsulta->consulta = ($consulta != NULL && is_array($consulta)) ? $this->encodeObject($consulta[0]) : NULL;
 
-	}
-
-	public function cadastrar($input = NULL){
-		try{
-			if($input != NULL){
-				foreach($input as $key => $val){
-					if(array_search($key, $this->columns) === FALSE){
-						throw new Exception("$key parametro incorreto", 400);
-					}
-					$this->$key = $val;
-				}
-			}
-			return $this->insert();
-		}catch(Exception $ex){
-			$this->log->write($ex->getMessage());
-			return FALSE;
-		}
-	}
-
-	public function obter($id){
-		$filtroId = array("id" => "= $id");
-		$result = $this->listar($filtroId);
-		reset($result);
-		return current($result);
 	}
 
 }

@@ -1,10 +1,10 @@
 <?php
+
 require_once "GenericDAO.php";
-require_once "Member.php";
 
 class Consulta extends GenericDAO{
 	
-	private $id_consulta;
+	private $idConsulta;
 	private $nome;
 	private $dataCadastro;
 	private $ativo;
@@ -16,16 +16,16 @@ class Consulta extends GenericDAO{
 	private $urlCapa;
 	private $urlDevolutiva;
 	
-	public function __construct(){	
-		parent::__construct();
+	public function __construct(){
 	
-		$this->tableName = "consultas";
+		$tableName = "consultas";
 		
 		/*
 			key = coluna do banco => value = property da classe
 		*/
-		$this->columns = array(
-			"id_consulta" => "id_consulta",
+        
+		$columns = array(
+			"id_consulta" => "idConsulta",
 			"nome" => "nome",
 			"data_cadastro" => "dataCadastro",
 			"ativo" => "ativo",
@@ -36,6 +36,8 @@ class Consulta extends GenericDAO{
 			"url_capa" => "urlCapa",
 			"url_devolutiva" => "urlDevolutiva"
 		);
+        parent::__construct($tableName, $columns);
+
 	}
 	
 	public function __get($campo) {
@@ -50,87 +52,55 @@ class Consulta extends GenericDAO{
 	}
 
 	public function listarPadrao($conditions = NULL, $orderColumns = NULL, $orderType = NULL, $selectColumns = NULL){
-		return $this->lista();
+		return $this->getList($conditions);
 	}
 	
-	public function listar($filtro = NULL){
+	public function getList($filtro = NULL){
 		if($filtro == NULL){
 			$filtro = array();
 		}
-		try{
-			$lista = $this->select($filtro);
-			foreach ($lista as $consulta) {
-				$consulta->nContribuicoes = $this->getNContribuicoes($consulta->id_consulta);
-			}
-			return $lista;
-		}catch(Exception $ex){
-			$this->log->write($ex->getMessage());
-			return FALSE;
-		}
+        $lista = parent::getList($filtro);
+        foreach ($lista as $consulta) {
+            $consulta->nContribuicoes = $this->getNContribuicoes($consulta->idConsulta);
+        }
+        return $lista;
 	}
 	
-	public function obter($id){
-		try{
-			$consulta = $this->getById($id);
-			$consulta->nContribuicoes = $this->getNContribuicoes($consulta->id_consulta);
-			return $consulta;
-		}catch(Exception $ex){
-			$this->log->write($ex->getMessage());
-			return FALSE;
-		}
+	public function get($id){
+        $consulta = parent::get($id);
+        if(empty($consulta)){
+            throw new Exception("Consulta $id não encontrada", 400);
+        }
+        $consulta->nContribuicoes = $this->getNContribuicoes($consulta->idConsulta);
+        return $consulta;
 	}
 	
 	public function obterPeloNome($nome){
 		$filtro = array("nome" => "= $nome");
-		$result = $this->listar($filtro);
+		$result = $this->getList($filtro);
 		if($result === FALSE || count($result) != 1){
 			return FALSE;
 		}
 		return $result[0];
 	}
-	
-	public function cadastrar($input = NULL){
-		try{
-			if($input != NULL){
-				foreach($input as $key => $val){
-					if(array_search($key, $this->columns) === FALSE){
-						throw new Exception("$key parametro incorreto", 400);
-					}
-					$this->$key = $val;
-				}
-			}
-			$this->dataCadastro = date("Y-m-d H:i:s");
-			$this->ativo = "1";
+    
+    public function beforeInsert($input){
+        parent::beforeInsert($input);
+        $this->dataCadastro = date("Y-m-d H:i:s");
+        $this->ativo = "1";
+    }
 
-			return $this->insert();
-		}catch(Exception $ex){
-			$this->log->write($ex->getMessage());
-			return FALSE;
-		}
-	}
-
-	public function atualizar($campos = NULL, $filtro = NULL){
-		try{
-			if($campos == NULL){
-				return $this->selfUpdate($this->id_consulta);
-			}
-			return $this->update($campos, $filtro);
-		}catch(Exception $ex){
-			$this->log->write($ex->getMessage());
-			return FALSE;
-		}
-	}
-
-	public function desativar($id){
+	public function remove($id){
 		$colunas = array("ativo" => "=0");
 		$filtros = array("id_consulta" => $id);
-		return $this->atualizar($colunas, $filtros);
+		return $this->update($colunas, $filtros);
 	}
 
 	public function getNContribuicoes($idConsulta = NULL){
 		if($idConsulta == NULL){
-			$idConsulta = $this->id_consulta;
+			$idConsulta = $this->idConsulta;
 		}
+        require_once "Member.php";
 		try{
 			$m = new Member();
 			$filtro = array("public" => "=1");

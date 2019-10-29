@@ -1,7 +1,7 @@
 <?php
 require_once "GenericDAO.php";
 
-class Member extends GenericDAO{
+class Member extends GenericDAO {
 	
 	private $memid;
 	private $name;
@@ -14,17 +14,18 @@ class Member extends GenericDAO{
 	private $commentid;
 	private $commentcontext;
 	private $idConsulta;
-	
+	private $proposta;
+	private $justificativa;
+	private $opiniao;
+
 	public function __construct(){	
-		parent::__construct();
-	
-		$this->tableName = "members";
+		$tableName = "members";
 		
 		/*
 			key = nome da coluna no banco => value = propriedade da classe
 			A primeira deve ser a Primary Key da tabela
 		*/
-		$this->columns = array(
+		$columns = array(
 			"memid" => "memid",
 			"name" => "name",
 			"email" => "email",
@@ -35,8 +36,13 @@ class Member extends GenericDAO{
 			"trash" => "trash",
 			"commentid" => "commentid",
 			"commentcontext" => "commentcontext",
-			"id_consulta" => "idConsulta"
+			"id_consulta" => "idConsulta",
+			"proposta" => "proposta",
+			"justificativa" => "justificativa",
+			"opiniao" => "opiniao"
 		);
+
+        parent::__construct($tableName, $columns);
 	}
 	
 	public function __get($campo) {
@@ -47,59 +53,43 @@ class Member extends GenericDAO{
 		$this -> $campo = $valor;
 	}
 
-	public function buscar($input, $page=NULL){
-		$filtro = array();
-		foreach($input as $key => $val){
-			if(array_search($key, $this->columns) === FALSE){
-				throw new Exception("$key parametro incorreto", 400);
-			}
-			$filtro[$key] = $val;
-		}
-		if(array_count_values($filtro) == 0){
-			throw new Exception("Parametros de busca incorretos", 400);
-		}
+    function getColumns(){
+		/*
+			key = coluna do banco => value = property da classe
+		*/
+        return array(
+			"memid" => "memid",
+			"name" => "name",
+			"email" => "email",
+			"content" => "content",
+			"commentdate" => "commentdate",
+			"public" => "public",
+			"postid" => "postid",
+			"trash" => "trash",
+			"commentid" => "commentid",
+			"commentcontext" => "commentcontext",
+			"id_consulta" => "idConsulta",
+			"proposta" => "idProposta",
+			"justificativa" => "justificativa",
+			"opiniao" => "idOpiniao"
+		);
+    }
 
-		return ($page != NULL) ? $this->listarAtivos($page, $filtro) : $this->listar($filtro);
-	}
-	
-	public function listar($filtro = NULL){
-		try{
-			return $this->select($filtro);
-		}catch(Exception $ex){
-			$this->log->write($ex->getMessage());
-			return FALSE;
-		}
-	}
-
-	public function listarAtivos($pagina = NULL, $filtro = NULL){
+	public function getList($filtro = NULL, $limite = 0, $pagina = 1){
 		if($filtro == NULL){
 			$filtro = array();
 		}
-		$filtro['trash'] = "=0";
-		$result = $this->select($filtro);
-		if($pagina != NULL){
-			$limite = 10;
-			$primeiro = ($pagina * $limite) - $limite;
-			$result = array_slice($result, $primeiro, $limite);
-		}
-		return $result;
+		//$filtro['trash'] = "=0";
+		return parent::getList($filtro, $limite, $pagina);
 	}
 	
 	public function listarPorConsulta($idConsulta, $filtro = NULL){
-		
 		if($filtro != NULL && is_array($filtro)){
 			$filtro["idConsulta"] = "=".$idConsulta;
 		}else{
 			$filtro = array("idConsulta" => "= $idConsulta");
 		}
-		return $this->listar($filtro);
-	}
-	
-	public function obter($id){
-		$filtroId = array("memid" => "= $id");
-		$result = $this->listar($filtroId);
-		reset($result);
-		return current($result);
+		return $this->getList($filtro);
 	}
 	
 	public function obterPorConsulta($idConsulta, $idMember){
@@ -107,54 +97,45 @@ class Member extends GenericDAO{
 		return $this->listarPorConsulta($idConsulta, $filtro);
 	}
 	
-	public function cadastrar($input = NULL){
-		try{			
-			if($input != NULL){
-				foreach($input as $key => $val){
-					if(array_search($key, $this->columns) === FALSE){
-						throw new Exception("$key parametro incorreto", 400);
-					}
-					$this->$key = $val;
-				}
-			}
-
-			if($this->isComentarioRepetido($this->content, $this->idConsulta)){
-				throw new Exception("Texto repetido nao autorizado.", 403);
-			}
-			$this->commentdate = date("Y-m-d H:i:s");
-			$this->content = trim($this->content);
-			return $this->insert();
-		}catch(Exception $ex){
-			$this->log->write($ex->getMessage());
-			return FALSE;
-		}
-	}
-	
-	public function atualizar($campos = NULL, $filtro = NULL){
-		try{
-			if($campos == NULL){
-				return $this->selfUpdate($this->memid);
-			}
-			return $this->update($campos, $filtro);
-		}catch(Exception $ex){
-			$this->log->write($ex->getMessage());
-			return FALSE;
-		}
-	}
-	
-	public function desativar($id){
-		$colunas = array("trash" => "=1");
+	public function remove($id){
+		$colunas = array("trash" => "1");
 		$filtros = array("memid" => "=".$id);
-		return $this->atualizar($colunas, $filtros);
+		return parent::update($colunas, $filtros);
 	}
 	
-	public function isComentarioRepetido($comentario, $idConsulta){
+	private function isComentarioRepetido($comentario, $idConsulta){
 		$comentario = trim($comentario);
 		$filtro = array(
 			"content" => "= $comentario",
 		);
 		$result = $this->listarPorConsulta($idConsulta, $filtro);		
 		return (count($result) > 0);
+	}
+    
+    protected function beforeInsert($input){
+        parent::beforeInsert($input);
+        $consulta = $this->getConsulta($this->idConsulta);
+        if($consulta !== FALSE){
+            if($consulta->ativo == '0'){
+                throw new Exception("Consulta encerrada. Periodo de participacao terminado.", 403);
+            }
+            $this->idConsulta = $consulta->idConsulta;
+        }
+        if($this->isComentarioRepetido($this->content, $this->idConsulta)){
+            throw new Exception("Texto repetido nao autorizado.", 403);
+        }
+        $this->commentdate = date("Y-m-d H:i:s");
+        $this->content = trim($this->content);
+    }
+    
+    private function getConsulta(){
+        require_once APP_PATH.'/classes/model/Consulta.php';
+		$consultaDAO = new Consulta();
+		$consulta = $consultaDAO->get($this->idConsulta);
+		if($consulta === FALSE){
+			throw new Exception("Erro ao obter a consulta em Member.", 404);
+		}
+		return $consulta;
 	}
 	
 }

@@ -1,4 +1,4 @@
-# Backend das consultas públicas
+# API das consultas públicas
 API REST das consulta públicas da Secretaria de Desenvolvimento Urbano e São Paulo Urbanismo.
 
 ## Para montar localmente

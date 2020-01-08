@@ -79,6 +79,7 @@ class GenericDAO implements APICallableModel{
 	 */
 	protected function bind($objetobd, $objetoclass = NULL){
         if(! ($classe = get_class($objetoclass) ))
+          if(! ($classe = get_class() ))
 			throw new DAOException("Falha no mapeamento do banco de dados. O parâmetro fornecido não é um objeto.");
 
 		if(! (is_array($this->columns) ) )

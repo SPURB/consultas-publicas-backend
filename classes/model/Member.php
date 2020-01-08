@@ -75,7 +75,7 @@ class Member extends GenericDAO {
 		);
     }
 
-	public function getList($filtro = NULL, $limite = 0, $pagina = 1){
+	public function getList($filtro = NULL, $limite = 0, $pagina = 1, $orderColumns = NULL, $orderType = "ASC", $selectColumns = NULL){
 		if($filtro == NULL){
 			$filtro = array();
 		}

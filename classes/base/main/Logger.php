@@ -22,7 +22,7 @@ class Logger{
     }
     
     private static function checkLogSize(){
-        if(file_exists(self::$LOGPATH)){
+        if(file_exists(self::$LOGPATH) && is_writable(self::$LOGPATH)){
             if(filesize(self::$LOGPATH) > 102400){//> 100KB
                 $newName = self::$LOGPATH."_".date('YmdHi');
                 rename(self::$LOGPATH, $newName);
@@ -59,13 +59,12 @@ class Logger{
 				error_log($ex->getMessage());
 			}
 		}else{
-			try{
-				$logFile = fopen(self::$LOGPATH, "w");//write do zero
-				fclose($logFile);
-				self::write($message);
-			}catch(Exception $ex){
-				error_log($ex->getMessage());
-			}
+            if($logFile = fopen(self::$LOGPATH, "w")){//write do zero
+              fclose($logFile);
+              self::write($message);
+            }else{
+              error_log("Não foi possivel criar o log ".self::$LOGPATH);
+            }
 		}
 		
 	}

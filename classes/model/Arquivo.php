@@ -46,7 +46,7 @@ class Arquivo extends GenericDAO{
 		$this -> $campo = $valor;
 	}
 	
-	public function getList($filtro = NULL){
+	public function getList($filtro = NULL, $limite = 0, $pagina = 1, $orderColumns = NULL, $orderType = "ASC", $selectColumns = NULL){
 		if($filtro == NULL){
 			$filtro = array();
 		}

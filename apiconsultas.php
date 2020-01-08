@@ -6,8 +6,7 @@ header('Access-Control-Allow-Credentials: false');
 header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE');
 header("Content-type: application/json");
 
-define('APP_PATH', realpath(dirname(__FILE__)));
-
+define('APP_PATH', realpath(dirname(__FILE__)));error_log('path : '.APP_PATH);
 require_once APP_PATH.'/classes/api/APIFactory.php';
 $method = $_SERVER['REQUEST_METHOD'];
 $info = (isset($_SERVER['PATH_INFO']) && $_SERVER['PATH_INFO'] != "") ? $_SERVER['PATH_INFO'] : $_SERVER['REQUEST_URI'];

@@ -2,6 +2,7 @@
 
 require_once 'exceptions/APIException.php';
 require_once APP_PATH.'/classes/model/APICallableModel.php';
+require_once APP_PATH.'/classes/base/main/Logger.php';
 
 abstract class APIMethod {
 	abstract static function load($request);

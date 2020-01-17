@@ -78,7 +78,7 @@ class GenericDAO implements APICallableModel{
 	 *
 	 */
 	protected function bind($objetobd, $objetoclass = NULL){
-        if(! ($classe = get_class($objetoclass) ))
+        if(! ($classe = @get_class($objetoclass) ))
           if(! ($classe = get_class() ))
 			throw new DAOException("Falha no mapeamento do banco de dados. O parâmetro fornecido não é um objeto.");
 
@@ -389,27 +389,6 @@ class GenericDAO implements APICallableModel{
         }
         return $obj;
     }
-    
-    
-    
-/*
-	protected function getById($id){
-		$campoId = array_search("id", $this->columns);
-		if($campoId !== FALSE){
-			$condition = array($campoId."=".$id);
-			$result = $this->select($condition);
-			foreach($result as $obj){
-				return $obj;
-			}
-		}
-		return NULL;
-	}
-
-	protected final function parseBoolean($value){
-		return ($value == 0) ? "FALSE" : "TRUE";
-	}
-    
-*/
 
 	public function encodeObject($obj){
 		if(is_array($obj)){
@@ -464,7 +443,7 @@ class GenericDAO implements APICallableModel{
 
 		$selectors = '';
 
-		$last_key = end(array_keys($arr));
+		$last_key = @end(@array_keys($arr));
 
 		foreach ($arr as $key => $value) {
 

@@ -14,7 +14,8 @@ class Logger{
     private function __clone(){}
   
 	public static function startLogger($logDir = NULL){
-        self::$LOGDIR = $logDir ?? self::$LOGDIR;
+        // self::$LOGDIR = $logDir ?? self::$LOGDIR;
+        self::$LOGDIR = isset($logDir) ? $logDir : self::$LOGDIR;
         self::$LOGPATH = self::$LOGDIR.self::$LOGFILE;
         if(!is_writable(self::$LOGDIR)){
           error_log("Sem permissao de escrita no diretorio :".self::$LOGPATH);

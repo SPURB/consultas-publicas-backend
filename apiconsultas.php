@@ -7,7 +7,7 @@ header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE');
 header("Content-type: application/json");
 
 define('APP_PATH', realpath(dirname(__FILE__)));
-
+//error_log('path : '.APP_PATH);
 require_once APP_PATH.'/classes/api/APIFactory.php';
 $method = $_SERVER['REQUEST_METHOD'];
 $info = (isset($_SERVER['PATH_INFO']) && $_SERVER['PATH_INFO'] != "") ? $_SERVER['PATH_INFO'] : $_SERVER['REQUEST_URI'];
@@ -18,6 +18,8 @@ if($info == NULL || $info == ""){
 	echo json_encode($message);
 } 
 else {
+    require_once APP_PATH.'/classes/base/main/Logger.php';
+    Logger::startLogger();
 	$requestPaths = explode('/', trim($info,'/'));
 
 	/*
@@ -31,22 +33,7 @@ else {
 		else return $pathItem;
 	}
 
-	/*
-	 * Checa parâmetros $_GET para filtrar resultados:
-	 * /consultas?ativo=1 => array("ativo" => 1)
-	 * /members?id_consulta=32&public=1 => array("id_consulta" => 32, "public" => 1)
-	 */
-    /*
-	function checkFilters($reqMethod, $filtros) {
-		if ($reqMethod != "GET" || count($filtros) <= 0) { return FALSE; }
-		else return $filtros;
-	}
-    */
-
 	$request = array_filter($requestPaths, 'removeVersion');
-	//$gets = isset($_GET) ? $_GET : 0;
-
-	//$filtros = checkFilters($method, $gets);
 	$result = NULL;
 	$result = APIFactory::executeRequest($method, $request, TRUE);
 	echo $result;

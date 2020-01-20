@@ -7,8 +7,7 @@ class APIException extends Exception{
 
 	public function __construct($message, $code = NULL){
 		parent::__construct($message, $code);
-		//$log = new Logger();
-		//$log->write($message);
+		Logger::write($message);
 	}
 
 

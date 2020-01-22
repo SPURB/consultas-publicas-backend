@@ -13,6 +13,18 @@ class Post extends APIMethod{
 		$input = json_decode(file_get_contents('php://input'),true);
 		
 		try{
+			if (!function_exists('getallheaders')) {
+			    function getallheaders() {
+			    $headers = [];
+			    foreach ($_SERVER as $name => $value) {
+			        if (substr($name, 0, 5) == 'HTTP_') {
+			            $headers[str_replace(' ', '-', ucwords(strtolower(str_replace('_', ' ', substr($name, 5)))))] = $value;
+			        }
+			    }
+			    return $headers;
+			    }
+			}
+			
 			$headers = getallheaders();
             //Header 'Current' deve conter a key de autorização
 			$token = $headers['Current'];

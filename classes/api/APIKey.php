@@ -31,11 +31,10 @@ class APIKey{
     }
 
     public static function generate(){
-        $hora = gmdate("G");//Hora sem zero a esq
         $mes = gmdate("n");//Mes sem zero a esq
         $dia = gmdate("j");//Dia do mes sem zero a esq
         $key = self::getKey();
-        $result = "hora:".$hora."_mes:".$mes."_dia:".$dia."_bicho:".$key;
+        $result = "mes:".$mes."_dia:".$dia."_bicho:".$key;
         return md5($result);
     }
     

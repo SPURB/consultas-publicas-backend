@@ -4,7 +4,7 @@ header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Headers: Content-Type, Current");
 header('Access-Control-Allow-Credentials: false');
 header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE');
-header("Content-type: application/json");
+header("Content-type: application/json; charset=UTF-8");
 
 define('APP_PATH', realpath(dirname(__FILE__)));
 //error_log('path : '.APP_PATH);
@@ -36,7 +36,8 @@ else {
 	$request = array_filter($requestPaths, 'removeVersion');
 	$result = NULL;
 	$result = APIFactory::executeRequest($method, $request, TRUE);
-	echo $result;
+	// echo $result;
+	echo utf8_decode(json_encode(json_decode($result), JSON_UNESCAPED_UNICODE));
 }
 
 ?>
